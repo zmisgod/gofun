@@ -6,7 +6,7 @@ target url  : http://www.alfuli.com/fuliba
 
 expact: save images
 
-## day one
+## to do list
 
 - [x] get url and page title
 - [ ] create a folder name is page title
