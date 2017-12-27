@@ -12,7 +12,7 @@ finish this day by day
 
 - [x] get url and page title (SpiderDemo.go finish at 26.12.2017)
 - [x] write a demo about auto create a folder and save a image here (DownloadDemo.go finish at 27.12.2017)
-- [ ] auto detected mutil-page (FetchPaginationDemo.go finsih at 23:14 27.12.2017)
+- [x] auto detected mutil-page (FetchPaginationDemo.go finsih at 23:14 27.12.2017)
 - [ ] combina code (spider.go not finished yet)
 - [ ] optimize codes
 
