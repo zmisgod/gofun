@@ -6,13 +6,15 @@ target url  : http://www.alfuli.com/fuliba
 
 expact: save images
 
-## to do list
+## To do list
 
-- [x] get url and page title (finish at 26.12.2017)
-- [x] write a demo about auto create a folder and save a image here (finish at 27.12.2017)
-- [ ] create a folder name as page title
-- [ ] download images
-- [ ] optimize code
+finish this day by day
+
+- [x] get url and page title (SpiderDemo.go finish at 26.12.2017)
+- [x] write a demo about auto create a folder and save a image here (DownloadDemo.go finish at 27.12.2017)
+- [ ] auto detected mutil-page (FetchPaginationDemo.go not finished yet)
+- [ ] combina code (spider.go not finished yet)
+- [ ] optimize codes
 
 ## contact
 

@@ -19,7 +19,6 @@ func main() {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	responseBody = string(body)
-	// println(string(responseBody))
 	var re = regexp.MustCompile(`<article .*>(.*?)<\/article>`)
 	if len(re.FindString(responseBody)) > 0 {
 		var responseBody = re.FindString(responseBody)
@@ -36,8 +35,4 @@ func main() {
 			println(url)
 		}
 	}
-}
-
-func fetchURL(url string) {
-
 }
