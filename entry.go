@@ -37,3 +37,7 @@ func main() {
 		}
 	}
 }
+
+func fetchURL(url string) {
+
+}
