@@ -24,12 +24,13 @@ func main() {
  * 创建文件夹
  */
 func createFolder(floderName string) error {
-	checkFloderExists, err := checkPathIsNotExists(floderName)
+	checkFloderNotExists, err := checkPathIsNotExists(floderName)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
-	if checkFloderExists {
-		err := os.Mkdir(floderName, 0777)
+	if checkFloderNotExists {
+		err := os.MkdirAll(floderName, 0777)
 		if err != nil {
 			return err
 		}
