@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	doc, err := goquery.NewDocument("http://www.alfuli.com/fuliba/page/13")
+	doc, err := goquery.NewDocument("http://www.alfuli.com/fuliba/page/14")
 	if err != nil {
 		log.Fatal(err)
 	}
