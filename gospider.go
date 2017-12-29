@@ -12,17 +12,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func fetchNextURL(nowURL string, chanNextURL chan string) {
-	doc, err := goquery.NewDocument(nowURL)
-	if err != nil {
-		panic(err)
-	}
-	section := doc.Find(".content .pagination .next-page a")
-	nextURL, _ := section.Attr("href")
-	fmt.Println(nextURL + "\n")
-	chanNextURL <- nextURL
-}
-
 func main() {
 	if len(os.Args) <= 1 {
 		fmt.Println(`please input at least one paramter
@@ -55,12 +44,23 @@ or
 	nowURL := targetURL
 	for i := 0; i < eachTime; i++ {
 		nextURL := make(chan string)
-		go fetchNextURL(nowURL, nextURL)
-		nowURL = <-nextURL
 		countPage := make(chan int)
 		go fetchPage(nowURL, countPage)
+		go fetchNextURL(nowURL, nextURL)
+		nowURL = <-nextURL
 		fmt.Printf("this page have %d content", <-countPage)
 	}
+}
+
+func fetchNextURL(nowURL string, chanNextURL chan string) {
+	doc, err := goquery.NewDocument(nowURL)
+	if err != nil {
+		panic(err)
+	}
+	section := doc.Find(".content .pagination .next-page a")
+	nextURL, _ := section.Attr("href")
+	fmt.Println(nextURL + "\n")
+	chanNextURL <- nextURL
 }
 
 func fetchPage(url string, countPage chan int) {
