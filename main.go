@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	doc, err := goquery.NewDocument("http://www.alfuli.com/fuliba")
+	doc, err := goquery.NewDocument("http://www.alfuli.com/fuliba/page/6")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,13 +23,17 @@ func main() {
 		targetURL, _ := contentSelection.Find("h2 a").Attr("href")
 		folderName := strings.Replace(title, " ", "", -1)
 		folder := "./images/" + folderName
-		err := createFolder(folder)
+		createFolder, err := createFolder(folder)
 		if err != nil {
 			panic(err)
 		}
-		go fetchDetail(targetURL, folder, count)
-		allFinish := <-count
-		fmt.Printf("title : %s download %d images \n", folderName, allFinish)
+		if createFolder {
+			go fetchDetail(targetURL, folder, count)
+			allFinish := <-count
+			fmt.Printf("title : %s download %d images \n", folderName, allFinish)
+		} else {
+			fmt.Printf("skip %s because exists\n", folder)
+		}
 		return true
 	})
 }
@@ -37,22 +41,21 @@ func main() {
 /**
  * 创建文件夹
  */
-func createFolder(floderName string) error {
+func createFolder(floderName string) (bool, error) {
 	checkFloderNotExists, err := checkPathIsNotExists(floderName)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return false, err
 	}
 	if checkFloderNotExists {
 		err := os.MkdirAll(floderName, 0777)
 		if err != nil {
-			return err
+			return false, err
 		}
 		fmt.Printf("create floder %s successful\n", floderName)
-	} else {
-		fmt.Printf("floder %s already exists\n", floderName)
+		return true, nil
 	}
-	return nil
+	return false, err
 }
 
 /**
@@ -71,43 +74,34 @@ func checkPathIsNotExists(path string) (bool, error) {
 }
 
 //文章获取详情的分页
-func fetchDetail(url string, savePath string, count chan int) {
+func fetchDetail(url string, savePath string, pagineCount chan int) {
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Fatal(err)
 	}
-	i := 0
+	//分页计数
+	detailCount := 0
 	imgCount := make(chan int)
 	doc.Find(".article-paging a").EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
-		i++
 		detailURL, _ := contentSelection.Attr("href")
 		filename := strconv.Itoa(i)
-		go fetchImage(detailURL, savePath, filename, i, imgCount)
+		go fetchImage(detailURL, savePath, filename, imgCount)
 		imgFinish := <-imgCount
 		fmt.Printf("finish this %d\n", imgFinish)
+		detailCount++
 		return true
 	})
-	count <- i
+	pagineCount <- detailCount
 }
 
 //获取文章分页中的图片并进行下载操作
-func fetchImage(url string, savePath string, fileName string, pcount int, imgCount chan int) {
-	count := make(chan int)
-	go downloadImages(url, savePath, fileName, count)
-	finish := <-count
-	fmt.Printf("finish download %d image\n", finish)
-	imgCount <- pcount
-}
-
-/**
- * 下载图片
- */
-func downloadImages(url string, folderPath string, fileName string, count chan int) {
+func fetchImage(url string, folderPath string, fileName string, count chan int) {
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Fatal(err)
 	}
 	content := doc.Find(".article-content img")
+	//页面中的图片计数
 	ct := 0
 	content.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
 		imgurl, _ := contentSelection.Attr("src")
@@ -123,8 +117,9 @@ func downloadImages(url string, folderPath string, fileName string, count chan i
 	count <- ct
 }
 
+//下载图片
 func fetchAImage(img string, folderPath string, fileName string, fileType string, count chan int) {
-	ct := 1
+	ct := 0
 	respImg, err := http.Get(img)
 	if err != nil {
 		panic(err)
@@ -138,8 +133,6 @@ func fetchAImage(img string, folderPath string, fileName string, fileType string
 		fp.Write(imgByte)
 		ct++
 		fmt.Printf("create %s/%s.%s successful\n", folderPath, fileName, fileType)
-	} else {
-		fmt.Printf("sorry %s/%s.%s exist\n", folderPath, fileName, fileType)
 	}
 	count <- ct
 }
