@@ -15,6 +15,8 @@ git clone
 cd /your/path/goSpider
 ./goSpider http://www.alfuli.com/fuliba 10
 ```
+
+./goSpider [targetURL] [total pages]
 just wait and do not turn your terminal off
 
 ## screenshot

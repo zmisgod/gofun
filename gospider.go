@@ -15,7 +15,7 @@ import (
 func main() {
 	if len(os.Args) <= 1 {
 		fmt.Println(`please input at least one paramter
-./main [target url (string)] [pull page(int), default:1, max:each all page]
+./main [target url (string)] [total pages(int), default:1]
 
 such as : 
 ./main http://www.alfuli.com/fuliba/page/13
@@ -48,7 +48,7 @@ or
 		go fetchPage(nowURL, countPage)
 		go fetchNextURL(nowURL, nextURL)
 		nowURL = <-nextURL
-		fmt.Printf("this page have %d content", <-countPage)
+		fmt.Printf("this page have %d content\n", <-countPage)
 	}
 }
 
