@@ -16,18 +16,26 @@ status: finish ✅
 
 ```
 git clone
-cd /your/path/goSpider
-./goSpider http://www.alfuli.com/fuliba 10
+cd /your/path/pictureSpider
+./pictureSpider http://www.alfuli.com/fuliba 10
 ```
 
-./goSpider [targetURL] [total pages]
+./pictureSpider [targetURL] [total pages]
 just wait and do not turn your terminal off
+
+you also can filter the keywords which you dislike
+
+then find `pictureSpider.go` replace which keywords you dislike
+```
+var expactKeyWord = []string{"漫画", "美女", "xxx"}
+```
+then run ```go run pictureSpider.go http://www.alfuli.com/fuliba 10```
 
 <hr />
 
 ## movie spider
 
-target url:https://movie.douban.com/j/search_subjects?type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=rank&page_limit=20&page_start=40
+target url:https://movie.douban.com/j/search_subjects?type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=rank&page_limit=20&page_start=20
 
 expact: save these data into database
 
@@ -64,13 +72,19 @@ then run ```go run doubanSpider.go```
 
 <img src="https://github.com/zmisgod/goSpider/blob/master/demo/run.png">
 
-<img src="https://github.com/zmisgod/goSpider/blob/master/demo/folder.png">
-
 <img src="https://github.com/zmisgod/goSpider/blob/master/demo/douban_movie.png">
 
 ## Postscript
 
 <a href="https://zmis.me/detail_1291">写go爬虫后记有感</a>
+
+## ChangeLog
+
+- 2018-01-17 pictureSpider.go support dislike keywords
+- 2018-01-17 doubanSpider.go all done
+- 2018-01-01 start douban spider task
+- 2017-12-29 pcitureSpider.go all done
+- 2017-12-24 start this project
 
 ## contact
 
