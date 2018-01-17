@@ -12,7 +12,7 @@ expact: save images
 
 status: finish ✅
 
-### useage
+### usage
 
 ```
 git clone
@@ -41,7 +41,7 @@ expact: save these data into database
 
 status: finish ✅
 
-### useage
+### usage
 
 create a mysql table
 ```
