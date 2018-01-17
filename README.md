@@ -1,6 +1,10 @@
 # goSpider
 
-learn to write a spider with golang and review how to use go routine
+learn to write a spider with golang
+
+<hr />
+
+## picture spider
 
 target url: http://www.alfuli.com/fuliba
 
@@ -8,7 +12,7 @@ expact: save images
 
 status: finish ✅
 
-## useage
+### useage
 
 ```
 git clone
@@ -21,13 +25,15 @@ just wait and do not turn your terminal off
 
 <hr />
 
+## movie spider
+
 target url:https://movie.douban.com/j/search_subjects?type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=rank&page_limit=20&page_start=40
 
 expact: save these data into database
 
 status: finish ✅
 
-## useage
+### useage
 
 create a mysql table
 ```
@@ -59,6 +65,8 @@ then run ```go run doubanSpider.go```
 <img src="https://github.com/zmisgod/goSpider/blob/master/demo/run.png">
 
 <img src="https://github.com/zmisgod/goSpider/blob/master/demo/folder.png">
+
+<img src="https://github.com/zmisgod/goSpider/blob/master/demo/douban_movie.png">
 
 ## Postscript
 
