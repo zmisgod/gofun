@@ -13,10 +13,10 @@ import (
 )
 
 //过滤的关键字（标题）
-var expactKeyWord = []string{"漫画"}
+var dislikeKeyWord = []string{"漫画"}
 
 func filterDislike(title string) bool {
-	for _, v := range expactKeyWord {
+	for _, v := range dislikeKeyWord {
 		res := strings.Split(title, v)
 		if len(res) >= 2 {
 			return true
