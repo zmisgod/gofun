@@ -13,6 +13,7 @@ two projects show you how to use write a spider with golang
 
 ## ChangeLog
 
+- 2018-01-24 fix some mistake in readme and separate it to three files
 - 2018-01-17 pictureSpider.go support dislike keywords
 - 2018-01-17 doubanSpider.go all done
 - 2018-01-01 start douban spider task
