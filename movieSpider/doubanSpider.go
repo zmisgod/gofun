@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -51,6 +52,8 @@ func goRunOneTime(targetURL string, next chan bool) {
 	startPage := 0
 	for {
 		resEnd := make(chan int)
+		//一秒钟后请求，防止豆瓣接口屏蔽ip
+		time.Sleep(time.Second * 1)
 		go fetchURLData(targetURL+strconv.Itoa(startPage), resEnd)
 		isEnd = <-resEnd
 		if isEnd == 0 {
@@ -63,7 +66,6 @@ func goRunOneTime(targetURL string, next chan bool) {
 }
 
 func fetchURLData(url string, end chan int) {
-	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		end <- 0

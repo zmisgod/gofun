@@ -13,7 +13,7 @@ two projects show you how to use write a spider with golang
 
 ## ChangeLog
 
-- 2018-01-25 get all douban recommand data in "<a href="https://movie.douban.com/explore">Choose Movie</a>"
+- 2018-01-25 get all douban recommand data in "<a href="https://movie.douban.com/explore">Choose Movie</a>", wait one second to fetch next API (prevent douban exception detect)
 - 2018-01-24 fix some mistake in readme and separate it to three files
 - 2018-01-17 pictureSpider.go support dislike keywords
 - 2018-01-17 doubanSpider.go all done

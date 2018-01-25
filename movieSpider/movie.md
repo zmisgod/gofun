@@ -4,11 +4,7 @@ target url : douban's recommand movies API (<a href="https://movie.douban.com/ex
 
 expact: save these data into database
 
-status: optimize ✅ 
-
-## TODO
-
-pass douban's exception detect
+status: finish ✅ 
 
 ## usage
 
