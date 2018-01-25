@@ -1,10 +1,14 @@
 # Movie Spider
 
-target url:https://movie.douban.com/j/search_subjects?type=movie&tag=%E8%B1%86%E7%93%A3%E9%AB%98%E5%88%86&sort=rank&page_limit=20&page_start=20
+target url : douban's recommand movies API (<a href="https://movie.douban.com/explore">选电影</a>)
 
 expact: save these data into database
 
-status: finish ✅
+status: optimize ✅ 
+
+## TODO
+
+pass douban's exception detect
 
 ## usage
 
@@ -15,7 +19,7 @@ cd /your/path/goSpider/movieSpider/
 
 create a mysql table
 ```
-CREATE TABLE `douban_movie` (
+CREATE TABLE `douban_year_best_movie` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `rate` varchar(20) DEFAULT NULL COMMENT '评分',
   `cover` varchar(200) DEFAULT NULL,
@@ -25,7 +29,10 @@ CREATE TABLE `douban_movie` (
   `cover_x` varchar(20) DEFAULT NULL COMMENT '?',
   `cover_y` varchar(20) DEFAULT NULL COMMENT '?',
   `is_new` tinyint(1) unsigned DEFAULT NULL COMMENT '?',
-  PRIMARY KEY (`id`)
+  `year` smallint(4) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `year` (`year`),
+  KEY `rate` (`rate`,`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27658397 DEFAULT CHARSET=utf8;
 ```
 
