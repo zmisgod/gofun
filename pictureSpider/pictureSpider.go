@@ -31,9 +31,9 @@ func main() {
 ./main [target url (string)] [total pages(int), default:1]
 
 such as : 
-./main http://www.alfuli.com/fuliba/page/13
+./main https://www.wnlfl.com/fuliba/page/13
 or
-./main http://www.alfuli.com/fuliba/page/13 10000000
+./main https://www.wnlfl.com/fuliba/page/13 10000000
 `)
 		os.Exit(0)
 	}

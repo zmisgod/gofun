@@ -1,6 +1,6 @@
 # Picture Spider
 
-target url: http://www.alfuli.com/fuliba
+target url: https://www.wnlfl.com/fuliba
 
 expact: save images
 
@@ -11,7 +11,7 @@ status: finish ✅
 ```
 git clone
 cd /your/path/goSpider/pictureSpider/
-./pictureSpider http://www.alfuli.com/fuliba 10
+./pictureSpider https://www.wnlfl.com/fuliba 10
 ```
 
 ./pictureSpider [targetURL] [total pages]
@@ -23,7 +23,7 @@ then find `pictureSpider.go` replace which keywords you dislike
 ```
 var dislikeKeyWord = []string{"漫画", "美女", "xxx"}
 ```
-then run ```go run pictureSpider.go http://www.alfuli.com/fuliba 10```
+then run ```go run pictureSpider.go https://www.wnlfl.com 10```
 
 <hr />
 
