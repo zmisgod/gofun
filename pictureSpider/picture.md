@@ -19,10 +19,17 @@ just wait and do not turn your terminal off
 
 you also can filter the keywords which you dislike
 
-then find `pictureSpider.go` replace which keywords you dislike
+find `pictureSpider.go` replace which keywords you dislike
 ```
+//default dislikeKeyWord = []string{"漫画"}
 var dislikeKeyWord = []string{"漫画", "美女", "xxx"}
 ```
+
+before you change it, you should run
+```
+go get github.com/PuerkitoBio/goquery
+```
+
 then run ```go run pictureSpider.go https://www.wnlfl.com 10```
 
 <hr />
