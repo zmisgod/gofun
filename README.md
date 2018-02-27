@@ -4,6 +4,7 @@ two projects show you how to use write a spider with golang
 
 - <a href="https://github.com/zmisgod/goSpider/blob/master/movieSpider/movie.md">doubanSpider</a>
 - <a href="https://github.com/zmisgod/goSpider/blob/master/pictureSpider/picture.md">pictureSpider</a>
+- <a href="https://github.com/zmisgod/goSpider/blob/master/fetchMovie/fetchMovie.md">fetchMovie</a>
 
 <hr />
 
@@ -13,6 +14,7 @@ two projects show you how to use write a spider with golang
 
 ## ChangeLog
 
+- 2018-02-28 finish movie fetch from dy2018.com
 - 2018-01-25 get all douban recommand data in "<a href="https://movie.douban.com/explore">Choose Movie</a>", wait one second to fetch next API (prevent douban exception detect)
 - 2018-01-24 fix some mistake in readme and separate it to three files
 - 2018-01-17 pictureSpider.go support dislike keywords

@@ -13,7 +13,7 @@ import (
 )
 
 //过滤的关键字（标题）
-var dislikeKeyWord = []string{"漫画"}
+var dislikeKeyWord = []string{"漫画", "秀人网"}
 
 func filterDislike(title string) bool {
 	for _, v := range dislikeKeyWord {
