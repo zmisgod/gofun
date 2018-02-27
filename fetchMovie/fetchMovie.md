@@ -7,7 +7,7 @@
 ```
 git clone
 cd /your/path/goSpider/fetchMovie/
-go get fetchMovie.go [电影名称]
+go run fetchMovie.go [电影名称]
 ```
 
 ## screenshot
