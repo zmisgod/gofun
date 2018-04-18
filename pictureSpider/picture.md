@@ -22,9 +22,9 @@ change the dislike keywords in `.env` ,you must use `,` to splite the different 
 dislike=秀人网,动漫
 ```
 
-you can also add `like` to download only contain these keywords in `.env`, it will ignore `favourite` keywords
+you can also add `favourite` to download only contain these keywords in `.env`, it will ignore `dislike` keywords
 ```
-favourite=巨乳
+favourite=你好
 ```
 
 
