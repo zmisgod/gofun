@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,52 +11,22 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+
+	"github.com/joho/godotenv"
 )
 
-//过滤的关键字（标题）
-var dislikeKeyWord = []string{"漫画", "秀人网"}
-
-func filterDislike(title string) bool {
-	for _, v := range dislikeKeyWord {
-		res := strings.Split(title, v)
-		if len(res) >= 2 {
-			return true
-		}
-	}
-	return false
-}
+var targetURL = "http://www.wnlfl.net/fuliba/page/"
 
 func main() {
-	if len(os.Args) <= 1 {
-		fmt.Println(`please input at least one paramter
-./main [target url (string)] [total pages(int), default:1]
-
-such as : 
-./main https://www.wnlfl.com/fuliba/page/13
-or
-./main https://www.wnlfl.com/fuliba/page/13 10000000
-`)
-		os.Exit(0)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
 	}
-	targetURL := ""
-	eachTime := 1
-	for k, v := range os.Args {
-		if k == 0 {
-			continue
-		}
-		if k == 1 {
-			targetURL = v
-		}
-		if k == 2 {
-			eachTime, _ = strconv.Atoi(v)
-		}
-	}
-	if targetURL == "" {
-		fmt.Println("please input a target url instead of empty")
-		os.Exit(0)
-	}
-	nowURL := targetURL
-	for i := 0; i < eachTime; i++ {
+	var startPage = flag.String("start", "1", "page start")
+	var count = flag.Int("length", 1, "download length")
+	flag.Parse()
+	nowURL := targetURL + *startPage
+	for i := 0; i < *count; i++ {
 		nextURL := make(chan string)
 		countPage := make(chan int)
 		go fetchPage(nowURL, countPage)
@@ -63,6 +34,31 @@ or
 		nowURL = <-nextURL
 		fmt.Printf("this page have %d content\n", <-countPage)
 	}
+}
+
+func filterDislike(spString string) bool {
+	dislikeKeyWord := os.Getenv("dislike")
+	dislikeKeyWords := strings.Split(dislikeKeyWord, ",")
+
+	favouriteKeyword := os.Getenv("favourite")
+	favouriteKeywords := strings.Split(favouriteKeyword, ",")
+	//favourite priority is big
+	if len(favouriteKeywords) >= 1 {
+		for _, v := range favouriteKeywords {
+			res := strings.Split(spString, v)
+			if len(res) >= 2 {
+				return false
+			}
+		}
+		return true
+	}
+	for _, v := range dislikeKeyWords {
+		res := strings.Split(spString, v)
+		if len(res) >= 2 {
+			return true
+		}
+	}
+	return false
 }
 
 func fetchNextURL(nowURL string, chanNextURL chan string) {

@@ -1,6 +1,6 @@
 # Picture Spider
 
-target url: https://www.wnlfl.com/fuliba
+target url: http://www.wnlfl.net/fuliba
 
 expact: save images
 
@@ -11,26 +11,22 @@ status: finish ✅
 ```
 git clone
 cd /your/path/goSpider/pictureSpider/
-./pictureSpider https://www.wnlfl.com/fuliba 10
+./pictureSpider -start 1 -length 2
 ```
-
-./pictureSpider [targetURL] [total pages]
 just wait and do not turn your terminal off
 
 you also can filter the keywords which you dislike
 
-find `pictureSpider.go` replace which keywords you dislike
+change the dislike keywords in `.env` ,you must use `,` to splite the different keywords in `.env`
 ```
-//default dislikeKeyWord = []string{"漫画"}
-var dislikeKeyWord = []string{"漫画", "美女", "xxx"}
-```
-
-before you change it, you should run
-```
-go get github.com/PuerkitoBio/goquery
+dislike=秀人网,动漫
 ```
 
-then run ```go run pictureSpider.go https://www.wnlfl.com 10```
+you can also add `like` to download only contain these keywords in `.env`, it will ignore `favourite` keywords
+```
+favourite=巨乳
+```
+
 
 <hr />
 
