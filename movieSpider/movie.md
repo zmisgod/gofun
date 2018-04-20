@@ -1,6 +1,6 @@
 # Movie Spider
 
-target url : douban's recommand movies API (<a href="https://movie.douban.com/explore">选电影</a>)
+target url : douban's recommand movies API ([选电影](https://movie.douban.com/explore))
 
 expact: save these data into database
 
@@ -44,4 +44,4 @@ then run ```go run doubanSpider.go```
 
 ## screenshot
 
-<img src="https://github.com/zmisgod/goSpider/blob/master/demo/douban_movie.png">
+![screenshot](https://github.com/zmisgod/goSpider/blob/master/demo/douban_movie.png)

@@ -1,21 +1,19 @@
 # goSpider
 
-two projects show you how to use write a spider with golang
+three projects show you how to use write a spider with golang
 
-- <a href="https://github.com/zmisgod/goSpider/blob/master/movieSpider/movie.md">doubanSpider</a>
-- <a href="https://github.com/zmisgod/goSpider/blob/master/pictureSpider/picture.md">pictureSpider</a>
-- <a href="https://github.com/zmisgod/goSpider/blob/master/fetchMovie/fetchMovie.md">fetchMovie</a>
-
-<hr />
+- [doubanSpider](https://github.com/zmisgod/goSpider/blob/master/movieSpider/movie.md)
+- [pictureSpider](https://github.com/zmisgod/goSpider/blob/master/pictureSpider/picture.md)
+- [fetchMovie](https://github.com/zmisgod/goSpider/blob/master/fetchMovie/fetchMovie.md)
 
 ## Postscript
 
-<a href="https://zmis.me/detail_1291">写go爬虫后记有感</a>
+[写go爬虫后记有感](https://zmis.me/detail_1291)
 
 ## ChangeLog
 
 - 2018-02-28 finish movie fetch from dy2018.com
-- 2018-01-25 get all douban recommand data in "<a href="https://movie.douban.com/explore">Choose Movie</a>", wait one second to fetch next API (prevent douban exception detect)
+- 2018-01-25 get all douban recommand data in "[Choose Movie](https://movie.douban.com/explore)", wait one second to fetch next API (prevent douban exception detect)
 - 2018-01-24 fix some mistake in readme and separate it to three files
 - 2018-01-17 pictureSpider.go support dislike keywords
 - 2018-01-17 doubanSpider.go all done
@@ -25,6 +23,6 @@ two projects show you how to use write a spider with golang
 
 ## contact
 
-<a href="https://zmis.me">zmis.me新博客</a>
+[zmis.me新博客](https://zmis.me)
 
-<a href="https://weibo.com/zmisgod">@zmisgod</a>
+[@zmisgod](https://weibo.com/zmisgod)

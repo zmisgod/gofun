@@ -27,9 +27,6 @@ you can also add `favourite` to download only contain these keywords in `.env`, 
 favourite=你好
 ```
 
-
-<hr />
-
 ## screenshot
 
-<img src="https://github.com/zmisgod/goSpider/blob/master/demo/run.png">
+![screenshot](https://github.com/zmisgod/goSpider/blob/master/demo/run.png)
