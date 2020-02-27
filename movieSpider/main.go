@@ -73,7 +73,7 @@ func goRunOneTime(targetURL string, next chan bool) {
 	for {
 		resEnd := make(chan int)
 		//一秒钟后请求，防止豆瓣接口屏蔽ip
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Second * 3)
 		go fetchURLData(targetURL+strconv.Itoa(startPage), resEnd)
 		isEnd = <-resEnd
 		if isEnd == 0 {

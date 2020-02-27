@@ -1,17 +1,26 @@
 # goSpider
 
-three projects show you how to use write a spider with golang
+some projects show you how to use write a spider with golang
 
-- [doubanSpider](https://github.com/zmisgod/goSpider/blob/master/movieSpider/movie.md)
-- [pictureSpider](https://github.com/zmisgod/goSpider/blob/master/pictureSpider/picture.md)
-- [fetchMovie](https://github.com/zmisgod/goSpider/blob/master/fetchMovie/fetchMovie.md)
+- [doubanSpider](https://github.com/zmisgod/goSpider/blob/master/movieSpider)
+- [pictureSpider](https://github.com/zmisgod/goSpider/blob/master/pictureSpider)
+- [fetchMovie](https://github.com/zmisgod/goSpider/blob/master/fetchMovie)
+
+[<details>]
+- [bootstrap](https://github.com/zmisgod/goSpider/blob/master/bootstrap) golang自举
+
+[/code]
+
 
 ## Postscript
 
-[写go爬虫后记有感](https://zmis.me/detail_1291)
+[写go爬虫后记有感](https://zmis.me/article/1291)
 
 ## ChangeLog
 
+- 2018-07-25 add svgFetch
+- 2018-07-15 add crhSpider
+- 2018-07-02 add pathDir
 - 2018-02-28 finish movie fetch from dy2018.com
 - 2018-01-25 get all douban recommand data in "[Choose Movie](https://movie.douban.com/explore)", wait one second to fetch next API (prevent douban exception detect)
 - 2018-01-24 fix some mistake in readme and separate it to three files

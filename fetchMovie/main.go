@@ -1,19 +1,20 @@
-package main 
+package main
 
 import (
-	"os"
-	"fmt"
+	"errors"
 	"flag"
-	"net/url"
-	"github.com/axgle/mahonia"
+	"fmt"
 	_ "io/ioutil"
 	_ "net/http"
-	"errors"
-	"github.com/PuerkitoBio/goquery"
+	"net/url"
 	_ "net/url"
+	"os"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/axgle/mahonia"
 )
 
-func main () {
+func main() {
 	if len(os.Args) <= 1 {
 		fmt.Println("please input movive")
 		os.Exit(0)
@@ -21,20 +22,21 @@ func main () {
 	movieName := flag.String("movieName", os.Args[1], "sasasa")
 	flag.Parse()
 	baiduURL := "http://www.baidu.com/s?wd=" + url.PathEscape(*movieName) + "+%E7%94%B5%E5%BD%B1%E5%A4%A9%E5%A0%82"
+	fmt.Println(baiduURL)
 	baiduLink, err := searchFromBaidu(baiduURL)
-	 if err != nil {
+	if err != nil {
 		panic(err)
 	}
 	res, err := getMovieURL(baiduLink)
 	if err != nil {
 		panic(err)
 	}
-	for _,v := range(res) {
+	for _, v := range res {
 		fmt.Println(v)
 	}
 }
 
-func searchFromBaidu(baiduURL string) (string, error){
+func searchFromBaidu(baiduURL string) (string, error) {
 	doc, err := goquery.NewDocument(baiduURL)
 	if err != nil {
 		return "", err
@@ -47,13 +49,13 @@ func searchFromBaidu(baiduURL string) (string, error){
 	return "", errors.New("没找到")
 }
 
-func getMovieURL(baiduLink string) ([]string, error){
+func getMovieURL(baiduLink string) ([]string, error) {
 	doc, err := goquery.NewDocument(baiduLink)
 	if err != nil {
 		return []string{}, err
 	}
 	content := doc.Find("#Zoom table")
-	
+
 	downloads := []string{}
 	content.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
 		downloadURL, exists := contentSelection.Find("tbody tr td a").Attr("href")

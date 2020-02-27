@@ -1,0 +1,1 @@
+var train_list = {"2018-07-17": {"D": [{"station_train_code": "D1(北京-沈阳)","train_no": "24000000D10V"}],"C": [{"station_train_code": "C1(北京-沈阳)","train_no": "25000000D10V"}]}}
