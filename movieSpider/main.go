@@ -7,35 +7,48 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
-var dbUser = "root"
-var dbPass = "111111"
-var dbName = "mytest"
 var dbTable = "douban_year_best_movie"
 var pageLimit = "20"
 var doubanCategoory = []string{"热门", "最新", "经典", "可播放", "豆瓣高分", "冷门佳片", "华语", "欧美", "日本", "动作", "喜剧", "爱情", "科幻", "悬疑", "恐怖", "成长"}
 
+//DoubanData data
 type DoubanData struct {
 	Subjects []detailData `json:"subjects"`
 }
+
 type detailData struct {
 	Rate     string `json:"rate"`
-	Cover_x  int    `json:"cover_x"`
+	CoverX   int    `json:"cover_x"`
 	Title    string `json:"title"`
-	Url      string `json:"url"`
+	URL      string `json:"url"`
 	Playable bool   `json:"playable"`
 	Cover    string `json:"cover"`
-	Id       string `json:"id"`
-	Cover_y  int    `json:"cover_y"`
-	Is_new   bool   `json:"is_new"`
+	ID       string `json:"id"`
+	CoverY   int    `json:"cover_y"`
+	IsNew    bool   `json:"is_new"`
 }
 
+var dbCon *sql.DB
+
 func main() {
+	err := godotenv.Load("./../../.env")
+	checkError(err)
+	dbHost := os.Getenv("mysql.host")
+	dbPort := os.Getenv("mysql.port")
+	dbUser := os.Getenv("mysql.username")
+	dbPass := os.Getenv("mysql.password")
+	dbName := os.Getenv("mysql.dbname")
+	dbCon, err := sql.Open("mysql", dbUser+":"+dbPass+"@tcp("+dbHost+":"+dbPort+")/"+dbName+"?charset=utf8")
+	checkError(err)
+	defer dbCon.Close()
 	for _, v := range doubanCategoory {
 		var tem = "https://movie.douban.com/j/search_subjects?type=movie&tag=" + url.QueryEscape(v) + "&sort=recommend&page_limit=" + pageLimit + "&page_start="
 		continueNext := make(chan bool)
@@ -44,6 +57,13 @@ func main() {
 		if cN {
 			fmt.Println("continue next fetch")
 		}
+	}
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(0)
 	}
 }
 
@@ -81,18 +101,14 @@ func fetchURLData(url string, end chan int) {
 	if err != nil {
 		end <- 0
 	}
-	db, err := sql.Open("mysql", dbUser+":"+dbPass+"@/"+dbName+"?charset=utf8")
-	if err != nil {
-		end <- 0
-	}
-	defer db.Close()
 	i := 1
 	for _, v := range data.Subjects {
 
-		stmt, err := db.Prepare("INSERT ignore INTO " + dbTable + " (id, rate, cover, title, url, playable,cover_x, cover_y, is_new) values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+		stmt, err := dbCon.Prepare("INSERT ignore INTO " + dbTable + " (id, rate, cover, title, url, playable,cover_x, cover_y, is_new) values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+		defer stmt.Close()
 		checkErr(err)
 
-		_, err = stmt.Exec(v.Id, v.Rate, v.Cover, v.Title, v.Url, v.Playable, v.Cover_x, v.Cover_y, v.Is_new)
+		_, err = stmt.Exec(v.ID, v.Rate, v.Cover, v.Title, v.URL, v.Playable, v.CoverX, v.CoverY, v.IsNew)
 		if err == nil {
 			i++
 		}

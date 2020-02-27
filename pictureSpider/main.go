@@ -15,24 +15,25 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var targetURL = "http://www.wnlfl.net/fuliba/page/"
+var targetURL = "https://www.jyflb.com/tag/%e7%a6%8f%e5%88%a9/page/"
 
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
-	var startPage = flag.String("start", "1", "page start")
-	var count = flag.Int("length", 1, "download length")
+	var startPage = flag.Int("start", 1, "page start")
+	var count = flag.Int("length", 100, "download length")
 	flag.Parse()
-	nowURL := targetURL + *startPage
-	for i := 0; i < *count; i++ {
-		nextURL := make(chan string)
-		countPage := make(chan int)
-		go fetchPage(nowURL, countPage)
-		go fetchNextURL(nowURL, nextURL)
-		nowURL = <-nextURL
-		fmt.Printf("this page have %d content\n", <-countPage)
+	for i := *startPage; i < *count; i++ {
+		haveNext := make(chan bool)
+		nowURL := targetURL + strconv.Itoa(i)
+		fmt.Println(nowURL)
+		go fetchPage(nowURL, haveNext)
+		if !<-haveNext {
+			fmt.Println("this page has no more content to fetch")
+			os.Exit(1)
+		}
 	}
 }
 
@@ -68,11 +69,11 @@ func fetchNextURL(nowURL string, chanNextURL chan string) {
 	}
 	section := doc.Find(".content .pagination .next-page a")
 	nextURL, _ := section.Attr("href")
-	fmt.Println(nextURL + "\n")
+	fmt.Println("next url = " + nextURL + "\n")
 	chanNextURL <- nextURL
 }
 
-func fetchPage(url string, countPage chan int) {
+func fetchPage(url string, hasNext chan bool) {
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Fatal(err)
@@ -101,24 +102,26 @@ func fetchPage(url string, countPage chan int) {
 		}
 		return true
 	})
-	countPage <- ct
+	section := doc.Find(".content .pagination .next-page a")
+	_, boolType := section.Attr("href")
+	hasNext <- boolType
 }
 
 /**
  * 创建文件夹
  */
-func createFolder(floderName string) (bool, error) {
-	checkFloderNotExists, err := checkPathIsNotExists(floderName)
+func createFolder(folderName string) (bool, error) {
+	checkFolderNotExists, err := checkPathIsNotExists(folderName)
 	if err != nil {
 		fmt.Println(err)
 		return false, err
 	}
-	if checkFloderNotExists {
-		err := os.MkdirAll(floderName, 0777)
+	if checkFolderNotExists {
+		err := os.MkdirAll(folderName, 0777)
 		if err != nil {
 			return false, err
 		}
-		fmt.Printf("create floder %s successful\n", floderName)
+		fmt.Printf("create floder %s successful\n", folderName)
 		return true, nil
 	}
 	return false, err
@@ -170,11 +173,11 @@ func fetchImage(url string, folderPath string, fileName string, count chan int) 
 	//页面中的图片计数
 	ct := 0
 	content.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
-		imgurl, _ := contentSelection.Attr("src")
-		nfilename := strconv.Itoa(i) + "_" + fileName
-		splitPoint := strings.Split(imgurl, ".")
+		imgURL, _ := contentSelection.Attr("src")
+		nFileName := strconv.Itoa(i) + "_" + fileName
+		splitPoint := strings.Split(imgURL, ".")
 		fileType := splitPoint[len(splitPoint)-1]
-		go fetchAImage(imgurl, folderPath, nfilename, fileType, count)
+		go fetchAImage(imgURL, folderPath, nFileName, fileType, count)
 		fmt.Printf("this page have %d images\n", <-count)
 		ct++
 		return true
