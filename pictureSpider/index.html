@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>picture</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta charset="UTF-8">
+	<!-- import CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<style>
+		body{
+			color: #949494;
+			padding: 0;
+			margin: 0;
+			font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+		}
+		ul,li{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		#app {
+			display: flex;
+		}
+		.sideBar{
+			padding: 10px 20px;
+			overflow-y: scroll;
+		}
+		.sideBar::-webkit-scrollbar {display:none}
+		.sideBar ul li {
+			padding: 5px 0;
+			cursor: pointer;
+		}
+		.sideBar ul li.now{
+			cursor: auto;
+			color: #409eff;
+		}
+		.picContent{
+			padding: 10px 20px;
+			overflow-y: scroll;
+		}
+		.picContent::-webkit-scrollbar {display:none}
+		.picContent ul li {
+			padding: 5px 0;
+			cursor: pointer;
+		}
+		.picContent ul li.now{
+			cursor: auto;
+			color: #409eff;
+		}
+		.imageShowLayer{
+			padding: 10px 20px;
+		}
+		.imageShowLayer div{
+			width: 100%;
+		}
+		@media (max-width: 900px) {
+			.app{
+				flex-direction: column;
+			}
+			.picContent{
+				flex-wrap: wrap;
+				display: flex;
+			}
+			.picContent ul li{
+				padding: 10px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="app" class="app" v-loading.fullscreen.lock="loading">
+		<div class="sideBar" :style="{maxHeight:minHeight}">
+			<ul v-for="(value,index) in data">
+				<li @click="clickTitle(index)" :class="index === nowIndex ? 'now' :''" v-text="value.title"></li>
+			</ul>
+		</div>
+		<div class="picContent">
+			<ul v-for="(value,index) in fileList">
+				<li @click="clickImage(index)" :class="index === nowImageIndex ? 'now' :''" v-text="value"></li>
+			</ul>
+		</div>
+		<div class="imageShowLayer">
+			<div v-if="showImage">
+				<img :src="'./'+ image" alt="">
+			</div>
+		</div>
+	</div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- axios --->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+	new Vue({
+		el: '#app',
+		data:  {
+			loading:false,
+			showImage: false,
+			minHeight: '200px',
+			nowIndex: 0,
+			data:[],
+			fileList:[],
+			nowImageIndex:-1,
+			image:"",
+		},
+		created(){
+			this.fetchData()
+			this.clickTitle(0)
+		},
+		mounted(){
+			if (window.innerHeight < 900) {
+				this.minHeight = '200px'
+			}else{
+				this.minHeight = window.innerHeight +'px';
+			}
+		},
+		methods:{
+			fetchData: function() {
+				let _this = this
+				const loading = this.$loading({
+					lock: true,
+					text: 'Loading',
+					spinner: 'el-icon-loading',
+					background: 'rgba(0, 0, 0, 0.7)'
+				});
+				axios.get('./data.json').then(response => {
+					_this.data = response.data
+					loading.close();
+				}, response => {
+					_this.$notify.error({
+						title: '加载失败',
+						message: '加载失败了老弟！'
+					});
+					loading.close();
+				});
+			},
+			clickTitle:function(index) {
+				this.nowIndex = index
+				console.log('title'+ index)
+				this.fileList = this.data[this.nowIndex].files
+				this.nowImageIndex = -1
+				this.showImage = false
+			},
+			clickImage:function (index) {
+				this.showImage = true
+				this.nowImageIndex = index
+				const nowData = this.data[this.nowIndex];
+				this.image = "./images/"+ nowData.title +"/"+ nowData.files[index]
+			}
+		}
+	})
+</script>
+</html>

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -24,16 +25,62 @@ func main() {
 	}
 	var startPage = flag.Int("start", 1, "page start")
 	var count = flag.Int("length", 100, "download length")
+	var resetJson = flag.Int("json", 0, "reset data.json default not reset")
 	flag.Parse()
-	for i := *startPage; i < *count; i++ {
-		haveNext := make(chan bool)
-		nowURL := targetURL + strconv.Itoa(i)
-		fmt.Println(nowURL)
-		go fetchPage(nowURL, haveNext)
-		if !<-haveNext {
-			fmt.Println("this page has no more content to fetch")
-			os.Exit(1)
+	if *resetJson == 1{
+		GenerateJson()
+	}else{
+		for i := *startPage; i < *count; i++ {
+			haveNext := make(chan bool)
+			nowURL := targetURL + strconv.Itoa(i)
+			fmt.Println(nowURL)
+			go fetchPage(nowURL, haveNext)
+			if !<-haveNext {
+				fmt.Println("this page has no more content to fetch")
+				os.Exit(1)
+			}
 		}
+	}
+}
+
+type GenJson struct {
+	Title string `json:"title"`
+	Files []string `json:"files"`
+}
+
+func GenerateJson() {
+	file, err := ioutil.ReadDir("images")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	var jsons []GenJson
+	for _,v := range file {
+		var oneJson GenJson
+		if v.IsDir() && v.Name() != "" {
+			oneJson.Title = v.Name()
+			image, err := ioutil.ReadDir("images/"+v.Name())
+			if err != nil {
+				fmt.Println(err)
+			}else{
+				for _, j := range image {
+					if !j.IsDir() && j.Name() != "" {
+						oneJson.Files = append(oneJson.Files, j.Name())
+					}
+				}
+			}
+		}
+		jsons = append(jsons, oneJson)
+	}
+	writeData, err := json.Marshal(jsons)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	err = ioutil.WriteFile("data.json", writeData, 0777)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
