@@ -71,6 +71,10 @@
         }
 
         @media (max-width: 900px) {
+			.el-image-viewer__wrapper{
+				background-color: rgb(255, 255, 255)
+			}
+
             .app {
                 flex-direction: column;
             }
@@ -100,7 +104,7 @@
     </div>
     <div class="imageShowLayer">
         <div v-if="showImage">
-            <el-image :src="'./'+ image" :preview-src-list="imageList"></el-image>
+            <el-image fit="fit" :src="image" :preview-src-list="imageList"></el-image>
         </div>
     </div>
 </div>
@@ -165,6 +169,7 @@
                 for (let i = 0; i < this.fileList.length; i++) {
                     this.imageList.push("./images/" + title + "/" + this.fileList[i])
                 }
+                console.log(this.imageList)
             },
             clickImage: function (index) {
                 this.showImage = true
