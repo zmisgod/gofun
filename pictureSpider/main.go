@@ -16,7 +16,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var targetURL = "https://www.jyflb.com/tag/%e7%a6%8f%e5%88%a9/page/"
+var targetURL = "https://www.znwz.net/category/znflt/page/"
 
 func main() {
 	err := godotenv.Load()
@@ -27,9 +27,9 @@ func main() {
 	var count = flag.Int("length", 100, "download length")
 	var resetJson = flag.Int("json", 0, "reset data.json default not reset")
 	flag.Parse()
-	if *resetJson == 1{
+	if *resetJson == 1 {
 		GenerateJson()
-	}else{
+	} else {
 		for i := *startPage; i < *count; i++ {
 			haveNext := make(chan bool)
 			nowURL := targetURL + strconv.Itoa(i)
@@ -44,7 +44,7 @@ func main() {
 }
 
 type GenJson struct {
-	Title string `json:"title"`
+	Title string   `json:"title"`
 	Files []string `json:"files"`
 }
 
@@ -55,18 +55,21 @@ func GenerateJson() {
 		os.Exit(1)
 	}
 	var jsons []GenJson
-	for _,v := range file {
+	for _, v := range file {
 		var oneJson GenJson
 		if v.IsDir() && v.Name() != "" {
 			oneJson.Title = v.Name()
-			image, err := ioutil.ReadDir("images/"+v.Name())
+			image, err := ioutil.ReadDir("images/" + v.Name())
 			if err != nil {
 				fmt.Println(err)
-			}else{
+			} else {
 				for _, j := range image {
 					if !j.IsDir() && j.Name() != "" {
 						oneJson.Files = append(oneJson.Files, j.Name())
 					}
+				}
+				if len(oneJson.Files) == 0 {
+					fmt.Println("images/" + v.Name())
 				}
 			}
 		}
