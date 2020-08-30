@@ -16,7 +16,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var targetURL = "https://www.znwz.net/category/znflt/page/"
+var targetURL = "https://www.jyflb.com/tag/%e9%82%aa%e6%81%b6%e5%8a%a8%e6%80%81%e5%9b%be/page/"
 
 func main() {
 	err := godotenv.Load()
