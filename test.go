@@ -12,18 +12,19 @@ func main() {
 func test7() {
 	filter := bloom_filter.NewBloomFilter()
 	fmt.Println(filter.Func[1].Seed)
-	str1 := "hello,bloom filter!"
+	str1 := "my name is zm"
 	filter.Add(str1)
-	str2 := "A happy day"
+	str2 := "my name is ad"
 	filter.Add(str2)
-	str3 := "Greate wall"
+	str3 := "cool boys"
 	filter.Add(str3)
 
 	fmt.Println(filter.Set.Count())
 	fmt.Println(filter.Contains(str1))
 	fmt.Println(filter.Contains(str2))
 	fmt.Println(filter.Contains(str3))
-	fmt.Println(filter.Contains("blockchain technology"))
+	fmt.Println(filter.Contains("cool boys"))
+	fmt.Println(filter.Contains("cool girls"))
 }
 
 func test5() {
