@@ -1,12 +1,21 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/zmisgod/goSpider/bloom_filter"
+	"github.com/zmisgod/goSpider/music"
+	"github.com/zmisgod/goSpider/utils"
 )
 
 func main() {
-	test7()
+	res, err := music.NewFetchMusic("王心凌《大眠》 https://c.y.qq.com/base/fcgi-bin/u?__=d3IYVRj @QQ音乐")
+	if err != nil {
+		utils.CheckError(err)
+	}else{
+		resUrl, err := res.GetDownloadURL(context.Background())
+		fmt.Println(resUrl, err)
+	}
 }
 
 func test7() {

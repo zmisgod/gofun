@@ -1,6 +1,4 @@
-images/
-svgFetch/svg
 .env
 .idea
-pictureSpider/images/
 .vscode
+music/node_modules/
