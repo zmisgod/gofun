@@ -2,9 +2,12 @@ package fileserver
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/zmisgod/goSpider/utils"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -28,18 +31,23 @@ type ListDir struct {
 }
 
 //Create 创建listDir
-func Create(port int, basePath, host, showType, templatePath string, validDownload []string) *ListDir {
-	h := ListDir{
+func Create(port int, basePath, host, showType, templatePath string, validDownload []string) (*ListDir, error) {
+	if host == "" {
+		host = "127.0.0.1"
+	}
+	notExist := utils.CheckPathIsNotExists(basePath)
+	if notExist {
+		return nil, errors.New(fmt.Sprintf("base path is not exists: %s", basePath))
+	}
+	return &ListDir{
 		BasePath:      basePath,
 		Host:          host,
 		Port:          port,
 		ShowType:      showType,
 		TemplatePath:  templatePath,
-		absPath:       os.Getenv("GOPATH") + "/src/github.com/zmisgod/goTool/fileServer",
 		ValidDownload: validDownload,
 		temBasePath:   basePath,
-	}
-	return &h
+	}, nil
 }
 
 //ShowList 显示列表
@@ -95,6 +103,7 @@ func (h *ListDir) CreateServer() error {
 	http.HandleFunc("/", h.ShowServer)
 	http.HandleFunc("/static/", h.ShowStaticFile)
 	http.HandleFunc("/404", h.NotFound)
+	log.Println(fmt.Sprintf("start file server on %s:%d", h.Host, h.Port))
 	return http.ListenAndServe(h.Host+":"+strconv.Itoa(h.Port), nil)
 }
 

@@ -2,10 +2,21 @@ package downloader
 
 import (
 	"fmt"
+	"log"
 	"testing"
 )
 
 func TestNewDownloader(t *testing.T) {
-	down, err := NewDownloader("https://cdn.poizon.com/leap/A5CEF94C-5BA4-45F4-BB9F-8B7E7ADA02C2.mov_dgTLUAnsBO.mp4")
-	fmt.Println(err, down)
+	text := "https://www.imax.com/download/file/fid/16840"
+	down, err := NewDownloader(text)
+	if err != nil {
+		log.Println(err)
+	}else{
+		err = down.SaveFile()
+		if err != nil {
+			fmt.Println(err)
+		}else{
+			fmt.Println(down.SaveName)
+		}
+	}
 }

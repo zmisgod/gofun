@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"os"
 )
@@ -20,15 +22,23 @@ func CreateFile(textName string) {
 	}
 }
 
-/**
- * 创建文件夹
- */
-func CreateFolder(folderName string) (bool, error) {
-	checkFolderNotExists, err := CheckPathIsNotExists(folderName)
+//CreateFileReError 创建文件
+func CreateFileReError(textName string) (*os.File, error) {
+	_, err := os.Stat(textName)
 	if err != nil {
-		log.Println(err)
-		return false, err
+		file, err := os.Create(textName)
+		if err != nil {
+			return nil, err
+		}
+		return file, nil
+	}else{
+		return nil, errors.New(fmt.Sprintf("file %s exits", textName))
 	}
+}
+
+//CreateFolder 创建文件夹
+func CreateFolder(folderName string) (bool, error) {
+	checkFolderNotExists := CheckPathIsNotExists(folderName)
 	if checkFolderNotExists {
 		err := os.MkdirAll(folderName, 0777)
 		if err != nil {
@@ -37,20 +47,17 @@ func CreateFolder(folderName string) (bool, error) {
 		log.Printf("create floder %s successful\n", folderName)
 		return true, nil
 	}
-	return false, err
+	return false, nil
 }
 
-/**
- * 检查文件是否存在
- * 返回true 不存在， false 存在
- */
-func CheckPathIsNotExists(path string) (bool, error) {
+//CheckPathIsNotExists 检查文件是否存在 返回true 不存在， false 存在
+func CheckPathIsNotExists(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		return true, nil
+		return true
 	}
 	if os.IsNotExist(err) {
-		return false, nil
+		return false
 	}
-	return false, err
+	return false
 }
