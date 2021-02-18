@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/zmisgod/goSpider/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -33,11 +34,10 @@ func main() {
 		for i := *startPage; i < *count; i++ {
 			haveNext := make(chan bool)
 			nowURL := targetURL + strconv.Itoa(i)
-			fmt.Println(nowURL)
+			log.Println(nowURL)
 			go fetchPage(nowURL, haveNext)
 			if !<-haveNext {
-				fmt.Println("this page has no more content to fetch")
-				os.Exit(1)
+				log.Fatal("this page has no more content to fetch")
 			}
 		}
 	}
@@ -50,10 +50,7 @@ type GenJson struct {
 
 func GenerateJson() {
 	file, err := ioutil.ReadDir("images")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	utils.CheckError(err)
 	var jsons []GenJson
 	for _, v := range file {
 		var oneJson GenJson
@@ -61,7 +58,7 @@ func GenerateJson() {
 			oneJson.Title = v.Name()
 			image, err := ioutil.ReadDir("images/" + v.Name())
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			} else {
 				for _, j := range image {
 					if !j.IsDir() && j.Name() != "" {
@@ -69,22 +66,16 @@ func GenerateJson() {
 					}
 				}
 				if len(oneJson.Files) == 0 {
-					fmt.Println("images/" + v.Name())
+					log.Println("images/" + v.Name())
 				}
 			}
 		}
 		jsons = append(jsons, oneJson)
 	}
 	writeData, err := json.Marshal(jsons)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	utils.CheckError(err)
 	err = ioutil.WriteFile("data.json", writeData, 0777)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	utils.CheckError(err)
 }
 
 func filterDislike(spString string) bool {
@@ -119,7 +110,7 @@ func fetchNextURL(nowURL string, chanNextURL chan string) {
 	}
 	section := doc.Find(".content .pagination .next-page a")
 	nextURL, _ := section.Attr("href")
-	fmt.Println("next url = " + nextURL + "\n")
+	log.Println("next url = " + nextURL + "\n")
 	chanNextURL <- nextURL
 }
 
@@ -137,7 +128,7 @@ func fetchPage(url string, hasNext chan bool) {
 		isDislike := filterDislike(folderName)
 		if !isDislike {
 			folder := "./images/" + folderName
-			createFolder, err := createFolder(folder)
+			createFolder, err := utils.CreateFolder(folder)
 			if err != nil {
 				panic(err)
 			}
@@ -145,9 +136,9 @@ func fetchPage(url string, hasNext chan bool) {
 				go fetchDetail(targetURL, folder, count)
 				ct++
 				allFinish := <-count
-				fmt.Printf("title : %s download %d images \n", folderName, allFinish)
+				log.Printf("title : %s download %d images \n", folderName, allFinish)
 			} else {
-				fmt.Printf("skip %s because exists\n", folder)
+				log.Printf("skip %s because exists\n", folder)
 			}
 		}
 		return true
@@ -160,37 +151,37 @@ func fetchPage(url string, hasNext chan bool) {
 /**
  * 创建文件夹
  */
-func createFolder(folderName string) (bool, error) {
-	checkFolderNotExists, err := checkPathIsNotExists(folderName)
-	if err != nil {
-		fmt.Println(err)
-		return false, err
-	}
-	if checkFolderNotExists {
-		err := os.MkdirAll(folderName, 0777)
-		if err != nil {
-			return false, err
-		}
-		fmt.Printf("create floder %s successful\n", folderName)
-		return true, nil
-	}
-	return false, err
-}
+//func createFolder(folderName string) (bool, error) {
+//	checkFolderNotExists, err := checkPathIsNotExists(folderName)
+//	if err != nil {
+//		log.Println(err)
+//		return false, err
+//	}
+//	if checkFolderNotExists {
+//		err := os.MkdirAll(folderName, 0777)
+//		if err != nil {
+//			return false, err
+//		}
+//		log.Printf("create floder %s successful\n", folderName)
+//		return true, nil
+//	}
+//	return false, err
+//}
 
 /**
  * 检查文件是否存在
  * 返回true 不存在， false 存在
  */
-func checkPathIsNotExists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err != nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
-}
+//func checkPathIsNotExists(path string) (bool, error) {
+//	_, err := os.Stat(path)
+//	if err != nil {
+//		return true, nil
+//	}
+//	if os.IsNotExist(err) {
+//		return false, nil
+//	}
+//	return false, err
+//}
 
 //文章获取详情的分页
 func fetchDetail(url string, savePath string, pagineCount chan int) {
@@ -206,7 +197,7 @@ func fetchDetail(url string, savePath string, pagineCount chan int) {
 		filename := strconv.Itoa(i)
 		go fetchImage(detailURL, savePath, filename, imgCount)
 		imgFinish := <-imgCount
-		fmt.Printf("finish this %d\n", imgFinish)
+		log.Printf("finish this %d\n", imgFinish)
 		detailCount++
 		return true
 	})
@@ -228,7 +219,7 @@ func fetchImage(url string, folderPath string, fileName string, count chan int) 
 		splitPoint := strings.Split(imgURL, ".")
 		fileType := splitPoint[len(splitPoint)-1]
 		go fetchAImage(imgURL, folderPath, nFileName, fileType, count)
-		fmt.Printf("this page have %d images\n", <-count)
+		log.Printf("this page have %d images\n", <-count)
 		ct++
 		return true
 	})
@@ -244,13 +235,13 @@ func fetchAImage(img string, folderPath string, fileName string, fileType string
 	}
 	defer respImg.Body.Close()
 	imgByte, _ := ioutil.ReadAll(respImg.Body)
-	notExist, _ := checkPathIsNotExists(folderPath + "/" + fileName + "." + fileType)
+	notExist, _ := utils.CheckPathIsNotExists(folderPath + "/" + fileName + "." + fileType)
 	if notExist {
 		fp, _ := os.Create(folderPath + "/" + fileName + "." + fileType)
 		defer fp.Close()
 		fp.Write(imgByte)
 		ct++
-		fmt.Printf("create %s/%s.%s successful\n", folderPath, fileName, fileType)
+		log.Printf("create %s/%s.%s successful\n", folderPath, fileName, fileType)
 	}
 	count <- ct
 }

@@ -1,16 +1,15 @@
-package main
+package draw
 
 import (
 	"fmt"
-
-	"github.com/zmisgod/goTool/drawsvg"
+	"testing"
 )
 
-func main() {
-	svg := drawsvg.Create()
+func TestCreate(t *testing.T) {
+	svg := Create()
 	svg.SetCircle(2, 1, "#42526e", "transparent")
 
-	var path drawsvg.Path
+	var path Path
 	path.Fill = "transparent"
 	path.Stroke = "blue"
 	path.StrokeWidth = 2
@@ -19,7 +18,7 @@ func main() {
 	path.Alt = "121212"
 	path.MaxGroup = 1
 	for i := 0; i < 3; i++ {
-		var ipath drawsvg.IPath
+		var ipath IPath
 		if i == 0 {
 			ipath.Lat = "100"
 			ipath.Long = "105"

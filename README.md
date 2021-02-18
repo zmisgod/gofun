@@ -1,4 +1,4 @@
-# goSpider
+# gofun
 
 some projects show you how to use write a spider with golang
 
