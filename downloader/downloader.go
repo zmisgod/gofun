@@ -174,18 +174,6 @@ func (a *Downloader) setDownloadFileInfo(header http.Header) {
 	}
 }
 
-//func (a *Downloader) fetchWriteBody(urlStr string, fd *os.File) error {
-//	resp, err := http.Get(urlStr)
-//	if err != nil {
-//		return err
-//	}
-//	defer resp.Body.Close()
-//	wt := bufio.NewWriter(fd)
-//	_, err = io.Copy(wt, resp.Body)
-//	_ = wt.Flush()
-//	return err
-//}
-
 func (a *Downloader) SaveFile(ctx context.Context) error {
 	a.initData()
 	//获取文件真实名称、文件大小、是否支持断点续传
@@ -196,7 +184,6 @@ func (a *Downloader) SaveFile(ctx context.Context) error {
 		return err
 	}
 	defer a.fd.Close()
-	fmt.Println(a)
 	var wg sync.WaitGroup
 	wg.Add(a.DownloadRoutine)
 	per := a.fileSize / a.DownloadRoutine

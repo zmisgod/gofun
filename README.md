@@ -1,6 +1,6 @@
 # gofun
 
-write golang codes every happy day
+write go every happy day
 
 ## contact
 
