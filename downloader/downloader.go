@@ -30,6 +30,18 @@ type Downloader struct {
 	fd                       *os.File          `json:"fd"`                          //文件
 }
 
+type options struct {
+	SaveName                 string            `json:"save_name"`                   //保存文件名称
+	SavePath                 string            `json:"save_path"`                   //保存的文件夹
+	ProxyHost                string            `json:"proxy_host"`                  //设置http代理
+	CustomHeader             map[string]string `json:"custom_header"`               //设置http的header
+	Timeout                  int               `json:"timeout"`                     //设置超时时间
+	BreakPointContinueUpload bool              `json:"break_point_continue_upload"` //是否需要支持断点续传
+	DownloadRoutine          int               `json:"download_routine"`            //下载的协程
+}
+
+type Option func(*options)
+
 type HttpMethod string
 
 const (
@@ -68,22 +80,87 @@ var (
 	ErrorFileIsError   = errors.New("file is error")
 )
 
-func NewDownloader(urlString string) (*Downloader, error) {
+func SetSaveFileName(name string) Option {
+	return func(o *options) {
+		o.SaveName = name
+	}
+}
+
+func SetSavePath(path string) Option {
+	return func(o *options) {
+		o.SavePath = path
+	}
+}
+
+func SetProxyHost(proxyHost string) Option {
+	return func(o *options) {
+		o.ProxyHost = proxyHost
+	}
+}
+
+func SetCustomHeader(header map[string]string) Option {
+	return func(o *options) {
+		o.CustomHeader = header
+	}
+}
+
+func SetTimeout(timeout int) Option {
+	return func(o *options) {
+		o.Timeout = timeout
+	}
+}
+
+func SetBreakPointContinueUpload(isSet bool) Option {
+	return func(o *options) {
+		o.BreakPointContinueUpload = isSet
+	}
+}
+
+func SetDownloadRoutine(num int) Option {
+	return func(o *options) {
+		o.DownloadRoutine = num
+	}
+}
+
+func NewDownloader(urlString string, option ...Option) (*Downloader, error) {
 	if urlString == "" {
 		return nil, ErrorUrlIsEmpty
 	}
-	saveName, err := genFileName(urlString)
-	if err != nil {
-		return nil, err
+	var op options
+	if len(option) > 0 {
+		for _, opt := range option {
+			opt(&op)
+		}
+	}
+	if op.SaveName == "" {
+		_name, err := genFileName(urlString)
+		if err != nil {
+			return nil, err
+		}
+		op.SaveName = _name
+	}
+	if op.SavePath == "" {
+		op.SavePath = "./"
+	}
+	if len(op.CustomHeader) == 0 {
+		op.CustomHeader = make(map[string]string, 0)
+	}
+	if op.DownloadRoutine == 0 {
+		if op.BreakPointContinueUpload {
+			op.DownloadRoutine = DefaultDownloadRoutine
+		} else {
+			op.DownloadRoutine = 1
+		}
 	}
 	return &Downloader{
 		Url:                      urlString,
-		SavePath:                 "./",
-		SaveName:                 saveName,
-		Timeout:                  DefaultHTTPTimeout,
-		DownloadRoutine:          DefaultDownloadRoutine,
-		BreakPointContinueUpload: true,
-		CustomHeader:             make(map[string]string, 0),
+		SavePath:                 op.SavePath,
+		SaveName:                 op.SaveName,
+		Timeout:                  op.Timeout,
+		DownloadRoutine:          op.DownloadRoutine,
+		BreakPointContinueUpload: op.BreakPointContinueUpload,
+		CustomHeader:             op.CustomHeader,
+		ProxyHost:                op.ProxyHost,
 	}, nil
 }
 

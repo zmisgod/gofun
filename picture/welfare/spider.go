@@ -220,13 +220,14 @@ func fetchImage(url string, folderPath string, fileName string, count chan int) 
 //下载图片
 func fetchAImage(img string, folderPath string, fileName string, fileType string, count chan int) {
 	ct := 0
-	res, err := downloader.NewDownloader(img)
+	res, err := downloader.NewDownloader(img,
+		downloader.SetSavePath(folderPath),
+		downloader.SetBreakPointContinueUpload(false),
+		downloader.SetSaveFileName(fileName+"."+fileType),
+	)
 	if err != nil {
 		log.Println(err)
 	} else {
-		res.SetSavePath(folderPath)
-		res.DisabledBreakPointContinueUpload()
-		res.SetSaveName(fileName + "." + fileType)
 		err = res.SaveFile(context.Background())
 		if err != nil {
 			log.Println(err)
