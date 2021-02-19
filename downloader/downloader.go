@@ -1,10 +1,10 @@
 package downloader
 
 import (
+	"bufio"
 	"errors"
 	"github.com/zmisgod/gofun/utils"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -61,7 +61,6 @@ func (a *Downloader) SetSavePath(path string) {
 func (a *Downloader) fetchHeader(urlStr string) error {
 	resp, err := http.Head(urlStr)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	defer resp.Body.Close()
@@ -82,23 +81,28 @@ func (a *Downloader) fetchWriteBody(urlStr string, fd *os.File) error {
 		return err
 	}
 	defer resp.Body.Close()
-	_, err = io.Copy(fd, resp.Body)
+	wt := bufio.NewWriter(fd)
+	_, err = io.Copy(wt, resp.Body)
+	_ = wt.Flush()
 	return err
 }
 
 func (a *Downloader) SaveFile() error {
+	a.initData()
 	if err := a.fetchHeader(a.Url); err != nil {
 		return err
 	}
-	log.Println("start CreateFileReError")
-	fd, err := utils.CreateFileReError(a.SavePath+a.SaveName)
+	fd, err := utils.CreateFileReError(a.SavePath + a.SaveName)
 	if err != nil {
 		return err
 	}
-	log.Println("start fetchWriteBody")
 	defer fd.Close()
 	if err := a.fetchWriteBody(a.Url, fd); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (a *Downloader) initData() {
+	a.SavePath = strings.TrimRight(a.SavePath, "/") + "/"
 }

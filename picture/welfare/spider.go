@@ -3,6 +3,7 @@ package welfare
 import (
 	"encoding/json"
 	"flag"
+	"github.com/zmisgod/gofun/downloader"
 	"github.com/zmisgod/gofun/utils"
 	"io/ioutil"
 	"log"
@@ -41,7 +42,7 @@ func NewSpider(startPage, count int) {
 		log.Println(nowURL)
 		go fetchPage(nowURL, haveNext)
 		if !<-haveNext {
-			log.Fatal("this page has no more content to fetch")
+			log.Println("this page has no more content to fetch")
 		}
 	}
 }
@@ -106,21 +107,28 @@ func filterDislike(spString string) bool {
 	return false
 }
 
-func fetchNextURL(nowURL string, chanNextURL chan string) {
-	doc, err := goquery.NewDocument(nowURL)
-	if err != nil {
-		panic(err)
-	}
-	section := doc.Find(".content .pagination .next-page a")
-	nextURL, _ := section.Attr("href")
-	log.Println("next url = " + nextURL + "\n")
-	chanNextURL <- nextURL
-}
+//func fetchNextURL(nowURL string, chanNextURL chan string) {
+//	doc, err := goquery.NewDocument(nowURL)
+//	if err != nil {
+//		panic(err)
+//	}
+//	section := doc.Find(".content .pagination .next-page a")
+//	nextURL, _ := section.Attr("href")
+//	log.Println("next url = " + nextURL + "\n")
+//	chanNextURL <- nextURL
+//}
 
 func fetchPage(url string, hasNext chan bool) {
-	doc, err := goquery.NewDocument(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 	count := make(chan int)
 	ct := 0
@@ -133,7 +141,7 @@ func fetchPage(url string, hasNext chan bool) {
 			folder := "./images/" + folderName
 			createFolder, err := utils.CreateFolder(folder)
 			if err != nil {
-				panic(err)
+				return true
 			}
 			if createFolder {
 				go fetchDetail(targetURL, folder, count)
@@ -153,9 +161,16 @@ func fetchPage(url string, hasNext chan bool) {
 
 //文章获取详情的分页
 func fetchDetail(url string, savePath string, pagineCount chan int) {
-	doc, err := goquery.NewDocument(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 	//分页计数
 	detailCount := 0
@@ -174,9 +189,16 @@ func fetchDetail(url string, savePath string, pagineCount chan int) {
 
 //获取文章分页中的图片并进行下载操作
 func fetchImage(url string, folderPath string, fileName string, count chan int) {
-	doc, err := goquery.NewDocument(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 	content := doc.Find(".article-content img")
 	//页面中的图片计数
@@ -197,19 +219,19 @@ func fetchImage(url string, folderPath string, fileName string, count chan int) 
 //下载图片
 func fetchAImage(img string, folderPath string, fileName string, fileType string, count chan int) {
 	ct := 0
-	respImg, err := http.Get(img)
+	res, err := downloader.NewDownloader(img)
 	if err != nil {
-		panic(err)
-	}
-	defer respImg.Body.Close()
-	imgByte, _ := ioutil.ReadAll(respImg.Body)
-	notExist := utils.CheckPathIsNotExists(folderPath + "/" + fileName + "." + fileType)
-	if notExist {
-		fp, _ := os.Create(folderPath + "/" + fileName + "." + fileType)
-		defer fp.Close()
-		fp.Write(imgByte)
-		ct++
-		log.Printf("create %s/%s.%s successful\n", folderPath, fileName, fileType)
+		log.Println(err)
+	} else {
+		res.SetSavePath(folderPath)
+		res.SetSaveName(fileName + "." + fileType)
+		err = res.SaveFile()
+		if err != nil {
+			log.Println(err)
+		} else {
+			log.Printf("create %s/%s.%s successful\n", folderPath, fileName, fileType)
+			ct++
+		}
 	}
 	count <- ct
 }

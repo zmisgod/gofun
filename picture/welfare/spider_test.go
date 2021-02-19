@@ -13,3 +13,7 @@ func TestNewSpider(t *testing.T) {
 	}
 	NewSpider(1, 2)
 }
+
+func TestGenerateJson(t *testing.T) {
+	GenerateJson()
+}
