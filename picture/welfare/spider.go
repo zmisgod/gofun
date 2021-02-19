@@ -1,10 +1,9 @@
-package main
+package welfare
 
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
-	"github.com/zmisgod/goSpider/utils"
+	"github.com/zmisgod/gofun/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,14 +30,18 @@ func main() {
 	if *resetJson == 1 {
 		GenerateJson()
 	} else {
-		for i := *startPage; i < *count; i++ {
-			haveNext := make(chan bool)
-			nowURL := targetURL + strconv.Itoa(i)
-			log.Println(nowURL)
-			go fetchPage(nowURL, haveNext)
-			if !<-haveNext {
-				log.Fatal("this page has no more content to fetch")
-			}
+		NewSpider(*startPage, *count)
+	}
+}
+
+func NewSpider(startPage, count int) {
+	for i := startPage; i < count; i++ {
+		haveNext := make(chan bool)
+		nowURL := targetURL + strconv.Itoa(i)
+		log.Println(nowURL)
+		go fetchPage(nowURL, haveNext)
+		if !<-haveNext {
+			log.Fatal("this page has no more content to fetch")
 		}
 	}
 }
@@ -148,41 +151,6 @@ func fetchPage(url string, hasNext chan bool) {
 	hasNext <- boolType
 }
 
-/**
- * 创建文件夹
- */
-//func createFolder(folderName string) (bool, error) {
-//	checkFolderNotExists, err := checkPathIsNotExists(folderName)
-//	if err != nil {
-//		log.Println(err)
-//		return false, err
-//	}
-//	if checkFolderNotExists {
-//		err := os.MkdirAll(folderName, 0777)
-//		if err != nil {
-//			return false, err
-//		}
-//		log.Printf("create floder %s successful\n", folderName)
-//		return true, nil
-//	}
-//	return false, err
-//}
-
-/**
- * 检查文件是否存在
- * 返回true 不存在， false 存在
- */
-//func checkPathIsNotExists(path string) (bool, error) {
-//	_, err := os.Stat(path)
-//	if err != nil {
-//		return true, nil
-//	}
-//	if os.IsNotExist(err) {
-//		return false, nil
-//	}
-//	return false, err
-//}
-
 //文章获取详情的分页
 func fetchDetail(url string, savePath string, pagineCount chan int) {
 	doc, err := goquery.NewDocument(url)
@@ -235,7 +203,7 @@ func fetchAImage(img string, folderPath string, fileName string, fileType string
 	}
 	defer respImg.Body.Close()
 	imgByte, _ := ioutil.ReadAll(respImg.Body)
-	notExist, _ := utils.CheckPathIsNotExists(folderPath + "/" + fileName + "." + fileType)
+	notExist := utils.CheckPathIsNotExists(folderPath + "/" + fileName + "." + fileType)
 	if notExist {
 		fp, _ := os.Create(folderPath + "/" + fileName + "." + fileType)
 		defer fp.Close()

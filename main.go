@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/zmisgod/goSpider/music"
-	"github.com/zmisgod/goSpider/utils"
+	"github.com/zmisgod/gofun/music"
+	"github.com/zmisgod/gofun/utils"
 )
 
 func main() {

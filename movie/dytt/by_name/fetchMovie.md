@@ -12,4 +12,4 @@ go run fetchMovie.go [电影名称]
 
 ## screenshot
 
-![screenshot](https://github.com/zmisgod/goSpider/blob/master/demo/fetchmovie.png)
+![screenshot](https://github.com/zmisgod/gofun/blob/master/demo/fetchmovie.png)

@@ -44,4 +44,4 @@ then run ```go run doubanSpider.go```
 
 ## screenshot
 
-![screenshot](https://github.com/zmisgod/goSpider/blob/master/demo/douban_movie.png)
+![screenshot](https://github.com/zmisgod/gofun/blob/master/demo/douban_movie.png)

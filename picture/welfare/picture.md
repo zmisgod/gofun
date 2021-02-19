@@ -29,4 +29,4 @@ favourite=你好
 
 ## screenshot
 
-![screenshot](https://github.com/zmisgod/goSpider/blob/master/demo/run.png)
+![screenshot](https://github.com/zmisgod/gofun/blob/master/demo/run.png)

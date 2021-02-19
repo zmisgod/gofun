@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/zmisgod/goTool/drawsvg"
+	"github.com/zmisgod/gofun/drawsvg"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"

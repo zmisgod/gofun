@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/zmisgod/goSpider/utils"
+	"github.com/zmisgod/gofun/utils"
 	"io"
 	"os"
 	"strconv"

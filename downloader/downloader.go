@@ -2,7 +2,7 @@ package downloader
 
 import (
 	"errors"
-	"github.com/zmisgod/goSpider/utils"
+	"github.com/zmisgod/gofun/utils"
 	"io"
 	"log"
 	"net/http"

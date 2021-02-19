@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zmisgod/goSpider/utils"
+	"github.com/zmisgod/gofun/utils"
 	"html/template"
 	"io"
 	"log"

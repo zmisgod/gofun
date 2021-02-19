@@ -1,6 +1,6 @@
 # gofun
 
-some projects show you how to use write a spider with golang
+write golang codes every happy day
 
 ## contact
 
