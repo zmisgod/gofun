@@ -1,6 +1,7 @@
 package downloader
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"testing"
@@ -11,11 +12,12 @@ func TestNewDownloader(t *testing.T) {
 	down, err := NewDownloader(text)
 	if err != nil {
 		log.Println(err)
-	}else{
-		err = down.SaveFile()
+	} else {
+		down.SetTimeout(60)
+		err = down.SaveFile(context.Background())
 		if err != nil {
 			fmt.Println(err)
-		}else{
+		} else {
 			fmt.Println(down.SaveName)
 		}
 	}

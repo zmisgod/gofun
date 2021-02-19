@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 )
@@ -22,6 +21,8 @@ func CreateFile(textName string) {
 	}
 }
 
+var ErrorFileExists error = errors.New("file exits")
+
 //CreateFileReError 创建文件
 func CreateFileReError(textName string) (*os.File, error) {
 	_, err := os.Stat(textName)
@@ -32,7 +33,7 @@ func CreateFileReError(textName string) (*os.File, error) {
 		}
 		return file, nil
 	}else{
-		return nil, errors.New(fmt.Sprintf("file %s exits", textName))
+		return nil, ErrorFileExists
 	}
 }
 

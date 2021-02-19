@@ -1,6 +1,7 @@
 package welfare
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"github.com/zmisgod/gofun/downloader"
@@ -224,8 +225,9 @@ func fetchAImage(img string, folderPath string, fileName string, fileType string
 		log.Println(err)
 	} else {
 		res.SetSavePath(folderPath)
+		res.DisabledBreakPointContinueUpload()
 		res.SetSaveName(fileName + "." + fileType)
-		err = res.SaveFile()
+		err = res.SaveFile(context.Background())
 		if err != nil {
 			log.Println(err)
 		} else {
