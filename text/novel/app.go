@@ -1,9 +1,10 @@
-package main
+package novel
 
 import (
 	"fmt"
 	"github.com/zmisgod/gofun/utils"
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -13,20 +14,15 @@ import (
 	"github.com/axgle/mahonia"
 )
 
-func main() {
-	var textName = "丹武双绝.txt"
-	var url = "https://www.18xs.org/book_25306/"
-	utils.CreateFile(textName)
-	fetchChapter(textName, url)
+func getTextFile(textName string) string {
+	return fmt.Sprintf("%s.txt", textName)
 }
 
-func fetchChapter(textName, url string) string {
+func FetchChapter(textName, url string) string {
 	document, err := goquery.NewDocument(url)
 	utils.CheckError(err)
 	content := document.Find(".box_con3 #list dl dd")
 	decoder := mahonia.NewDecoder("gbk")
-	file, err := os.OpenFile(textName, os.O_APPEND|os.O_WRONLY, 0777)
-	utils.CheckError(err)
 	for j := 0; j <= 1125; j++ {
 		time.Sleep(time.Duration(3) * time.Second)
 		content.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
@@ -34,10 +30,12 @@ func fetchChapter(textName, url string) string {
 			chapterName, _ := contentSelection.Find("a").Html()
 			chapterName = decoder.ConvertString(chapterName)
 			chatp := "第" + strconv.Itoa(j) + "章"
-			fmt.Println(chatp)
+			fileName := textName+"/"+chatp+".txt"
+			utils.CreateFile(fileName)
+			file, err := os.OpenFile(getTextFile(textName), os.O_APPEND|os.O_WRONLY, 0777)
+			utils.CheckError(err)
 			if strings.Contains(chapterName, chatp) {
-				fetchFromServer(url+"/"+link, chapterName, file)
-				fmt.Printf("%s download finish\n", chapterName)
+				go fetchFromServer(url+"/"+link, chapterName, file)
 			}
 			return true
 		})
@@ -62,11 +60,12 @@ func fetchFromServer(url, chapterName string, fp *os.File) {
 			time.Sleep(time.Second)
 			fetchFromServer(url, chapterName, fp)
 		} else {
-			fmt.Println("unexpected error")
+			log.Println("unexpected error")
 			os.Exit(0)
 		}
 	} else {
 		content = "\n\n" + chapterName + "\n\n" + content
 		io.WriteString(fp, content)
+		log.Printf("%s download finish\n", chapterName)
 	}
 }
