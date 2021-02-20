@@ -18,26 +18,24 @@ import (
 )
 
 type Downloader struct {
-	Url                      string            `json:"url"`                         //下载的url
-	SaveName                 string            `json:"save_name"`                   //保存文件名称
-	SavePath                 string            `json:"save_path"`                   //保存的文件夹
-	ProxyHost                string            `json:"proxy_host"`                  //设置http代理
-	CustomHeader             map[string]string `json:"custom_header"`               //设置http的header
-	Timeout                  int               `json:"timeout"`                     //设置超时时间
-	BreakPointContinueUpload bool              `json:"break_point_continue_upload"` //是否需要支持断点续传
-	DownloadRoutine          int               `json:"download_routine"`            //下载的协程
-	fileSize                 int               `json:"file_size"`                   //文件的大小
-	fd                       *os.File          `json:"fd"`                          //文件
+	Url             string            `json:"url"`              //下载的url
+	SaveName        string            `json:"save_name"`        //保存文件名称
+	SavePath        string            `json:"save_path"`        //保存的文件夹
+	ProxyHost       string            `json:"proxy_host"`       //设置http代理
+	CustomHeader    map[string]string `json:"custom_header"`    //设置http的header
+	Timeout         int               `json:"timeout"`          //设置超时时间
+	DownloadRoutine int               `json:"download_routine"` //下载的协程
+	fileSize        int               `json:"file_size"`        //文件的大小
+	fd              *os.File          `json:"fd"`               //文件
 }
 
 type options struct {
-	SaveName                 string            `json:"save_name"`                   //保存文件名称
-	SavePath                 string            `json:"save_path"`                   //保存的文件夹
-	ProxyHost                string            `json:"proxy_host"`                  //设置http代理
-	CustomHeader             map[string]string `json:"custom_header"`               //设置http的header
-	Timeout                  int               `json:"timeout"`                     //设置超时时间
-	BreakPointContinueUpload bool              `json:"break_point_continue_upload"` //是否需要支持断点续传
-	DownloadRoutine          int               `json:"download_routine"`            //下载的协程
+	SaveName        string            `json:"save_name"`        //保存文件名称
+	SavePath        string            `json:"save_path"`        //保存的文件夹
+	ProxyHost       string            `json:"proxy_host"`       //设置http代理
+	CustomHeader    map[string]string `json:"custom_header"`    //设置http的header
+	Timeout         int               `json:"timeout"`          //设置超时时间
+	DownloadRoutine int               `json:"download_routine"` //下载的协程
 }
 
 type Option func(*options)
@@ -70,8 +68,9 @@ func getHeaderRange(startId, endId int) string {
 }
 
 const (
-	DefaultHTTPTimeout     int = 10 //http超时时间
-	DefaultDownloadRoutine int = 6  //下载的协程数量
+	DefaultHTTPTimeout             int = 10 //http超时时间
+	DefaultDownloadRoutine         int = 6  //下载的协程数量
+	DefaultDisabledDownloadRoutine int = 1  //不支持下载的协程数量
 )
 
 var (
@@ -110,12 +109,6 @@ func SetTimeout(timeout int) Option {
 	}
 }
 
-func SetBreakPointContinueUpload(isSet bool) Option {
-	return func(o *options) {
-		o.BreakPointContinueUpload = isSet
-	}
-}
-
 func SetDownloadRoutine(num int) Option {
 	return func(o *options) {
 		o.DownloadRoutine = num
@@ -146,21 +139,19 @@ func NewDownloader(urlString string, option ...Option) (*Downloader, error) {
 		op.CustomHeader = make(map[string]string, 0)
 	}
 	if op.DownloadRoutine == 0 {
-		if op.BreakPointContinueUpload {
-			op.DownloadRoutine = DefaultDownloadRoutine
-		} else {
-			op.DownloadRoutine = 1
-		}
+		op.DownloadRoutine = DefaultDownloadRoutine
+	}
+	if op.Timeout == 0 {
+		op.Timeout = DefaultHTTPTimeout
 	}
 	return &Downloader{
-		Url:                      urlString,
-		SavePath:                 op.SavePath,
-		SaveName:                 op.SaveName,
-		Timeout:                  op.Timeout,
-		DownloadRoutine:          op.DownloadRoutine,
-		BreakPointContinueUpload: op.BreakPointContinueUpload,
-		CustomHeader:             op.CustomHeader,
-		ProxyHost:                op.ProxyHost,
+		Url:             urlString,
+		SavePath:        op.SavePath,
+		SaveName:        op.SaveName,
+		Timeout:         op.Timeout,
+		DownloadRoutine: op.DownloadRoutine,
+		CustomHeader:    op.CustomHeader,
+		ProxyHost:       op.ProxyHost,
 	}, nil
 }
 
@@ -173,7 +164,7 @@ func genFileName(pathUrl string) (string, error) {
 	return pathInfo[len(pathInfo)-1], nil
 }
 
-func (a *Downloader) SetSaveName(name string) {
+func (a *Downloader) setSaveName(name string) {
 	if name != "" {
 		a.SaveName = name
 	}
@@ -185,35 +176,31 @@ func (a *Downloader) setFileSize(size int) {
 	}
 }
 
-func (a *Downloader) SetSavePath(path string) {
+func (a *Downloader) setSavePath(path string) {
 	if path != "" {
 		a.SavePath = path
 	}
 }
 
-func (a *Downloader) SetProxy(proxyHost string) {
+func (a *Downloader) setProxy(proxyHost string) {
 	if proxyHost != "" {
 		a.ProxyHost = proxyHost
 	}
 }
 
-func (a *Downloader) SetTimeout(timeout int) {
+func (a *Downloader) setTimeout(timeout int) {
 	if timeout > 0 {
 		a.Timeout = timeout
 	}
 }
 
-func (a *Downloader) SupportBreakPointContinueUpload() {
-	a.BreakPointContinueUpload = true
-	a.DownloadRoutine = DefaultDownloadRoutine
+func (a *Downloader) setDownloadRoutine(num int) {
+	if num > 0 {
+		a.DownloadRoutine = DefaultDownloadRoutine
+	}
 }
 
-func (a *Downloader) DisabledBreakPointContinueUpload() {
-	a.BreakPointContinueUpload = false
-	a.DownloadRoutine = 1
-}
-
-func (a *Downloader) SetCustomHeader(headers map[string]string) {
+func (a *Downloader) setCustomHeader(headers map[string]string) {
 	if len(headers) > 0 {
 		a.CustomHeader = headers
 	} else {
@@ -229,7 +216,7 @@ func (a *Downloader) setDownloadFileInfo(header http.Header) {
 		var re = regexp.MustCompile(`(?m)filename="(.*)"`)
 		list := re.FindAllStringSubmatch(cdData, 10000)
 		if len(list) > 0 && len(list[0]) >= 1 {
-			a.SetSaveName(list[0][1])
+			a.setSaveName(list[0][1])
 		}
 	}
 	crData := header.Get("Content-Range")
@@ -252,8 +239,8 @@ func (a *Downloader) setDownloadFileInfo(header http.Header) {
 
 func (a *Downloader) SaveFile(ctx context.Context) error {
 	a.initData()
-	//获取文件真实名称、文件大小、是否支持断点续传
-	if err := a.checkFileSupportBreakPointAndFileName(ctx, getDefaultHeaderRange()); err != nil {
+	//获取文件真实名称、文件大小、是否支持多协程下载
+	if err := a.checkFileSupportMultiRoutineAndFileName(ctx, getDefaultHeaderRange()); err != nil {
 		return err
 	}
 	if err := a.createFile(ctx); err != nil {
@@ -314,7 +301,7 @@ func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string
 	return client, request, nil
 }
 
-func (a *Downloader) checkFileSupportBreakPointAndFileName(ctx context.Context, rangeStr string) error {
+func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context, rangeStr string) error {
 	httpClient, httpRequest, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
 	if err != nil {
 		return err
@@ -329,7 +316,7 @@ func (a *Downloader) checkFileSupportBreakPointAndFileName(ctx context.Context, 
 		return ErrorUrlIsNotFound
 	}
 	if resp.StatusCode != http.StatusPartialContent {
-		a.DisabledBreakPointContinueUpload()
+		a.setDownloadRoutine(1)
 	}
 	//获取文件的真实文件名称
 	a.setDownloadFileInfo(resp.Header)
@@ -363,7 +350,7 @@ func (a *Downloader) createFile(ctx context.Context) error {
 	fd, err := utils.CreateFileReError(a.SavePath + a.SaveName)
 	if err != nil {
 		if err == utils.ErrorFileExists {
-			if !a.BreakPointContinueUpload {
+			if a.DownloadRoutine > DefaultDisabledDownloadRoutine{
 				return err
 			}
 			fd, _ = os.OpenFile(a.SavePath+a.SaveName, os.O_RDWR, 0666)

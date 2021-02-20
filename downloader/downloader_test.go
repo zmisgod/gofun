@@ -11,7 +11,7 @@ func TestNewDownloader(t *testing.T) {
 	text := "https://www.imax.com/download/file/fid/16840"
 	down, err := NewDownloader(text,
 		SetTimeout(60),
-		SetBreakPointContinueUpload(false),
+		SetDownloadRoutine(1),
 	)
 	if err != nil {
 		log.Println(err)

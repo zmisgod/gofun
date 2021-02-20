@@ -222,7 +222,7 @@ func fetchAImage(img string, folderPath string, fileName string, fileType string
 	ct := 0
 	res, err := downloader.NewDownloader(img,
 		downloader.SetSavePath(folderPath),
-		downloader.SetBreakPointContinueUpload(false),
+		downloader.SetDownloadRoutine(1),
 		downloader.SetSaveFileName(fileName+"."+fileType),
 	)
 	if err != nil {
