@@ -232,17 +232,16 @@ func (a *Downloader) setDownloadFileInfo(header http.Header) {
 			a.SetSaveName(list[0][1])
 		}
 	}
-	if a.BreakPointContinueUpload {
-		crData := header.Get("Content-Range")
-		if crData != "" {
-			var re = regexp.MustCompile(fmt.Sprintf(`%s\/(.*)`, getResponseHeaderRange()))
-			list := re.FindAllStringSubmatch(crData, 10000)
-			if len(list) > 0 && len(list[0]) >= 1 {
-				_n, _ := strconv.Atoi(list[0][1])
-				a.setFileSize(_n)
-			}
+	crData := header.Get("Content-Range")
+	if crData != "" {
+		var re = regexp.MustCompile(fmt.Sprintf(`%s\/(.*)`, getResponseHeaderRange()))
+		list := re.FindAllStringSubmatch(crData, 10000)
+		if len(list) > 0 && len(list[0]) >= 1 {
+			_n, _ := strconv.Atoi(list[0][1])
+			a.setFileSize(_n)
 		}
-	} else {
+	}
+	if a.fileSize == 0 {
 		clData := header.Get("Content-Length")
 		if clData != "" {
 			_n, _ := strconv.Atoi(clData)

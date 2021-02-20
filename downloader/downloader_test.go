@@ -9,7 +9,10 @@ import (
 
 func TestNewDownloader(t *testing.T) {
 	text := "https://www.imax.com/download/file/fid/16840"
-	down, err := NewDownloader(text, SetTimeout(60), SetBreakPointContinueUpload(true))
+	down, err := NewDownloader(text,
+		SetTimeout(60),
+		SetBreakPointContinueUpload(false),
+	)
 	if err != nil {
 		log.Println(err)
 	} else {
