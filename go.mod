@@ -7,5 +7,5 @@ require (
 	github.com/willf/bitset v1.1.11
 	github.com/PuerkitoBio/goquery v1.6.2-0.20210118231321-bedb4e7a8891
 	github.com/joho/godotenv v1.3.1-0.20201111043658-f562099a4320
-	github.com/go-sql-driver/mysql master
+	github.com/go-sql-driver/mysql v1.5.1-0.20210202043019-fe2230a8b20c
 )

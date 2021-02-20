@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-var targetURL = "http://www.xiuren.org/tuigirl-001.html"
+var targetURL = "http://www.xiuren.org/XiuRen-N02267.html"
 
 func main() {
-	proxyStr, err := url.Parse("http://127.0.0.1:1087")
+	proxyStr, err := url.Parse("http://127.0.0.1:1081")
 	if err != nil {
 		fmt.Println(err)
 	}else {
