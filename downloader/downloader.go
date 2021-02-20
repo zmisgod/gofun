@@ -25,6 +25,7 @@ type Downloader struct {
 	CustomHeader    map[string]string `json:"custom_header"`    //设置http的header
 	Timeout         int               `json:"timeout"`          //设置超时时间
 	DownloadRoutine int               `json:"download_routine"` //下载的协程
+	BreakPoint      bool              `json:"break_point"`      //是否需要支持断点续传
 	fileSize        int               `json:"file_size"`        //文件的大小
 	fd              *os.File          `json:"fd"`               //文件
 }
@@ -36,6 +37,7 @@ type options struct {
 	CustomHeader    map[string]string `json:"custom_header"`    //设置http的header
 	Timeout         int               `json:"timeout"`          //设置超时时间
 	DownloadRoutine int               `json:"download_routine"` //下载的协程
+	BreakPoint      bool              `json:"break_point"`      //是否需要支持断点续传
 }
 
 type Option func(*options)
@@ -109,6 +111,12 @@ func SetTimeout(timeout int) Option {
 	}
 }
 
+func SetBreakPoint(isNeed bool) Option {
+	return func(o *options) {
+		o.BreakPoint = isNeed
+	}
+}
+
 func SetDownloadRoutine(num int) Option {
 	return func(o *options) {
 		o.DownloadRoutine = num
@@ -152,6 +160,7 @@ func NewDownloader(urlString string, option ...Option) (*Downloader, error) {
 		DownloadRoutine: op.DownloadRoutine,
 		CustomHeader:    op.CustomHeader,
 		ProxyHost:       op.ProxyHost,
+		BreakPoint:      op.BreakPoint,
 	}, nil
 }
 
@@ -243,7 +252,109 @@ func (a *Downloader) SaveFile(ctx context.Context) error {
 	if err := a.checkFileSupportMultiRoutineAndFileName(ctx, getDefaultHeaderRange()); err != nil {
 		return err
 	}
-	if err := a.createFile(ctx); err != nil {
+	if a.BreakPoint {
+		return a.doMultiDownloadWithBreakPoint(ctx)
+	} else {
+		return a.doMultiDownloadWithoutBreakPoint(ctx)
+	}
+}
+
+func (a *Downloader) initData() {
+	a.SavePath = strings.TrimRight(a.SavePath, "/") + "/"
+}
+
+func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string, method HttpMethod, rangeStr string) (*http.Response, error) {
+	client := &http.Client{
+		Timeout: time.Second * time.Duration(a.Timeout), //超时时间
+	}
+	if a.ProxyHost != "" {
+		proxyStr, err := url.Parse(a.ProxyHost)
+		if err != nil {
+			return nil, err
+		}
+		client.Transport = &http.Transport{
+			Proxy: http.ProxyURL(proxyStr),
+		}
+	}
+	request, err := http.NewRequest(string(method), targetURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(a.CustomHeader) > 0 {
+		for k, v := range a.CustomHeader {
+			request.Header.Set(k, v)
+		}
+	}
+	if rangeStr != "" {
+		request.Header.Set(HeaderRange, rangeStr)
+	}
+	resp, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context, rangeStr string) error {
+	resp, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	//检查文件是否支持断点续传
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
+		return ErrorUrlIsNotFound
+	}
+	if resp.StatusCode != http.StatusPartialContent {
+		a.setDownloadRoutine(1)
+	}
+	//获取文件的真实文件名称
+	a.setDownloadFileInfo(resp.Header)
+	return nil
+}
+
+func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) error {
+	rangeStr := getHeaderRange(startId, endId)
+	resp, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if a.fd == nil {
+		return ErrorFileIsError
+	}
+	fd := a.fd
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	_, err = fd.WriteAt(data, int64(startId))
+	return err
+}
+
+func (a *Downloader) createFile() error {
+	fd, err := utils.CreateFileReError(a.SavePath + a.SaveName)
+	if err != nil {
+		if err == utils.ErrorFileExists {
+			if a.DownloadRoutine > DefaultDisabledDownloadRoutine {
+				return err
+			}
+			fd, _ = os.OpenFile(a.SavePath+a.SaveName, os.O_RDWR, 0666)
+			fileStatus, _ := fd.Stat()
+			_, err := fd.Seek(fileStatus.Size(), 0)
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+	a.fd = fd
+	return nil
+}
+
+func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error {
+	if err := a.createFile(); err != nil {
 		return err
 	}
 	defer a.fd.Close()
@@ -269,100 +380,6 @@ func (a *Downloader) SaveFile(ctx context.Context) error {
 	return nil
 }
 
-func (a *Downloader) initData() {
-	a.SavePath = strings.TrimRight(a.SavePath, "/") + "/"
-}
-
-func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string, method HttpMethod, rangeStr string) (*http.Client, *http.Request, error) {
-	client := &http.Client{
-		Timeout: time.Second * time.Duration(a.Timeout), //超时时间
-	}
-	if a.ProxyHost != "" {
-		proxyStr, err := url.Parse(a.ProxyHost)
-		if err != nil {
-			return nil, nil, err
-		}
-		client.Transport = &http.Transport{
-			Proxy: http.ProxyURL(proxyStr),
-		}
-	}
-	request, err := http.NewRequest(string(method), targetURL, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(a.CustomHeader) > 0 {
-		for k, v := range a.CustomHeader {
-			request.Header.Set(k, v)
-		}
-	}
-	if rangeStr != "" {
-		request.Header.Set(HeaderRange, rangeStr)
-	}
-	return client, request, nil
-}
-
-func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context, rangeStr string) error {
-	httpClient, httpRequest, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
-	if err != nil {
-		return err
-	}
-	resp, err := httpClient.Do(httpRequest)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	//检查文件是否支持断点续传
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
-		return ErrorUrlIsNotFound
-	}
-	if resp.StatusCode != http.StatusPartialContent {
-		a.setDownloadRoutine(1)
-	}
-	//获取文件的真实文件名称
-	a.setDownloadFileInfo(resp.Header)
-	return nil
-}
-
-func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) error {
-	rangeStr := getHeaderRange(startId, endId)
-	httpClient, httpRequest, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
-	if err != nil {
-		return err
-	}
-	resp, err := httpClient.Do(httpRequest)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	if a.fd == nil {
-		return ErrorFileIsError
-	}
-	fd := a.fd
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	_, err = fd.WriteAt(data, int64(startId))
-	return err
-}
-
-func (a *Downloader) createFile(ctx context.Context) error {
-	fd, err := utils.CreateFileReError(a.SavePath + a.SaveName)
-	if err != nil {
-		if err == utils.ErrorFileExists {
-			if a.DownloadRoutine > DefaultDisabledDownloadRoutine{
-				return err
-			}
-			fd, _ = os.OpenFile(a.SavePath+a.SaveName, os.O_RDWR, 0666)
-			fileStatus, _ := fd.Stat()
-			_, err := fd.Seek(fileStatus.Size(), 0)
-			if err != nil {
-				return err
-			}
-		} else {
-			return err
-		}
-	}
-	a.fd = fd
+func (a *Downloader) doMultiDownloadWithBreakPoint(ctx context.Context) error {
 	return nil
 }
