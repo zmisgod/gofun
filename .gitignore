@@ -2,3 +2,4 @@
 .idea
 .vscode
 music/node_modules/
+music/package-lock.json

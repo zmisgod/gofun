@@ -7,9 +7,17 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.post('/getSign', function(req, res) {
-    let result = sign.getSign(req.body["needSign"])
-    console.log(result)
-    res.send({"code":200, "data":result})
+    try{
+        let jsonObj = JSON.parse(req.body["needSign"])
+        if (jsonObj !== undefined) {
+            let result = sign.getSign(jsonObj)
+            res.send({"code":200, "data":result, "msg": "ok"})
+        }else{
+            res.send({"code":400, "data":"", "msg": "parse error"})
+        }
+    }catch (e) {
+        res.send({"code":500, "data":"", "msg": e.toString()})
+    }
 })
 
 app.listen(port, () => {
