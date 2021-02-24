@@ -1,5 +1,5 @@
 .env
 .idea
 .vscode
-music/node_modules/
-music/package-lock.json
+music/node/node_modules/
+music/node/package-lock.json
