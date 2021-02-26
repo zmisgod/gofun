@@ -1,12 +1,13 @@
 package novel
 
 import (
+	"context"
 	"fmt"
 	"github.com/zmisgod/gofun/utils"
 	"io"
 	"log"
 	"os"
-	"strconv"
+	"regexp"
 	"strings"
 	"time"
 
@@ -18,29 +19,51 @@ func getTextFile(textName string) string {
 	return fmt.Sprintf("%s.txt", textName)
 }
 
-func FetchChapter(textName, url string) string {
-	document, err := goquery.NewDocument(url)
-	utils.CheckError(err)
-	content := document.Find(".box_con3 #list dl dd")
-	decoder := mahonia.NewDecoder("gbk")
-	for j := 0; j <= 1125; j++ {
-		time.Sleep(time.Duration(3) * time.Second)
-		content.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
-			link, _ := contentSelection.Find("a").Attr("href")
-			chapterName, _ := contentSelection.Find("a").Html()
-			chapterName = decoder.ConvertString(chapterName)
-			chatp := "第" + strconv.Itoa(j) + "章"
-			fileName := textName+"/"+chatp+".txt"
-			utils.CreateFile(fileName)
-			file, err := os.OpenFile(getTextFile(textName), os.O_APPEND|os.O_WRONLY, 0777)
-			utils.CheckError(err)
-			if strings.Contains(chapterName, chatp) {
-				go fetchFromServer(url+"/"+link, chapterName, file)
-			}
-			return true
-		})
+func FetchChapter(ctx context.Context, textName, url string) error {
+	header := map[string]string{
+		"sec-fetch-user": "?1",
+		"sec-fetch-dest": "document",
+		"sec-fetch-mode": "navigate",
+		"sec-fetch-site": "none",
+		"user-agent":     "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36",
 	}
-	return ""
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, url, 5, "", nil, header)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	body := resp.Body
+	document, err := goquery.NewDocumentFromReader(body)
+	if err != nil {
+		return err
+	}
+	content := document.Find("#newlist ul li")
+	content.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
+		link, _ := contentSelection.Find("a").Attr("href")
+		chapterName, _ := contentSelection.Find("a").Html()
+		var re = regexp.MustCompile(`(?m)第([0-9]*)章`)
+		number := re.FindAllStringSubmatch(chapterName, 10000)
+		nameL := strings.Split(chapterName, " ")
+		if len(number) > 0 && len(number[0]) >= 2 && len(nameL) > 1 {
+			realName := strings.Builder{}
+			for k, v := range nameL {
+				if k != 0 {
+					realName.WriteString(v)
+				}
+			}
+			fmt.Println(link, number[0][1], realName.String())
+		}
+		//chatp := "第" + strconv.Itoa(j) + "章"
+		//fileName := textName + "/" + chatp + ".txt"
+		//utils.CreateFile(fileName)
+		//file, err := os.OpenFile(getTextFile(textName), os.O_APPEND|os.O_WRONLY, 0777)
+		//utils.CheckError(err)
+		//if strings.Contains(chapterName, chatp) {
+		//	go fetchFromServer(url+"/"+link, chapterName, file)
+		//}
+		return true
+	})
+	return nil
 }
 
 func fetchFromServer(url, chapterName string, fp *os.File) {

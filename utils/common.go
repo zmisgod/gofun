@@ -1,9 +1,15 @@
 package utils
 
 import (
+	"context"
+	"crypto/tls"
 	"errors"
+	"io"
 	"log"
+	"net/http"
+	"net/url"
 	"os"
+	"time"
 )
 
 func CheckError(err error) {
@@ -32,7 +38,7 @@ func CreateFileReError(textName string) (*os.File, error) {
 			return nil, err
 		}
 		return file, nil
-	}else{
+	} else {
 		return nil, ErrorFileExists
 	}
 }
@@ -61,4 +67,52 @@ func CheckPathIsNotExists(path string) bool {
 		return false
 	}
 	return false
+}
+
+type HttpClientMethod string
+
+const (
+	HttpClientMethodGet  HttpClientMethod = "GET"
+	HttpClientMethodPost HttpClientMethod = "POST"
+)
+
+var DefaultUserAgent map[string]string = map[string]string{
+	"user-agent": UserAgentString,
+}
+
+const UserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+
+func HttpClient(ctx context.Context, method HttpClientMethod, targetURL string, timeout int, proxy string, body io.ReadCloser, customHeader map[string]string) (*http.Response, error) {
+	client := &http.Client{
+		Timeout: time.Second * time.Duration(timeout), //超时时间
+	}
+	transPort := &http.Transport{
+		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+	}
+	if proxy != "" {
+		proxyStr, err := url.Parse(proxy)
+		if err != nil {
+			return nil, err
+		}
+		transPort.Proxy = http.ProxyURL(proxyStr)
+	}
+	client.Transport = transPort
+
+	request, err := http.NewRequest(string(method), targetURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(customHeader) > 0 {
+		for k, v := range customHeader {
+			request.Header.Set(k, v)
+		}
+	}
+	if body != nil {
+		request.Body = body
+	}
+	resp, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
