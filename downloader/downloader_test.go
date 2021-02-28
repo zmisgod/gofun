@@ -13,10 +13,11 @@ import (
 )
 
 func TestNewDownloader(t *testing.T) {
-	text := "https://www.imax.com/download/file/fid/16840"
+	text := "https://cdn.poizon.com/leap/A5CEF94C-5BA4-45F4-BB9F-8B7E7ADA02C2.mov_dgTLUAnsBO.mp4"
 	down, err := NewDownloader(text,
-		SetTimeout(60),
-		SetDownloadRoutine(6),
+		SetTimeout(22260),
+		SetDownloadRoutine(5),
+		SetBreakPoint(true),
 	)
 	if err != nil {
 		log.Println(err)
@@ -25,7 +26,7 @@ func TestNewDownloader(t *testing.T) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println(down.SaveName)
+			fmt.Println(down.option.SaveName)
 		}
 	}
 }

@@ -18,16 +18,11 @@ import (
 )
 
 type Downloader struct {
-	Url             string            `json:"url"`              //下载的url
-	SaveName        string            `json:"save_name"`        //保存文件名称
-	SavePath        string            `json:"save_path"`        //保存的文件夹
-	ProxyHost       string            `json:"proxy_host"`       //设置http代理
-	CustomHeader    map[string]string `json:"custom_header"`    //设置http的header
-	Timeout         int               `json:"timeout"`          //设置超时时间
-	DownloadRoutine int               `json:"download_routine"` //下载的协程
-	BreakPoint      bool              `json:"break_point"`      //是否需要支持断点续传
-	fileSize        int               `json:"file_size"`        //文件的大小
-	fd              *os.File          `json:"fd"`               //文件
+	Url      string            `json:"url"`       //下载的url
+	fileSize int               `json:"file_size"` //文件的大小
+	fd       *os.File          `json:"fd"`        //文件指针
+	option   options           `json:"option"`    //参数
+	fileMap  map[uint]*os.File `json:"file_map"`  //文件指针map for 断点续传
 }
 
 type options struct {
@@ -153,14 +148,8 @@ func NewDownloader(urlString string, option ...Option) (*Downloader, error) {
 		op.Timeout = DefaultHTTPTimeout
 	}
 	return &Downloader{
-		Url:             urlString,
-		SavePath:        op.SavePath,
-		SaveName:        op.SaveName,
-		Timeout:         op.Timeout,
-		DownloadRoutine: op.DownloadRoutine,
-		CustomHeader:    op.CustomHeader,
-		ProxyHost:       op.ProxyHost,
-		BreakPoint:      op.BreakPoint,
+		Url:    urlString,
+		option: op,
 	}, nil
 }
 
@@ -175,7 +164,7 @@ func genFileName(pathUrl string) (string, error) {
 
 func (a *Downloader) setSaveName(name string) {
 	if name != "" {
-		a.SaveName = name
+		a.option.SaveName = name
 	}
 }
 
@@ -187,34 +176,34 @@ func (a *Downloader) setFileSize(size int) {
 
 func (a *Downloader) setSavePath(path string) {
 	if path != "" {
-		a.SavePath = path
+		a.option.SavePath = path
 	}
 }
 
 func (a *Downloader) setProxy(proxyHost string) {
 	if proxyHost != "" {
-		a.ProxyHost = proxyHost
+		a.option.ProxyHost = proxyHost
 	}
 }
 
 func (a *Downloader) setTimeout(timeout int) {
 	if timeout > 0 {
-		a.Timeout = timeout
+		a.option.Timeout = timeout
 	}
 }
 
 func (a *Downloader) setDownloadRoutine(num int) {
 	if num > 0 {
-		a.DownloadRoutine = DefaultDownloadRoutine
+		a.option.DownloadRoutine = DefaultDownloadRoutine
 	}
 }
 
 func (a *Downloader) setCustomHeader(headers map[string]string) {
 	if len(headers) > 0 {
-		a.CustomHeader = headers
+		a.option.CustomHeader = headers
 	} else {
-		a.CustomHeader = make(map[string]string, 1)
-		a.CustomHeader["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+		a.option.CustomHeader = make(map[string]string, 1)
+		a.option.CustomHeader["User-Agent"] = utils.UserAgentString
 	}
 }
 
@@ -252,7 +241,7 @@ func (a *Downloader) SaveFile(ctx context.Context) error {
 	if err := a.checkFileSupportMultiRoutineAndFileName(ctx, getDefaultHeaderRange()); err != nil {
 		return err
 	}
-	if a.BreakPoint {
+	if a.option.BreakPoint {
 		return a.doMultiDownloadWithBreakPoint(ctx)
 	} else {
 		return a.doMultiDownloadWithoutBreakPoint(ctx)
@@ -260,15 +249,15 @@ func (a *Downloader) SaveFile(ctx context.Context) error {
 }
 
 func (a *Downloader) initData() {
-	a.SavePath = strings.TrimRight(a.SavePath, "/") + "/"
+	a.option.SavePath = strings.TrimRight(a.option.SavePath, "/") + "/"
 }
 
 func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string, method HttpMethod, rangeStr string) (*http.Response, error) {
 	client := &http.Client{
-		Timeout: time.Second * time.Duration(a.Timeout), //超时时间
+		Timeout: time.Second * time.Duration(a.option.Timeout), //超时时间
 	}
-	if a.ProxyHost != "" {
-		proxyStr, err := url.Parse(a.ProxyHost)
+	if a.option.ProxyHost != "" {
+		proxyStr, err := url.Parse(a.option.ProxyHost)
 		if err != nil {
 			return nil, err
 		}
@@ -280,8 +269,8 @@ func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string
 	if err != nil {
 		return nil, err
 	}
-	if len(a.CustomHeader) > 0 {
-		for k, v := range a.CustomHeader {
+	if len(a.option.CustomHeader) > 0 {
+		for k, v := range a.option.CustomHeader {
 			request.Header.Set(k, v)
 		}
 	}
@@ -332,14 +321,19 @@ func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) erro
 	return err
 }
 
+func getPerFileName(name string, i uint64) string {
+	res := strings.Split(name, ".")
+
+}
+
 func (a *Downloader) createFile() error {
-	fd, err := utils.CreateFileReError(a.SavePath + a.SaveName)
+	fd, err := utils.CreateFileReError(a.option.SavePath + a.option.SaveName)
 	if err != nil {
 		if err == utils.ErrorFileExists {
-			if a.DownloadRoutine > DefaultDisabledDownloadRoutine {
+			if a.option.DownloadRoutine > DefaultDisabledDownloadRoutine {
 				return err
 			}
-			fd, _ = os.OpenFile(a.SavePath+a.SaveName, os.O_RDWR, 0666)
+			fd, _ = os.OpenFile(a.option.SavePath+a.option.SaveName, os.O_RDWR, 0666)
 			fileStatus, _ := fd.Stat()
 			_, err := fd.Seek(fileStatus.Size(), 0)
 			if err != nil {
@@ -353,18 +347,38 @@ func (a *Downloader) createFile() error {
 	return nil
 }
 
+func (a *Downloader) createFileByPer(i uint64, size uint64) (int64, error) {
+	var fileSize int64
+	fd, err := utils.CreateFileReError(a.option.SavePath + a.option.SaveName + fmt.Sprintf(".tmp%d", i))
+	if err != nil {
+		if err == utils.ErrorFileExists {
+			fd, _ = os.OpenFile(a.option.SavePath+a.option.SaveName, os.O_RDWR, 0666)
+			fileStatus, _ := fd.Stat()
+			fileSize = fileStatus.Size()
+			_, err := fd.Seek(fileSize, 0)
+			if err != nil {
+				return 0, err
+			}
+		} else {
+			return 0, err
+		}
+	}
+	a.fd = fd
+	return fileSize, nil
+}
+
 func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error {
 	if err := a.createFile(); err != nil {
 		return err
 	}
 	defer a.fd.Close()
 	var wg sync.WaitGroup
-	wg.Add(a.DownloadRoutine)
-	per := a.fileSize / a.DownloadRoutine
-	for i := 0; i < a.DownloadRoutine; i++ {
+	wg.Add(a.option.DownloadRoutine)
+	per := a.fileSize / a.option.DownloadRoutine
+	for i := 0; i < a.option.DownloadRoutine; i++ {
 		startId := i * per
 		endId := (i+1)*per - 1
-		if i == (a.DownloadRoutine - 1) {
+		if i == (a.option.DownloadRoutine - 1) {
 			endId = a.fileSize
 		}
 		go func(i, startId, endId int) {
@@ -381,5 +395,9 @@ func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error
 }
 
 func (a *Downloader) doMultiDownloadWithBreakPoint(ctx context.Context) error {
+	per := a.fileSize / a.option.DownloadRoutine
+	for i := 0; i < a.option.DownloadRoutine; i++ {
+
+	}
 	return nil
 }
