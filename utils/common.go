@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -77,10 +78,25 @@ const (
 )
 
 var DefaultUserAgent map[string]string = map[string]string{
-	"user-agent": UserAgentString,
+	UserAgentName: UserAgentString,
 }
 
-const UserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+func Rand(min, max int) int {
+	if min > max {
+		return max
+	}
+	if int31 := 1<<31 - 1; max > int31 {
+		return min
+	}
+	if min == max {
+		return min
+	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return r.Intn(max+1-min) + min
+}
+
+const UserAgentName = "User-Agent"
+const UserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36"
 
 func HttpClient(ctx context.Context, method HttpClientMethod, targetURL string, timeout int, proxy string, body io.ReadCloser, customHeader map[string]string) (*http.Response, error) {
 	client := &http.Client{
@@ -110,6 +126,7 @@ func HttpClient(ctx context.Context, method HttpClientMethod, targetURL string, 
 	if body != nil {
 		request.Body = body
 	}
+	request = request.WithContext(ctx)
 	resp, err := client.Do(request)
 	if err != nil {
 		return nil, err

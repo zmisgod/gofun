@@ -2,6 +2,7 @@ package downloader
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/zmisgod/gofun/utils"
@@ -33,6 +34,8 @@ type options struct {
 	Timeout         int               `json:"timeout"`          //设置超时时间
 	DownloadRoutine int               `json:"download_routine"` //下载的协程
 	BreakPoint      bool              `json:"break_point"`      //是否需要支持断点续传
+	TryTimes        int               `json:"try_times"`        //失败重试次数
+	StrategyWait    bool              `json:"strategy_wait"`    //策略等待
 }
 
 type Option func(*options)
@@ -48,8 +51,9 @@ const (
 const (
 	HeaderRange                string = "Range"
 	DefaultHeaderRangeTemplate string = "bytes=%d-%d"
-	DefaultHeaderRangeStartId  int    = 0
+	DefaultHeaderRangeStartId  int    = 3
 	DefaultHeaderRangeEndId    int    = 4
+	DefaultTryTimes            int    = 30
 )
 
 func getDefaultHeaderRange() string {
@@ -75,6 +79,18 @@ var (
 	ErrorUrlIsNotFound = errors.New("url not found")
 	ErrorFileIsError   = errors.New("file is error")
 )
+
+func SetTryTimes(times int ) Option {
+	return func(o *options) {
+		o.TryTimes = times
+	}
+}
+
+func SetStrategyWait(isSmart bool) Option {
+	return func(o *options) {
+		o.StrategyWait = isSmart
+	}
+}
 
 func SetSaveFileName(name string) Option {
 	return func(o *options) {
@@ -140,12 +156,16 @@ func NewDownloader(urlString string, option ...Option) (*Downloader, error) {
 	}
 	if len(op.CustomHeader) == 0 {
 		op.CustomHeader = make(map[string]string, 0)
+		op.CustomHeader[utils.UserAgentName] = utils.UserAgentString
 	}
 	if op.DownloadRoutine == 0 {
 		op.DownloadRoutine = DefaultDownloadRoutine
 	}
 	if op.Timeout == 0 {
 		op.Timeout = DefaultHTTPTimeout
+	}
+	if op.TryTimes == 0 {
+		op.TryTimes = DefaultTryTimes
 	}
 	return &Downloader{
 		Url:    urlString,
@@ -252,19 +272,21 @@ func (a *Downloader) initData() {
 	a.option.SavePath = strings.TrimRight(a.option.SavePath, "/") + "/"
 }
 
-func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string, method HttpMethod, rangeStr string) (*http.Response, error) {
+func (a *Downloader) prepareHTTPClient(ctx context.Context, targetURL string, method HttpMethod, rangeStr string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * time.Duration(a.option.Timeout), //超时时间
+	}
+	transPort := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	if a.option.ProxyHost != "" {
 		proxyStr, err := url.Parse(a.option.ProxyHost)
 		if err != nil {
 			return nil, err
 		}
-		client.Transport = &http.Transport{
-			Proxy: http.ProxyURL(proxyStr),
-		}
+		transPort.Proxy = http.ProxyURL(proxyStr)
 	}
+	client.Transport = transPort
 	request, err := http.NewRequest(string(method), targetURL, nil)
 	if err != nil {
 		return nil, err
@@ -277,6 +299,7 @@ func (a *Downloader) prepareHTTPClient(context context.Context, targetURL string
 	if rangeStr != "" {
 		request.Header.Set(HeaderRange, rangeStr)
 	}
+	request = request.WithContext(ctx)
 	resp, err := client.Do(request)
 	if err != nil {
 		return nil, err
@@ -292,6 +315,7 @@ func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context
 	defer resp.Body.Close()
 	//检查文件是否支持断点续传
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
+		log.Println(fmt.Sprintf("http response statusCode is :%d", resp.StatusCode))
 		return ErrorUrlIsNotFound
 	}
 	if resp.StatusCode != http.StatusPartialContent {
@@ -304,6 +328,7 @@ func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context
 
 func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) error {
 	rangeStr := getHeaderRange(startId, endId)
+	//a.option.CustomHeader[utils.UserAgentName] = fmt.Sprintf("Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%d.0.4324.192 Safari/537.36", utils.Rand(80, 100))
 	resp, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
 	if err != nil {
 		return err
@@ -312,18 +337,27 @@ func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) erro
 	if a.fd == nil {
 		return ErrorFileIsError
 	}
-	fd := a.fd
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
+		return errors.New(fmt.Sprintf("startId %d- endId %d response status is not valid,now is %d", startId, endId, resp.StatusCode))
 	}
-	_, err = fd.WriteAt(data, int64(startId))
+	//result := make([]byte, endId-startId+1)
+	//err = binary.Read(resp.Body, binary.BigEndian, result)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	result, _ := ioutil.ReadAll(resp.Body)
+	fmt.Printf("resLength:%d e-s:%d startId:%d endId:%d \n", len(result), endId-startId, startId, endId)
+	//if len(data) != (endId - startId) {
+	//	return errors.New("response data is not equal")
+	//}
+	_, err = a.fd.WriteAt(result, int64(startId))
 	return err
 }
 
 func getPerFileName(name string, i uint64) string {
 	res := strings.Split(name, ".")
-
+	fmt.Println(res)
+	return ""
 }
 
 func (a *Downloader) createFile() error {
@@ -334,12 +368,11 @@ func (a *Downloader) createFile() error {
 				return err
 			}
 			fd, _ = os.OpenFile(a.option.SavePath+a.option.SaveName, os.O_RDWR, 0666)
-			fileStatus, _ := fd.Stat()
-			_, err := fd.Seek(fileStatus.Size(), 0)
-			if err != nil {
-				return err
-			}
 		} else {
+			return err
+		}
+	} else {
+		if err := fd.Truncate(int64(a.fileSize)); err != nil {
 			return err
 		}
 	}
@@ -372,8 +405,12 @@ func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error
 		return err
 	}
 	defer a.fd.Close()
+	childCtx, _ := context.WithCancel(ctx)
 	var wg sync.WaitGroup
 	wg.Add(a.option.DownloadRoutine)
+	if a.option.StrategyWait {
+		time.Sleep(3 * time.Second)
+	}
 	per := a.fileSize / a.option.DownloadRoutine
 	for i := 0; i < a.option.DownloadRoutine; i++ {
 		startId := i * per
@@ -381,23 +418,34 @@ func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error
 		if i == (a.option.DownloadRoutine - 1) {
 			endId = a.fileSize
 		}
-		go func(i, startId, endId int) {
+		go func(ctx context.Context, i, startId, endId int) {
 			defer wg.Done()
-			if err := a.doHttpRequest(ctx, startId, endId); err != nil {
-				log.Printf("gId:%d range:%d-%d error:%v", i, startId, endId, err)
-			} else {
-				log.Printf("gId:%d range:%d-%d", i, startId, endId)
+			for j := 0; j < a.option.TryTimes; j++ {
+				if a.option.StrategyWait {
+					time.Sleep(time.Duration(utils.Rand(3, 10)) * time.Second)
+				}
+				if err := a.doHttpRequest(ctx, startId, endId); err != nil {
+					log.Printf("gId:%d range:%d-%d error:%v try:%d", i, startId, endId, err, j)
+				} else {
+					log.Printf("\033[32m gId:%d range:%d-%d \033[0m", i, startId, endId)
+					break
+				}
 			}
-		}(i, startId, endId)
+			if a.option.StrategyWait {
+				time.Sleep(time.Duration(i)*time.Second)
+			}
+		}(childCtx, i, startId, endId)
 	}
 	wg.Wait()
 	return nil
 }
 
+//TODO
 func (a *Downloader) doMultiDownloadWithBreakPoint(ctx context.Context) error {
-	per := a.fileSize / a.option.DownloadRoutine
-	for i := 0; i < a.option.DownloadRoutine; i++ {
-
-	}
-	return nil
+	//per := a.fileSize / a.option.DownloadRoutine
+	//fmt.Println(per)
+	//for i := 0; i < a.option.DownloadRoutine; i++ {
+	//
+	//}
+	return errors.New("not impl")
 }
