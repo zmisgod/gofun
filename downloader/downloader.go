@@ -313,7 +313,7 @@ func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context
 		return err
 	}
 	defer resp.Body.Close()
-	//检查文件是否支持断点续传
+	//检查文件是否支持range
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
 		log.Println(fmt.Sprintf("http response statusCode is :%d", resp.StatusCode))
 		return ErrorUrlIsNotFound
@@ -328,7 +328,6 @@ func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context
 
 func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) error {
 	rangeStr := getHeaderRange(startId, endId)
-	//a.option.CustomHeader[utils.UserAgentName] = fmt.Sprintf("Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%d.0.4324.192 Safari/537.36", utils.Rand(80, 100))
 	resp, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
 	if err != nil {
 		return err
@@ -340,16 +339,7 @@ func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) erro
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
 		return errors.New(fmt.Sprintf("startId %d- endId %d response status is not valid,now is %d", startId, endId, resp.StatusCode))
 	}
-	//result := make([]byte, endId-startId+1)
-	//err = binary.Read(resp.Body, binary.BigEndian, result)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
 	result, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("resLength:%d e-s:%d startId:%d endId:%d \n", len(result), endId-startId, startId, endId)
-	//if len(data) != (endId - startId) {
-	//	return errors.New("response data is not equal")
-	//}
 	_, err = a.fd.WriteAt(result, int64(startId))
 	return err
 }
