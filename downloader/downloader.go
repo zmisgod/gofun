@@ -8,6 +8,7 @@ import (
 	"github.com/zmisgod/gofun/utils"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -19,11 +20,24 @@ import (
 )
 
 type Downloader struct {
-	Url      string            `json:"url"`       //下载的url
-	fileSize int               `json:"file_size"` //文件的大小
-	fd       *os.File          `json:"fd"`        //文件指针
-	option   options           `json:"option"`    //参数
-	fileMap  map[uint]*os.File `json:"file_map"`  //文件指针map for 断点续传
+	Url             string             `json:"url"`       //下载的url
+	fileSize        int                `json:"file_size"` //文件的大小
+	fd              *os.File           `json:"fd"`        //文件指针
+	option          options            `json:"option"`    //参数
+	fileMap         map[uint]*os.File  `json:"file_map"`  //文件指针map for 断点续传
+	downloaderQueue []*downloaderQueue `json:"downloader_queue"`
+}
+
+const (
+	QueueTypeNone        int = 0
+	QueueTypeDownloading int = 1
+	QueueTypeFinish      int = 2
+)
+
+type downloaderQueue struct {
+	startId   int `json:"start_id"`
+	endId     int `json:"end_id"`
+	queueType int `json:"is_finish"`
 }
 
 type options struct {
@@ -80,7 +94,7 @@ var (
 	ErrorFileIsError   = errors.New("file is error")
 )
 
-func SetTryTimes(times int ) Option {
+func SetTryTimes(times int) Option {
 	return func(o *options) {
 		o.TryTimes = times
 	}
@@ -395,6 +409,108 @@ func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error
 		return err
 	}
 	defer a.fd.Close()
+	if a.option.StrategyWait {
+		return a.SmartDownloader(ctx)
+	} else {
+		return a.normalDownloader(ctx)
+	}
+}
+
+func (a *Downloader) SmartDownloader(ctx context.Context) error {
+	downloadQueue := make([]*downloaderQueue, 0)
+	per := a.fileSize / a.option.DownloadRoutine
+	for i := 0; i < a.option.DownloadRoutine; i++ {
+		startId := i * per
+		endId := (i+1)*per - 1
+		if i == (a.option.DownloadRoutine - 1) {
+			endId = a.fileSize
+		}
+		downloadQueue = append(downloadQueue, &downloaderQueue{
+			startId:   startId,
+			endId:     endId,
+			queueType: QueueTypeNone,
+		})
+	}
+
+	ticker := time.NewTicker(1 * time.Second)
+	var wg sync.WaitGroup
+	rand.Seed(time.Now().UnixNano())
+	sStop := false
+	existList := make([]int, 0)
+	for k := range downloadQueue {
+		existList = append(existList, k)
+	}
+	finishMap := make(map[int]int, 0)
+
+	for !sStop {
+		<-ticker.C
+		nowId := -1
+		_teCount := 0
+
+		rand.Shuffle(len(existList), func(i, j int) {
+			existList[i],existList[j] = existList[j], existList[i]
+		})
+		i:=0
+		stop := false
+		for !stop {
+			k := existList[i%len(downloadQueue)]
+			fmt.Printf("k = %d\n", k)
+			if downloadQueue[k].queueType == QueueTypeFinish {
+				nowId = k
+				finishMap[k] = k
+			}
+			if len(finishMap) == len(downloadQueue) {
+				stop = true
+				sStop = true
+			}else{
+				if downloadQueue[k].queueType == QueueTypeNone {
+					stop = true
+					break
+				}
+			}
+			i++
+		}
+		fmt.Println(nowId)
+
+		for k := range existList {
+			if downloadQueue[k].queueType == QueueTypeFinish {
+				_teCount++
+			}else if downloadQueue[k].queueType == QueueTypeNone{
+				downloadQueue[k].queueType = QueueTypeDownloading
+				nowId = k
+			}
+		}
+		if _teCount == len(downloadQueue) {
+			sStop = true
+		}else{
+			if nowId >= 0{
+				wg.Add(1)
+				go func(_k int) {
+					defer wg.Done()
+					_s := rand.Intn(10)
+					if _s >= 8 {
+						downloadQueue[_k].queueType = QueueTypeFinish
+						fmt.Println("finish")
+					}else{
+						downloadQueue[_k].queueType = QueueTypeNone
+						fmt.Println("none")
+					}
+					//if err := a.doHttpRequest(ctx, downloadQueue[_k].startId, downloadQueue[_k].endId); err != nil {
+					//	downloadQueue[_k].queueType = QueueTypeNone
+					//	log.Printf("gId:%d range:%d-%d error:%v try:%d", _k, downloadQueue[_k].startId, downloadQueue[_k].endId, err, _k)
+					//} else {
+					//	downloadQueue[_k].queueType = QueueTypeFinish
+					//	log.Printf("\033[32m gId:%d range:%d-%d \033[0m", _k, downloadQueue[_k].startId, downloadQueue[_k].endId)
+					//}
+				}(nowId)
+			}
+		}
+	}
+	wg.Wait()
+	return nil
+}
+
+func (a *Downloader) bkDownloader(ctx context.Context) error {
 	childCtx, _ := context.WithCancel(ctx)
 	var wg sync.WaitGroup
 	wg.Add(a.option.DownloadRoutine)
@@ -422,7 +538,34 @@ func (a *Downloader) doMultiDownloadWithoutBreakPoint(ctx context.Context) error
 				}
 			}
 			if a.option.StrategyWait {
-				time.Sleep(time.Duration(i)*time.Second)
+				time.Sleep(time.Duration(i) * time.Second)
+			}
+		}(childCtx, i, startId, endId)
+	}
+	wg.Wait()
+	return nil
+}
+
+func (a *Downloader) normalDownloader(ctx context.Context) error {
+	childCtx, _ := context.WithCancel(ctx)
+	var wg sync.WaitGroup
+	wg.Add(a.option.DownloadRoutine)
+	per := a.fileSize / a.option.DownloadRoutine
+	for i := 0; i < a.option.DownloadRoutine; i++ {
+		startId := i * per
+		endId := (i+1)*per - 1
+		if i == (a.option.DownloadRoutine - 1) {
+			endId = a.fileSize
+		}
+		go func(ctx context.Context, i, startId, endId int) {
+			defer wg.Done()
+			for j := 0; j < a.option.TryTimes; j++ {
+				if err := a.doHttpRequest(ctx, startId, endId); err != nil {
+					log.Printf("gId:%d range:%d-%d error:%v try:%d", i, startId, endId, err, j)
+				} else {
+					log.Printf("\033[32m gId:%d range:%d-%d \033[0m", i, startId, endId)
+					break
+				}
 			}
 		}(childCtx, i, startId, endId)
 	}

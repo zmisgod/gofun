@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"time"
+	"net"
 )
 
 func CheckError(err error) {
@@ -96,14 +97,22 @@ func Rand(min, max int) int {
 }
 
 const UserAgentName = "User-Agent"
-const UserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36"
+const UserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
 
 func HttpClient(ctx context.Context, method HttpClientMethod, targetURL string, timeout int, proxy string, body io.ReadCloser, customHeader map[string]string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * time.Duration(timeout), //超时时间
 	}
 	transPort := &http.Transport{
-		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		Dial: func(netw, addr string) (net.Conn, error) {
+			c, err := net.DialTimeout(netw, addr, time.Duration(timeout) * time.Second) //设置建立连接超时
+			if err != nil {
+				return nil, err
+			}
+			c.SetDeadline(time.Now().Add(time.Duration(timeout) * time.Second)) //设置发送接收数据超时
+			return c, nil
+		},
 	}
 	if proxy != "" {
 		proxyStr, err := url.Parse(proxy)
