@@ -1,0 +1,1930 @@
+{
+  "code": 0,
+  "message": "请求成功",
+  "data": {
+    "hot": [
+      {
+        "id": 1,
+        "cityId": 1,
+        "name": "北京",
+        "sort": 0
+      },
+      {
+        "id": 12,
+        "cityId": 70,
+        "name": "长沙",
+        "sort": 0
+      },
+      {
+        "id": 11,
+        "cityId": 57,
+        "name": "武汉",
+        "sort": 0
+      },
+      {
+        "id": 10,
+        "cityId": 59,
+        "name": "成都",
+        "sort": 0
+      },
+      {
+        "id": 9,
+        "cityId": 55,
+        "name": "南京",
+        "sort": 0
+      },
+      {
+        "id": 8,
+        "cityId": 50,
+        "name": "杭州",
+        "sort": 0
+      },
+      {
+        "id": 7,
+        "cityId": 45,
+        "name": "重庆",
+        "sort": 0
+      },
+      {
+        "id": 6,
+        "cityId": 40,
+        "name": "天津",
+        "sort": 0
+      },
+      {
+        "id": 5,
+        "cityId": 42,
+        "name": "西安",
+        "sort": 0
+      },
+      {
+        "id": 4,
+        "cityId": 30,
+        "name": "深圳",
+        "sort": 0
+      },
+      {
+        "id": 3,
+        "cityId": 20,
+        "name": "广州",
+        "sort": 0
+      },
+      {
+        "id": 2,
+        "cityId": 10,
+        "name": "上海",
+        "sort": 0
+      },
+      {
+        "id": 17,
+        "cityId": 361,
+        "name": "兰州",
+        "sort": 0
+      }
+    ],
+    "all": {
+      "A": [
+        {
+          "id": 139,
+          "cityId": 197,
+          "acronym": "anqing",
+          "name": "安庆",
+          "locationId": "340800",
+          "pinyinName": "anqing",
+          "word": "A"
+        },
+        {
+          "id": 164,
+          "cityId": 238,
+          "acronym": "ay",
+          "name": "安阳",
+          "locationId": "410500",
+          "pinyinName": "anyang",
+          "word": "A"
+        },
+        {
+          "id": 2252,
+          "cityId": 151,
+          "acronym": "as",
+          "name": "鞍山",
+          "locationId": "210300",
+          "pinyinName": "anshan",
+          "word": "A"
+        }
+      ],
+      "B": [
+        {
+          "id": 1,
+          "cityId": 1,
+          "acronym": "bj",
+          "name": "北京",
+          "locationId": "110000",
+          "pinyinName": "beijing",
+          "word": "B"
+        },
+        {
+          "id": 33,
+          "cityId": 88,
+          "acronym": "bengbu",
+          "name": "蚌埠",
+          "locationId": "340300",
+          "pinyinName": "bengbu",
+          "word": "B"
+        },
+        {
+          "id": 72,
+          "cityId": 140,
+          "acronym": "bt",
+          "name": "包头",
+          "locationId": "150200",
+          "pinyinName": "baotou",
+          "word": "B"
+        },
+        {
+          "id": 84,
+          "cityId": 153,
+          "acronym": "benxi",
+          "name": "本溪",
+          "locationId": "210500",
+          "pinyinName": "benxi",
+          "word": "B"
+        },
+        {
+          "id": 132,
+          "cityId": 204,
+          "acronym": "bozhou",
+          "name": "亳州",
+          "locationId": "341600",
+          "pinyinName": "bozhou",
+          "word": "B"
+        },
+        {
+          "id": 169,
+          "cityId": 233,
+          "acronym": "bz",
+          "name": "滨州",
+          "locationId": "371600",
+          "pinyinName": "binzhou",
+          "word": "B"
+        },
+        {
+          "id": 247,
+          "cityId": 292,
+          "acronym": "bh",
+          "name": "北海",
+          "locationId": "450500",
+          "pinyinName": "beihai",
+          "word": "B"
+        },
+        {
+          "id": 2251,
+          "cityId": 353,
+          "acronym": "baoji",
+          "name": "宝鸡",
+          "locationId": "610300",
+          "pinyinName": "baoji",
+          "word": "B"
+        }
+      ],
+      "C": [
+        {
+          "id": 8,
+          "cityId": 45,
+          "acronym": "cq",
+          "name": "重庆",
+          "locationId": "500000",
+          "pinyinName": "chongqing",
+          "word": "C"
+        },
+        {
+          "id": 13,
+          "cityId": 59,
+          "acronym": "cd",
+          "name": "成都",
+          "locationId": "510100",
+          "pinyinName": "chengdu",
+          "word": "C"
+        },
+        {
+          "id": 18,
+          "cityId": 70,
+          "acronym": "chs",
+          "name": "长沙",
+          "locationId": "430100",
+          "pinyinName": "changsha",
+          "word": "C"
+        },
+        {
+          "id": 32,
+          "cityId": 89,
+          "acronym": "cz",
+          "name": "常州",
+          "locationId": "320400",
+          "pinyinName": "changzhou",
+          "word": "C"
+        },
+        {
+          "id": 54,
+          "cityId": 116,
+          "acronym": "cc",
+          "name": "长春",
+          "locationId": "220100",
+          "pinyinName": "changchun",
+          "word": "C"
+        },
+        {
+          "id": 74,
+          "cityId": 142,
+          "acronym": "chifeng",
+          "name": "赤峰",
+          "locationId": "150400",
+          "pinyinName": "chifeng",
+          "word": "C"
+        },
+        {
+          "id": 77,
+          "cityId": 131,
+          "acronym": "changzhi",
+          "name": "长治",
+          "locationId": "140400",
+          "pinyinName": "changzhi",
+          "word": "C"
+        },
+        {
+          "id": 110,
+          "cityId": 160,
+          "acronym": "cy",
+          "name": "朝阳",
+          "locationId": "211300",
+          "pinyinName": "chaoyang",
+          "word": "C"
+        },
+        {
+          "id": 224,
+          "cityId": 271,
+          "acronym": "chenzhou",
+          "name": "郴州",
+          "locationId": "431000",
+          "pinyinName": "chenzhou",
+          "word": "C"
+        },
+        {
+          "id": 225,
+          "cityId": 268,
+          "acronym": "changde",
+          "name": "常德",
+          "locationId": "430700",
+          "pinyinName": "changde",
+          "word": "C"
+        },
+        {
+          "id": 2260,
+          "cityId": 199,
+          "acronym": "chuzhou",
+          "name": "滁州",
+          "locationId": "341100",
+          "pinyinName": "chuzhou",
+          "word": "C"
+        }
+      ],
+      "D": [
+        {
+          "id": 19,
+          "cityId": 65,
+          "acronym": "dl",
+          "name": "大连",
+          "locationId": "210200",
+          "pinyinName": "dalian",
+          "word": "D"
+        },
+        {
+          "id": 34,
+          "cityId": 91,
+          "acronym": "dg",
+          "name": "东莞",
+          "locationId": "441900",
+          "pinyinName": "dongguan",
+          "word": "D"
+        },
+        {
+          "id": 35,
+          "cityId": 90,
+          "acronym": "dq",
+          "name": "大庆",
+          "locationId": "230600",
+          "pinyinName": "daqing",
+          "word": "D"
+        },
+        {
+          "id": 75,
+          "cityId": 129,
+          "acronym": "dt",
+          "name": "大同",
+          "locationId": "140200",
+          "pinyinName": "datong",
+          "word": "D"
+        },
+        {
+          "id": 85,
+          "cityId": 154,
+          "acronym": "dandong",
+          "name": "丹东",
+          "locationId": "210600",
+          "pinyinName": "dandong",
+          "word": "D"
+        },
+        {
+          "id": 150,
+          "cityId": 223,
+          "acronym": "dy",
+          "name": "东营",
+          "locationId": "370500",
+          "pinyinName": "dongying",
+          "word": "D"
+        },
+        {
+          "id": 171,
+          "cityId": 231,
+          "acronym": "dz",
+          "name": "德州",
+          "locationId": "371400",
+          "pinyinName": "dezhou",
+          "word": "D"
+        },
+        {
+          "id": 227,
+          "cityId": 305,
+          "acronym": "deyang",
+          "name": "德阳",
+          "locationId": "510600",
+          "pinyinName": "deyang",
+          "word": "D"
+        },
+        {
+          "id": 237,
+          "cityId": 315,
+          "acronym": "dazhou",
+          "name": "达州",
+          "locationId": "511700",
+          "pinyinName": "dazhou",
+          "word": "D"
+        },
+        {
+          "id": 261,
+          "cityId": 341,
+          "acronym": "dali",
+          "name": "大理",
+          "locationId": "532900",
+          "pinyinName": "dali",
+          "word": "D"
+        },
+        {
+          "id": 2267,
+          "cityId": 478,
+          "acronym": "dongtai",
+          "name": "东台",
+          "locationId": "320981",
+          "pinyinName": "dongtai",
+          "word": "D"
+        }
+      ],
+      "F": [
+        {
+          "id": 7,
+          "cityId": 44,
+          "acronym": "fz",
+          "name": "福州",
+          "locationId": "350100",
+          "pinyinName": "fuzhou",
+          "word": "F"
+        },
+        {
+          "id": 29,
+          "cityId": 92,
+          "acronym": "fs",
+          "name": "佛山",
+          "locationId": "440600",
+          "pinyinName": "foshan",
+          "word": "F"
+        },
+        {
+          "id": 83,
+          "cityId": 152,
+          "acronym": "fushun",
+          "name": "抚顺",
+          "locationId": "210400",
+          "pinyinName": "fushun",
+          "word": "F"
+        },
+        {
+          "id": 87,
+          "cityId": 156,
+          "acronym": "fx",
+          "name": "阜新",
+          "locationId": "210900",
+          "pinyinName": "fuxin",
+          "word": "F"
+        },
+        {
+          "id": 136,
+          "cityId": 200,
+          "acronym": "fy",
+          "name": "阜阳",
+          "locationId": "341200",
+          "pinyinName": "fuyang",
+          "word": "F"
+        },
+        {
+          "id": 147,
+          "cityId": 220,
+          "acronym": "fuz",
+          "name": "抚州",
+          "locationId": "361000",
+          "pinyinName": "fuzhoufz",
+          "word": "F"
+        }
+      ],
+      "G": [
+        {
+          "id": 3,
+          "cityId": 20,
+          "acronym": "gz",
+          "name": "广州",
+          "locationId": "440100",
+          "pinyinName": "guangzhou",
+          "word": "G"
+        },
+        {
+          "id": 28,
+          "cityId": 93,
+          "acronym": "gl",
+          "name": "桂林",
+          "locationId": "450300",
+          "pinyinName": "guilin",
+          "word": "G"
+        },
+        {
+          "id": 48,
+          "cityId": 107,
+          "acronym": "gy",
+          "name": "贵阳",
+          "locationId": "520100",
+          "pinyinName": "guiyang",
+          "word": "G"
+        },
+        {
+          "id": 152,
+          "cityId": 217,
+          "acronym": "ganzhou",
+          "name": "赣州",
+          "locationId": "360700",
+          "pinyinName": "ganzhou",
+          "word": "G"
+        },
+        {
+          "id": 229,
+          "cityId": 307,
+          "acronym": "guangyuan",
+          "name": "广元",
+          "locationId": "510800",
+          "pinyinName": "guangyuan",
+          "word": "G"
+        },
+        {
+          "id": 250,
+          "cityId": 295,
+          "acronym": "gg",
+          "name": "贵港",
+          "locationId": "450800",
+          "pinyinName": "guigang",
+          "word": "G"
+        }
+      ],
+      "H": [
+        {
+          "id": 10,
+          "cityId": 50,
+          "acronym": "hz",
+          "name": "杭州",
+          "locationId": "330100",
+          "pinyinName": "hangzhou",
+          "word": "H"
+        },
+        {
+          "id": 15,
+          "cityId": 56,
+          "acronym": "hf",
+          "name": "合肥",
+          "locationId": "340100",
+          "pinyinName": "hefei",
+          "word": "H"
+        },
+        {
+          "id": 31,
+          "cityId": 94,
+          "acronym": "haikou",
+          "name": "海口",
+          "locationId": "460100",
+          "pinyinName": "haikou",
+          "word": "H"
+        },
+        {
+          "id": 50,
+          "cityId": 105,
+          "acronym": "hrb",
+          "name": "哈尔滨",
+          "locationId": "230100",
+          "pinyinName": "haerbin",
+          "word": "H"
+        },
+        {
+          "id": 63,
+          "cityId": 123,
+          "acronym": "hd",
+          "name": "邯郸",
+          "locationId": "130400",
+          "pinyinName": "handan",
+          "word": "H"
+        },
+        {
+          "id": 69,
+          "cityId": 139,
+          "acronym": "hu",
+          "name": "呼和浩特",
+          "locationId": "150100",
+          "pinyinName": "huhehaote",
+          "word": "H"
+        },
+        {
+          "id": 115,
+          "cityId": 186,
+          "acronym": "huzhou",
+          "name": "湖州",
+          "locationId": "330500",
+          "pinyinName": "huzhou",
+          "word": "H"
+        },
+        {
+          "id": 129,
+          "cityId": 180,
+          "acronym": "ha",
+          "name": "淮安",
+          "locationId": "320800",
+          "pinyinName": "huaian",
+          "word": "H"
+        },
+        {
+          "id": 142,
+          "cityId": 198,
+          "acronym": "huangshan",
+          "name": "黄山",
+          "locationId": "341000",
+          "pinyinName": "huangshan",
+          "word": "H"
+        },
+        {
+          "id": 143,
+          "cityId": 193,
+          "acronym": "hn",
+          "name": "淮南",
+          "locationId": "340400",
+          "pinyinName": "huainan",
+          "word": "H"
+        },
+        {
+          "id": 145,
+          "cityId": 195,
+          "acronym": "huaibei",
+          "name": "淮北",
+          "locationId": "340600",
+          "pinyinName": "huaibei",
+          "word": "H"
+        },
+        {
+          "id": 163,
+          "cityId": 239,
+          "acronym": "hb",
+          "name": "鹤壁",
+          "locationId": "410600",
+          "pinyinName": "hebi",
+          "word": "H"
+        },
+        {
+          "id": 168,
+          "cityId": 234,
+          "acronym": "heze",
+          "name": "菏泽",
+          "locationId": "371700",
+          "pinyinName": "heze",
+          "word": "H"
+        },
+        {
+          "id": 183,
+          "cityId": 250,
+          "acronym": "hshi",
+          "name": "黄石",
+          "locationId": "420200",
+          "pinyinName": "huangshi",
+          "word": "H"
+        },
+        {
+          "id": 205,
+          "cityId": 281,
+          "acronym": "huizhou",
+          "name": "惠州",
+          "locationId": "441300",
+          "pinyinName": "huizhou",
+          "word": "H"
+        },
+        {
+          "id": 211,
+          "cityId": 258,
+          "acronym": "hg",
+          "name": "黄冈",
+          "locationId": "421100",
+          "pinyinName": "huanggang",
+          "word": "H"
+        },
+        {
+          "id": 222,
+          "cityId": 265,
+          "acronym": "hy",
+          "name": "衡阳",
+          "locationId": "430400",
+          "pinyinName": "hengyang",
+          "word": "H"
+        }
+      ],
+      "J": [
+        {
+          "id": 39,
+          "cityId": 98,
+          "acronym": "jinzhou",
+          "name": "锦州",
+          "locationId": "210700",
+          "pinyinName": "jinzhou",
+          "word": "J"
+        },
+        {
+          "id": 41,
+          "cityId": 96,
+          "acronym": "jn",
+          "name": "济南",
+          "locationId": "370100",
+          "pinyinName": "jinan",
+          "word": "J"
+        },
+        {
+          "id": 42,
+          "cityId": 97,
+          "acronym": "jiaozuo",
+          "name": "焦作",
+          "locationId": "410800",
+          "pinyinName": "jiaozuo",
+          "word": "J"
+        },
+        {
+          "id": 55,
+          "cityId": 115,
+          "acronym": "jj",
+          "name": "九江",
+          "locationId": "360400",
+          "pinyinName": "jiujiang",
+          "word": "J"
+        },
+        {
+          "id": 82,
+          "cityId": 134,
+          "acronym": "jz",
+          "name": "晋中",
+          "locationId": "140700",
+          "pinyinName": "jinzhong",
+          "word": "J"
+        },
+        {
+          "id": 101,
+          "cityId": 169,
+          "acronym": "jixi",
+          "name": "鸡西",
+          "locationId": "230300",
+          "pinyinName": "jixi",
+          "word": "J"
+        },
+        {
+          "id": 105,
+          "cityId": 173,
+          "acronym": "jms",
+          "name": "佳木斯",
+          "locationId": "230800",
+          "pinyinName": "jiamusi",
+          "word": "J"
+        },
+        {
+          "id": 109,
+          "cityId": 161,
+          "acronym": "jl",
+          "name": "吉林",
+          "locationId": "220200",
+          "pinyinName": "jilin",
+          "word": "J"
+        },
+        {
+          "id": 118,
+          "cityId": 185,
+          "acronym": "jx",
+          "name": "嘉兴",
+          "locationId": "330400",
+          "pinyinName": "jiaxing",
+          "word": "J"
+        },
+        {
+          "id": 121,
+          "cityId": 188,
+          "acronym": "jh",
+          "name": "金华",
+          "locationId": "330700",
+          "pinyinName": "jinhua",
+          "word": "J"
+        },
+        {
+          "id": 180,
+          "cityId": 255,
+          "acronym": "jingmen",
+          "name": "荆门",
+          "locationId": "420800",
+          "pinyinName": "jingmen",
+          "word": "J"
+        },
+        {
+          "id": 201,
+          "cityId": 277,
+          "acronym": "jm",
+          "name": "江门",
+          "locationId": "440700",
+          "pinyinName": "jiangmen",
+          "word": "J"
+        },
+        {
+          "id": 214,
+          "cityId": 257,
+          "acronym": "jingzhou",
+          "name": "荆州",
+          "locationId": "421000",
+          "pinyinName": "jingzhou",
+          "word": "J"
+        },
+        {
+          "id": 296,
+          "cityId": 368,
+          "acronym": "jq",
+          "name": "酒泉",
+          "locationId": "620900",
+          "pinyinName": "jiuquan",
+          "word": "J"
+        },
+        {
+          "id": 374,
+          "cityId": 225,
+          "acronym": "jining",
+          "name": "济宁",
+          "locationId": "370800",
+          "pinyinName": "jining",
+          "word": "J"
+        },
+        {
+          "id": 2265,
+          "cityId": 218,
+          "acronym": "ja",
+          "name": "吉安",
+          "locationId": "360800",
+          "pinyinName": "jian",
+          "word": "J"
+        }
+      ],
+      "K": [
+        {
+          "id": 56,
+          "cityId": 114,
+          "acronym": "km",
+          "name": "昆明",
+          "locationId": "530100",
+          "pinyinName": "kunming",
+          "word": "K"
+        },
+        {
+          "id": 167,
+          "cityId": 235,
+          "acronym": "kaifeng",
+          "name": "开封",
+          "locationId": "410200",
+          "pinyinName": "kaifeng",
+          "word": "K"
+        }
+      ],
+      "L": [
+        {
+          "id": 47,
+          "cityId": 106,
+          "acronym": "lf",
+          "name": "廊坊",
+          "locationId": "131000",
+          "pinyinName": "langfang",
+          "word": "L"
+        },
+        {
+          "id": 67,
+          "cityId": 137,
+          "acronym": "linfen",
+          "name": "临汾",
+          "locationId": "141000",
+          "pinyinName": "linfen",
+          "word": "L"
+        },
+        {
+          "id": 88,
+          "cityId": 157,
+          "acronym": "liaoyang",
+          "name": "辽阳",
+          "locationId": "211000",
+          "pinyinName": "liaoyang",
+          "word": "L"
+        },
+        {
+          "id": 124,
+          "cityId": 179,
+          "acronym": "lyg",
+          "name": "连云港",
+          "locationId": "320700",
+          "pinyinName": "lianyungang",
+          "word": "L"
+        },
+        {
+          "id": 137,
+          "cityId": 203,
+          "acronym": "la",
+          "name": "六安",
+          "locationId": "341500",
+          "pinyinName": "liuan",
+          "word": "L"
+        },
+        {
+          "id": 144,
+          "cityId": 192,
+          "acronym": "lishui",
+          "name": "丽水",
+          "locationId": "331100",
+          "pinyinName": "lishui",
+          "word": "L"
+        },
+        {
+          "id": 162,
+          "cityId": 211,
+          "acronym": "ly",
+          "name": "龙岩",
+          "locationId": "350800",
+          "pinyinName": "longyan",
+          "word": "L"
+        },
+        {
+          "id": 166,
+          "cityId": 236,
+          "acronym": "luoyang",
+          "name": "洛阳",
+          "locationId": "410300",
+          "pinyinName": "luoyang",
+          "word": "L"
+        },
+        {
+          "id": 172,
+          "cityId": 230,
+          "acronym": "linyi",
+          "name": "临沂",
+          "locationId": "371300",
+          "pinyinName": "linyi",
+          "word": "L"
+        },
+        {
+          "id": 228,
+          "cityId": 304,
+          "acronym": "luzhou",
+          "name": "泸州",
+          "locationId": "510500",
+          "pinyinName": "luzhou",
+          "word": "L"
+        },
+        {
+          "id": 234,
+          "cityId": 310,
+          "acronym": "ls",
+          "name": "乐山",
+          "locationId": "511100",
+          "pinyinName": "leshan",
+          "word": "L"
+        },
+        {
+          "id": 245,
+          "cityId": 290,
+          "acronym": "liuzhou",
+          "name": "柳州",
+          "locationId": "450200",
+          "pinyinName": "liuzhou",
+          "word": "L"
+        },
+        {
+          "id": 279,
+          "cityId": 322,
+          "acronym": "lps",
+          "name": "六盘水",
+          "locationId": "520200",
+          "pinyinName": "liupanshui",
+          "word": "L"
+        },
+        {
+          "id": 320,
+          "cityId": 361,
+          "acronym": "lz",
+          "name": "兰州",
+          "locationId": "620100",
+          "pinyinName": "lanzhou",
+          "word": "L"
+        },
+        {
+          "id": 2255,
+          "cityId": 345,
+          "acronym": "lasa",
+          "name": "拉萨",
+          "locationId": "540100",
+          "pinyinName": "lasa",
+          "word": "L"
+        }
+      ],
+      "M": [
+        {
+          "id": 103,
+          "cityId": 175,
+          "acronym": "mdj",
+          "name": "牡丹江",
+          "locationId": "231000",
+          "pinyinName": "mudanjiang",
+          "word": "M"
+        },
+        {
+          "id": 146,
+          "cityId": 194,
+          "acronym": "mas",
+          "name": "马鞍山",
+          "locationId": "340500",
+          "pinyinName": "maanshan",
+          "word": "M"
+        },
+        {
+          "id": 204,
+          "cityId": 282,
+          "acronym": "mz",
+          "name": "梅州",
+          "locationId": "441400",
+          "pinyinName": "meizhou",
+          "word": "M"
+        },
+        {
+          "id": 230,
+          "cityId": 306,
+          "acronym": "my",
+          "name": "绵阳",
+          "locationId": "510700",
+          "pinyinName": "mianyang",
+          "word": "M"
+        },
+        {
+          "id": 236,
+          "cityId": 312,
+          "acronym": "ms",
+          "name": "眉山",
+          "locationId": "511400",
+          "pinyinName": "meishan",
+          "word": "M"
+        },
+        {
+          "id": 2263,
+          "cityId": 279,
+          "acronym": "mm",
+          "name": "茂名",
+          "locationId": "440900",
+          "pinyinName": "maoming",
+          "word": "M"
+        }
+      ],
+      "N": [
+        {
+          "id": 9,
+          "cityId": 51,
+          "acronym": "nb",
+          "name": "宁波",
+          "locationId": "330200",
+          "pinyinName": "ningbo",
+          "word": "N"
+        },
+        {
+          "id": 11,
+          "cityId": 55,
+          "acronym": "nj",
+          "name": "南京",
+          "locationId": "320100",
+          "pinyinName": "nanjing",
+          "word": "N"
+        },
+        {
+          "id": 26,
+          "cityId": 83,
+          "acronym": "nc",
+          "name": "南昌",
+          "locationId": "360100",
+          "pinyinName": "nanchang",
+          "word": "N"
+        },
+        {
+          "id": 27,
+          "cityId": 82,
+          "acronym": "nt",
+          "name": "南通",
+          "locationId": "320600",
+          "pinyinName": "nantong",
+          "word": "N"
+        },
+        {
+          "id": 40,
+          "cityId": 99,
+          "acronym": "nn",
+          "name": "南宁",
+          "locationId": "450100",
+          "pinyinName": "nanning",
+          "word": "N"
+        },
+        {
+          "id": 155,
+          "cityId": 212,
+          "acronym": "nd",
+          "name": "宁德",
+          "locationId": "350900",
+          "pinyinName": "ningde",
+          "word": "N"
+        },
+        {
+          "id": 161,
+          "cityId": 210,
+          "acronym": "np",
+          "name": "南平",
+          "locationId": "350700",
+          "pinyinName": "nanping",
+          "word": "N"
+        },
+        {
+          "id": 189,
+          "cityId": 244,
+          "acronym": "ny",
+          "name": "南阳",
+          "locationId": "411300",
+          "pinyinName": "nanyang",
+          "word": "N"
+        },
+        {
+          "id": 231,
+          "cityId": 309,
+          "acronym": "scnj",
+          "name": "内江",
+          "locationId": "511000",
+          "pinyinName": "neijiang",
+          "word": "N"
+        },
+        {
+          "id": 2253,
+          "cityId": 311,
+          "acronym": "nc",
+          "name": "南充",
+          "locationId": "511300",
+          "pinyinName": "nanchong",
+          "word": "N"
+        }
+      ],
+      "P": [
+        {
+          "id": 133,
+          "cityId": 207,
+          "acronym": "pt",
+          "name": "莆田",
+          "locationId": "350300",
+          "pinyinName": "putian",
+          "word": "P"
+        },
+        {
+          "id": 165,
+          "cityId": 237,
+          "acronym": "pds",
+          "name": "平顶山",
+          "locationId": "410400",
+          "pinyinName": "pingdingshan",
+          "word": "P"
+        },
+        {
+          "id": 2258,
+          "cityId": 158,
+          "acronym": "pj",
+          "name": "盘锦",
+          "locationId": "211100",
+          "pinyinName": "panjin",
+          "word": "P"
+        },
+        {
+          "id": 2264,
+          "cityId": 303,
+          "acronym": "panzhihua",
+          "name": "攀枝花",
+          "locationId": "510400",
+          "pinyinName": "panzhihua",
+          "word": "P"
+        }
+      ],
+      "Q": [
+        {
+          "id": 17,
+          "cityId": 60,
+          "acronym": "qd",
+          "name": "青岛",
+          "locationId": "370200",
+          "pinyinName": "qingdao",
+          "word": "Q"
+        },
+        {
+          "id": 43,
+          "cityId": 110,
+          "acronym": "qz",
+          "name": "泉州",
+          "locationId": "350500",
+          "pinyinName": "quanzhou",
+          "word": "Q"
+        },
+        {
+          "id": 122,
+          "cityId": 189,
+          "acronym": "quzhou",
+          "name": "衢州",
+          "locationId": "330800",
+          "pinyinName": "quzhou",
+          "word": "Q"
+        },
+        {
+          "id": 208,
+          "cityId": 286,
+          "acronym": "qingyuan",
+          "name": "清远",
+          "locationId": "441800",
+          "pinyinName": "qingyuan",
+          "word": "Q"
+        },
+        {
+          "id": 287,
+          "cityId": 330,
+          "acronym": "qj",
+          "name": "曲靖",
+          "locationId": "530300",
+          "pinyinName": "qujing",
+          "word": "Q"
+        },
+        {
+          "id": 2254,
+          "cityId": 122,
+          "acronym": "qhd",
+          "name": "秦皇岛",
+          "locationId": "130300",
+          "pinyinName": "qinhuangdao",
+          "word": "Q"
+        }
+      ],
+      "R": [
+        {
+          "id": 2256,
+          "cityId": 228,
+          "acronym": "rz",
+          "name": "日照",
+          "locationId": "371100",
+          "pinyinName": "rizhao",
+          "word": "R"
+        }
+      ],
+      "S": [
+        {
+          "id": 2,
+          "cityId": 10,
+          "acronym": "sh",
+          "name": "上海",
+          "locationId": "310000",
+          "pinyinName": "shanghai",
+          "word": "S"
+        },
+        {
+          "id": 4,
+          "cityId": 30,
+          "acronym": "sz",
+          "name": "深圳",
+          "locationId": "440300",
+          "pinyinName": "shenzhen",
+          "word": "S"
+        },
+        {
+          "id": 20,
+          "cityId": 66,
+          "acronym": "sy",
+          "name": "沈阳",
+          "locationId": "210100",
+          "pinyinName": "shenyang",
+          "word": "S"
+        },
+        {
+          "id": 21,
+          "cityId": 76,
+          "acronym": "sjz",
+          "name": "石家庄",
+          "locationId": "130100",
+          "pinyinName": "shijiazhuang",
+          "word": "S"
+        },
+        {
+          "id": 25,
+          "cityId": 80,
+          "acronym": "su",
+          "name": "苏州",
+          "locationId": "320500",
+          "pinyinName": "suzhou",
+          "word": "S"
+        },
+        {
+          "id": 44,
+          "cityId": 111,
+          "acronym": "sanya",
+          "name": "三亚",
+          "locationId": "460200",
+          "pinyinName": "sanya",
+          "word": "S"
+        },
+        {
+          "id": 53,
+          "cityId": 117,
+          "acronym": "st",
+          "name": "汕头",
+          "locationId": "440500",
+          "pinyinName": "shantou",
+          "word": "S"
+        },
+        {
+          "id": 108,
+          "cityId": 162,
+          "acronym": "sp",
+          "name": "四平",
+          "locationId": "220300",
+          "pinyinName": "siping",
+          "word": "S"
+        },
+        {
+          "id": 116,
+          "cityId": 187,
+          "acronym": "sx",
+          "name": "绍兴",
+          "locationId": "330600",
+          "pinyinName": "shaoxing",
+          "word": "S"
+        },
+        {
+          "id": 117,
+          "cityId": 184,
+          "acronym": "suqian",
+          "name": "宿迁",
+          "locationId": "321300",
+          "pinyinName": "suqian",
+          "word": "S"
+        },
+        {
+          "id": 126,
+          "cityId": 177,
+          "acronym": "suihua",
+          "name": "绥化",
+          "locationId": "231200",
+          "pinyinName": "suihua",
+          "word": "S"
+        },
+        {
+          "id": 135,
+          "cityId": 201,
+          "acronym": "suzhousz",
+          "name": "宿州",
+          "locationId": "341300",
+          "pinyinName": "suzhousz",
+          "word": "S"
+        },
+        {
+          "id": 148,
+          "cityId": 221,
+          "acronym": "sr",
+          "name": "上饶",
+          "locationId": "361100",
+          "pinyinName": "shangrao",
+          "word": "S"
+        },
+        {
+          "id": 159,
+          "cityId": 208,
+          "acronym": "sm",
+          "name": "三明",
+          "locationId": "350400",
+          "pinyinName": "sanming",
+          "word": "S"
+        },
+        {
+          "id": 184,
+          "cityId": 251,
+          "acronym": "shiyan",
+          "name": "十堰",
+          "locationId": "420300",
+          "pinyinName": "shiyan",
+          "word": "S"
+        },
+        {
+          "id": 190,
+          "cityId": 245,
+          "acronym": "sq",
+          "name": "商丘",
+          "locationId": "411400",
+          "pinyinName": "shangqiu",
+          "word": "S"
+        },
+        {
+          "id": 192,
+          "cityId": 243,
+          "acronym": "smx",
+          "name": "三门峡",
+          "locationId": "411200",
+          "pinyinName": "sanmenxia",
+          "word": "S"
+        },
+        {
+          "id": 232,
+          "cityId": 308,
+          "acronym": "suining",
+          "name": "遂宁",
+          "locationId": "510900",
+          "pinyinName": "suining",
+          "word": "S"
+        },
+        {
+          "id": 301,
+          "cityId": 383,
+          "acronym": "szs",
+          "name": "石嘴山",
+          "locationId": "640200",
+          "pinyinName": "shizuishan",
+          "word": "S"
+        },
+        {
+          "id": 2261,
+          "cityId": 266,
+          "acronym": "shaoyang",
+          "name": "邵阳",
+          "locationId": "430500",
+          "pinyinName": "shaoyang",
+          "word": "S"
+        }
+      ],
+      "T": [
+        {
+          "id": 6,
+          "cityId": 40,
+          "acronym": "tj",
+          "name": "天津",
+          "locationId": "120000",
+          "pinyinName": "tianjin",
+          "word": "T"
+        },
+        {
+          "id": 38,
+          "cityId": 101,
+          "acronym": "ty",
+          "name": "太原",
+          "locationId": "140100",
+          "pinyinName": "taiyuan",
+          "word": "T"
+        },
+        {
+          "id": 65,
+          "cityId": 121,
+          "acronym": "ts",
+          "name": "唐山",
+          "locationId": "130200",
+          "pinyinName": "tangshan",
+          "word": "T"
+        },
+        {
+          "id": 73,
+          "cityId": 143,
+          "acronym": "tongliao",
+          "name": "通辽",
+          "locationId": "150500",
+          "pinyinName": "tongliao",
+          "word": "T"
+        },
+        {
+          "id": 120,
+          "cityId": 191,
+          "acronym": "tz",
+          "name": "台州",
+          "locationId": "331000",
+          "pinyinName": "taizhoutz",
+          "word": "T"
+        },
+        {
+          "id": 128,
+          "cityId": 183,
+          "acronym": "taizhou",
+          "name": "泰州",
+          "locationId": "321200",
+          "pinyinName": "taizhou",
+          "word": "T"
+        },
+        {
+          "id": 140,
+          "cityId": 196,
+          "acronym": "tongling",
+          "name": "铜陵",
+          "locationId": "340700",
+          "pinyinName": "tongling",
+          "word": "T"
+        },
+        {
+          "id": 176,
+          "cityId": 226,
+          "acronym": "ta",
+          "name": "泰安",
+          "locationId": "370900",
+          "pinyinName": "taian",
+          "word": "T"
+        }
+      ],
+      "W": [
+        {
+          "id": 12,
+          "cityId": 52,
+          "acronym": "wx",
+          "name": "无锡",
+          "locationId": "320200",
+          "pinyinName": "wuxi",
+          "word": "W"
+        },
+        {
+          "id": 14,
+          "cityId": 57,
+          "acronym": "wh",
+          "name": "武汉",
+          "locationId": "420100",
+          "pinyinName": "wuhan",
+          "word": "W"
+        },
+        {
+          "id": 36,
+          "cityId": 102,
+          "acronym": "wuhu",
+          "name": "芜湖",
+          "locationId": "340200",
+          "pinyinName": "wuhu",
+          "word": "W"
+        },
+        {
+          "id": 58,
+          "cityId": 112,
+          "acronym": "wz",
+          "name": "温州",
+          "locationId": "330300",
+          "pinyinName": "wenzhou",
+          "word": "W"
+        },
+        {
+          "id": 71,
+          "cityId": 141,
+          "acronym": "wuhai",
+          "name": "乌海",
+          "locationId": "150300",
+          "pinyinName": "wuhai",
+          "word": "W"
+        },
+        {
+          "id": 178,
+          "cityId": 224,
+          "acronym": "wf",
+          "name": "潍坊",
+          "locationId": "370700",
+          "pinyinName": "weifang",
+          "word": "W"
+        },
+        {
+          "id": 314,
+          "cityId": 355,
+          "acronym": "wn",
+          "name": "渭南",
+          "locationId": "610500",
+          "pinyinName": "weinan",
+          "word": "W"
+        },
+        {
+          "id": 316,
+          "cityId": 365,
+          "acronym": "wuwei",
+          "name": "武威",
+          "locationId": "620600",
+          "pinyinName": "wuwei",
+          "word": "W"
+        },
+        {
+          "id": 343,
+          "cityId": 387,
+          "acronym": "xj",
+          "name": "乌鲁木齐",
+          "locationId": "650100",
+          "pinyinName": "wulumuqi",
+          "word": "W"
+        },
+        {
+          "id": 2259,
+          "cityId": 384,
+          "acronym": "wuzhong",
+          "name": "吴忠",
+          "locationId": "640300",
+          "pinyinName": "wuzhong",
+          "word": "W"
+        }
+      ],
+      "X": [
+        {
+          "id": 5,
+          "cityId": 42,
+          "acronym": "xa",
+          "name": "西安",
+          "locationId": "610100",
+          "pinyinName": "xian",
+          "word": "X"
+        },
+        {
+          "id": 16,
+          "cityId": 62,
+          "acronym": "xm",
+          "name": "厦门",
+          "locationId": "350200",
+          "pinyinName": "xiamen",
+          "word": "X"
+        },
+        {
+          "id": 37,
+          "cityId": 103,
+          "acronym": "xx",
+          "name": "新乡",
+          "locationId": "410700",
+          "pinyinName": "xinxiang",
+          "word": "X"
+        },
+        {
+          "id": 51,
+          "cityId": 119,
+          "acronym": "xz",
+          "name": "徐州",
+          "locationId": "320300",
+          "pinyinName": "xuzhou",
+          "word": "X"
+        },
+        {
+          "id": 62,
+          "cityId": 124,
+          "acronym": "xt",
+          "name": "邢台",
+          "locationId": "130500",
+          "pinyinName": "xingtai",
+          "word": "X"
+        },
+        {
+          "id": 134,
+          "cityId": 206,
+          "acronym": "xuancheng",
+          "name": "宣城",
+          "locationId": "341800",
+          "pinyinName": "xuancheng",
+          "word": "X"
+        },
+        {
+          "id": 158,
+          "cityId": 215,
+          "acronym": "xinyu",
+          "name": "新余",
+          "locationId": "360500",
+          "pinyinName": "xinyu",
+          "word": "X"
+        },
+        {
+          "id": 182,
+          "cityId": 253,
+          "acronym": "xf",
+          "name": "襄阳",
+          "locationId": "420600",
+          "pinyinName": "xiangyang",
+          "word": "X"
+        },
+        {
+          "id": 213,
+          "cityId": 256,
+          "acronym": "xiaogan",
+          "name": "孝感",
+          "locationId": "420900",
+          "pinyinName": "xiaogan",
+          "word": "X"
+        },
+        {
+          "id": 221,
+          "cityId": 264,
+          "acronym": "xiangtan",
+          "name": "湘潭",
+          "locationId": "430300",
+          "pinyinName": "xiangtan",
+          "word": "X"
+        },
+        {
+          "id": 262,
+          "cityId": 340,
+          "acronym": "bn",
+          "name": "西双版纳",
+          "locationId": "532800",
+          "pinyinName": "xishuangbanna",
+          "word": "X"
+        },
+        {
+          "id": 294,
+          "cityId": 374,
+          "acronym": "xn",
+          "name": "西宁",
+          "locationId": "630100",
+          "pinyinName": "xining",
+          "word": "X"
+        },
+        {
+          "id": 2266,
+          "cityId": 412,
+          "acronym": "xiantao",
+          "name": "仙桃",
+          "locationId": "429004",
+          "pinyinName": "xiantao",
+          "word": "X"
+        }
+      ],
+      "Y": [
+        {
+          "id": 49,
+          "cityId": 104,
+          "acronym": "yt",
+          "name": "烟台",
+          "locationId": "370600",
+          "pinyinName": "yantai",
+          "word": "Y"
+        },
+        {
+          "id": 66,
+          "cityId": 120,
+          "acronym": "yz",
+          "name": "扬州",
+          "locationId": "321000",
+          "pinyinName": "yangzhou",
+          "word": "Y"
+        },
+        {
+          "id": 81,
+          "cityId": 135,
+          "acronym": "yuncheng",
+          "name": "运城",
+          "locationId": "140800",
+          "pinyinName": "yuncheng",
+          "word": "Y"
+        },
+        {
+          "id": 86,
+          "cityId": 155,
+          "acronym": "yk",
+          "name": "营口",
+          "locationId": "210800",
+          "pinyinName": "yingkou",
+          "word": "Y"
+        },
+        {
+          "id": 130,
+          "cityId": 181,
+          "acronym": "yancheng",
+          "name": "盐城",
+          "locationId": "320900",
+          "pinyinName": "yancheng",
+          "word": "Y"
+        },
+        {
+          "id": 154,
+          "cityId": 219,
+          "acronym": "yichun",
+          "name": "宜春",
+          "locationId": "360900",
+          "pinyinName": "yichun",
+          "word": "Y"
+        },
+        {
+          "id": 181,
+          "cityId": 252,
+          "acronym": "yc",
+          "name": "宜昌",
+          "locationId": "420500",
+          "pinyinName": "yichang",
+          "word": "Y"
+        },
+        {
+          "id": 220,
+          "cityId": 267,
+          "acronym": "yy",
+          "name": "岳阳",
+          "locationId": "430600",
+          "pinyinName": "yueyang",
+          "word": "Y"
+        },
+        {
+          "id": 223,
+          "cityId": 270,
+          "acronym": "yiyang",
+          "name": "益阳",
+          "locationId": "430900",
+          "pinyinName": "yiyang",
+          "word": "Y"
+        },
+        {
+          "id": 235,
+          "cityId": 313,
+          "acronym": "yb",
+          "name": "宜宾",
+          "locationId": "511500",
+          "pinyinName": "yibin",
+          "word": "Y"
+        },
+        {
+          "id": 240,
+          "cityId": 316,
+          "acronym": "ya",
+          "name": "雅安",
+          "locationId": "511800",
+          "pinyinName": "yaan",
+          "word": "Y"
+        },
+        {
+          "id": 251,
+          "cityId": 296,
+          "acronym": "yulin",
+          "name": "玉林",
+          "locationId": "450900",
+          "pinyinName": "yulin",
+          "word": "Y"
+        },
+        {
+          "id": 302,
+          "cityId": 382,
+          "acronym": "yinchuan",
+          "name": "银川",
+          "locationId": "640100",
+          "pinyinName": "yinchuan",
+          "word": "Y"
+        },
+        {
+          "id": 309,
+          "cityId": 358,
+          "acronym": "yl",
+          "name": "榆林",
+          "locationId": "610800",
+          "pinyinName": "yulinyl",
+          "word": "Y"
+        },
+        {
+          "id": 373,
+          "cityId": 423,
+          "acronym": "yanji",
+          "name": "延吉",
+          "locationId": "222401",
+          "pinyinName": "yanji",
+          "word": "Y"
+        }
+      ],
+      "Z": [
+        {
+          "id": 22,
+          "cityId": 73,
+          "acronym": "zz",
+          "name": "郑州",
+          "locationId": "410100",
+          "pinyinName": "zhengzhou",
+          "word": "Z"
+        },
+        {
+          "id": 24,
+          "cityId": 81,
+          "acronym": "zb",
+          "name": "淄博",
+          "locationId": "370300",
+          "pinyinName": "zibo",
+          "word": "Z"
+        },
+        {
+          "id": 45,
+          "cityId": 108,
+          "acronym": "zh",
+          "name": "珠海",
+          "locationId": "440400",
+          "pinyinName": "zhuhai",
+          "word": "Z"
+        },
+        {
+          "id": 57,
+          "cityId": 113,
+          "acronym": "zs",
+          "name": "中山",
+          "locationId": "442000",
+          "pinyinName": "zhongshan",
+          "word": "Z"
+        },
+        {
+          "id": 127,
+          "cityId": 182,
+          "acronym": "zj",
+          "name": "镇江",
+          "locationId": "321100",
+          "pinyinName": "zhenjiang",
+          "word": "Z"
+        },
+        {
+          "id": 149,
+          "cityId": 222,
+          "acronym": "zaozhuang",
+          "name": "枣庄",
+          "locationId": "370400",
+          "pinyinName": "zaozhuang",
+          "word": "Z"
+        },
+        {
+          "id": 160,
+          "cityId": 209,
+          "acronym": "zhangzhou",
+          "name": "漳州",
+          "locationId": "350600",
+          "pinyinName": "zhangzhou",
+          "word": "Z"
+        },
+        {
+          "id": 200,
+          "cityId": 278,
+          "acronym": "zhanjiang",
+          "name": "湛江",
+          "locationId": "440800",
+          "pinyinName": "zhanjiang",
+          "word": "Z"
+        },
+        {
+          "id": 242,
+          "cityId": 318,
+          "acronym": "zy",
+          "name": "资阳",
+          "locationId": "512000",
+          "pinyinName": "ziyang",
+          "word": "Z"
+        },
+        {
+          "id": 257,
+          "cityId": 302,
+          "acronym": "zg",
+          "name": "自贡",
+          "locationId": "510300",
+          "pinyinName": "zigong",
+          "word": "Z"
+        },
+        {
+          "id": 2257,
+          "cityId": 280,
+          "acronym": "zq",
+          "name": "肇庆",
+          "locationId": "441200",
+          "pinyinName": "zhaoqing",
+          "word": "Z"
+        },
+        {
+          "id": 2262,
+          "cityId": 190,
+          "acronym": "zhoushan",
+          "name": "舟山",
+          "locationId": "330900",
+          "pinyinName": "zhoushan",
+          "word": "Z"
+        }
+      ]
+    }
+  }
+}

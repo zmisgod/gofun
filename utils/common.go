@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"math/rand"
@@ -141,4 +142,13 @@ func HttpClient(ctx context.Context, method HttpClientMethod, targetURL string, 
 		return nil, err
 	}
 	return resp, nil
+}
+
+const (
+	DefaultHeaderRangeTemplate string = "bytes=%d-%d"
+	HeaderRange                string = "Range"
+)
+
+func GetHeaderRange(startId, endId int) string {
+	return fmt.Sprintf(DefaultHeaderRangeTemplate, startId, endId)
 }

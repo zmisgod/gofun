@@ -64,22 +64,17 @@ const (
 
 const (
 	HeaderRange                string = "Range"
-	DefaultHeaderRangeTemplate string = "bytes=%d-%d"
 	DefaultHeaderRangeStartId  int    = 3
 	DefaultHeaderRangeEndId    int    = 4
 	DefaultTryTimes            int    = 30
 )
 
 func getDefaultHeaderRange() string {
-	return getHeaderRange(DefaultHeaderRangeStartId, DefaultHeaderRangeEndId)
+	return utils.GetHeaderRange(DefaultHeaderRangeStartId, DefaultHeaderRangeEndId)
 }
 
 func getResponseHeaderRange() string {
 	return fmt.Sprintf("bytes %d-%d", DefaultHeaderRangeStartId, DefaultHeaderRangeEndId)
-}
-
-func getHeaderRange(startId, endId int) string {
-	return fmt.Sprintf(DefaultHeaderRangeTemplate, startId, endId)
 }
 
 const (
@@ -311,7 +306,7 @@ func (a *Downloader) prepareHTTPClient(ctx context.Context, targetURL string, me
 		}
 	}
 	if rangeStr != "" {
-		request.Header.Set(HeaderRange, rangeStr)
+		request.Header.Set(utils.HeaderRange, rangeStr)
 	}
 	request = request.WithContext(ctx)
 	resp, err := client.Do(request)
@@ -341,7 +336,7 @@ func (a *Downloader) checkFileSupportMultiRoutineAndFileName(ctx context.Context
 }
 
 func (a *Downloader) doHttpRequest(ctx context.Context, startId, endId int) error {
-	rangeStr := getHeaderRange(startId, endId)
+	rangeStr := utils.GetHeaderRange(startId, endId)
 	resp, err := a.prepareHTTPClient(ctx, a.Url, HTTPGet, rangeStr)
 	if err != nil {
 		return err

@@ -1,0 +1,194 @@
+{
+  "code": 0,
+  "message": "请求成功",
+  "data": {
+    "video": [
+      {
+        "img": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-04-20/1618905113009.jpg",
+        "name": "传奇谍战，生死较量！张艺谋导演IMAX悬崖之上预告",
+        "url": "m3239z50gst"
+      }
+    ],
+    "want": 0,
+    "movie": {
+      "englishName": "Cliff Walkers",
+      "ver": "IMAX 2D",
+      "directors": "张艺谋",
+      "pubDesc": "2021-04-30 18:00中国大陆上映",
+      "movieId": 1298367,
+      "stars": "张译,于和伟,秦海璐",
+      "source": "中国大陆",
+      "duration": 120,
+      "drama": "上世纪三十年代，四位曾在苏联接受特训的共产党特工组成任务小队，回国执行代号为“乌特拉”的秘密行动。由于叛徒的出卖，他们从跳伞降落的第一刻起， 就已置身于敌人布下的罗网之中。同志能否脱身，任务能否完成，雪一直下，立于“悬崖之上”的行动小组面临严峻考验。",
+      "score": "9.1",
+      "name": "悬崖之上",
+      "category": "剧情,悬疑,动作",
+      "ownMark": "IMAX<sup>®</sup>版《悬崖之上》经由专利的IMAX DMR<sup>®</sup>数字原底翻版技术逐帧转制，通过身临其境的观影体验，将观众带回上世纪三十年代的“冰城”哈尔滨，体验血雨腥风的谍战漩涡。在IMAX<sup>®</sup>顶天立地的大银幕和纤毫毕现的影音效果呈现下，导演张艺谋的电影视觉美学得到了淋漓尽致的展现，观众也将如临现场，感受命悬一线的生死较量与扣人心弦的正邪博弈。",
+      "ownImg": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-04-20/1618905056305.jpg",
+      "ownPic": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-04-20/1618905119444.jpg",
+      "showst": 3
+    },
+    "photo": [
+      {
+        "id": 43777,
+        "mid": 1298367,
+        "pid": 28352145,
+        "olonk": "http://p0.meituan.net/movie/022f000e74898405a5a0d086b8894ace432310.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/022f000e74898405a5a0d086b8894ace432310.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43778,
+        "mid": 1298367,
+        "pid": 28352144,
+        "olonk": "http://p1.meituan.net/movie/004e9bd173e3ba68ab02df9eb1a78b81505146.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p1.meituan.net/movie/004e9bd173e3ba68ab02df9eb1a78b81505146.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43779,
+        "mid": 1298367,
+        "pid": 28352143,
+        "olonk": "http://p0.meituan.net/movie/fd5bc8c1f142ab7bb3ed06bb02121bdc307465.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/fd5bc8c1f142ab7bb3ed06bb02121bdc307465.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43780,
+        "mid": 1298367,
+        "pid": 27484045,
+        "olonk": "http://p1.meituan.net/movie/a7e552e4d0badafec1bd3bc0aff2eb4d538684.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p1.meituan.net/movie/a7e552e4d0badafec1bd3bc0aff2eb4d538684.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43781,
+        "mid": 1298367,
+        "pid": 27484044,
+        "olonk": "http://p0.meituan.net/movie/692fea3fae849bb1a779c3d1d9c10f57498977.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/692fea3fae849bb1a779c3d1d9c10f57498977.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43782,
+        "mid": 1298367,
+        "pid": 27484040,
+        "olonk": "http://p1.meituan.net/movie/75fb2f9347f10c37fd162400952698db102391.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p1.meituan.net/movie/75fb2f9347f10c37fd162400952698db102391.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43783,
+        "mid": 1298367,
+        "pid": 27484038,
+        "olonk": "http://p1.meituan.net/movie/2536a14a2bccc89a8de20b768abaa395545268.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p1.meituan.net/movie/2536a14a2bccc89a8de20b768abaa395545268.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43784,
+        "mid": 1298367,
+        "pid": 28515989,
+        "olonk": "http://p0.meituan.net/movie/b672e60fab6a97a692c2a425d52ac326539535.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/b672e60fab6a97a692c2a425d52ac326539535.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43785,
+        "mid": 1298367,
+        "pid": 28515985,
+        "olonk": "http://p0.meituan.net/movie/083f7a8f40c82bc5517475dd9d3ee5ad144502.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/083f7a8f40c82bc5517475dd9d3ee5ad144502.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43786,
+        "mid": 1298367,
+        "pid": 15258523,
+        "olonk": "http://p0.meituan.net/movie/2930d56d66311742ff49eeb9f821109450927.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/2930d56d66311742ff49eeb9f821109450927.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43787,
+        "mid": 1298367,
+        "pid": 28516002,
+        "olonk": "http://p0.meituan.net/movie/903b74e131df2733c547c838333d6713545370.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/903b74e131df2733c547c838333d6713545370.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43788,
+        "mid": 1298367,
+        "pid": 15258522,
+        "olonk": "http://p0.meituan.net/movie/44c78fdd2656b53a29c95a64d64b904735415.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/44c78fdd2656b53a29c95a64d64b904735415.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43789,
+        "mid": 1298367,
+        "pid": 28515986,
+        "olonk": "http://p0.meituan.net/movie/9f79c1c9b8d7866f558808439b13767d638782.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/9f79c1c9b8d7866f558808439b13767d638782.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43790,
+        "mid": 1298367,
+        "pid": 28361116,
+        "olonk": "http://p0.meituan.net/movie/52404a949ed194f32e6708b4b452962e132260.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/52404a949ed194f32e6708b4b452962e132260.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43791,
+        "mid": 1298367,
+        "pid": 15242916,
+        "olonk": "http://p0.meituan.net/movie/5b6cf790c7e982873686e8a206f1967232507.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/5b6cf790c7e982873686e8a206f1967232507.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43792,
+        "mid": 1298367,
+        "pid": 28528132,
+        "olonk": "http://p0.meituan.net/movie/f3fbc9c00f8a627662375db864f2264f616487.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/f3fbc9c00f8a627662375db864f2264f616487.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43793,
+        "mid": 1298367,
+        "pid": 28516004,
+        "olonk": "http://p0.meituan.net/movie/744a0633af08857bb89dbad9c8e1033b612298.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/744a0633af08857bb89dbad9c8e1033b612298.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43794,
+        "mid": 1298367,
+        "pid": 27754398,
+        "olonk": "http://p0.meituan.net/movie/7eadcebddb6cb4a1c0b6d0589826ae0097926.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/7eadcebddb6cb4a1c0b6d0589826ae0097926.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43795,
+        "mid": 1298367,
+        "pid": 28515994,
+        "olonk": "http://p0.meituan.net/movie/86aed6110d5c08a87ed4de247cc3b88943814.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/86aed6110d5c08a87ed4de247cc3b88943814.jpg@100w_100h_1e_1c",
+        "type": 1
+      },
+      {
+        "id": 43796,
+        "mid": 1298367,
+        "pid": 28363067,
+        "olonk": "http://p0.meituan.net/movie/9adf0f1e330feb295a2a1170144e1551144544.jpg@2500w_2500h_1l_0e",
+        "tlink": "http://p0.meituan.net/movie/9adf0f1e330feb295a2a1170144e1551144544.jpg@100w_100h_1e_1c",
+        "type": 1
+      }
+    ]
+  }
+}

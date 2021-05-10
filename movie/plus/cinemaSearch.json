@@ -1,0 +1,14 @@
+{
+  "code": 0,
+  "message": "请求成功",
+  "data": [
+    {
+      "cinemaId": 16669,
+      "cinemaName": "星轶IMAX影城（安庆吾悦广场旗舰店）",
+      "address": "人民路4号新城吾悦广场4楼4009号",
+      "distince": 431897.0,
+      "hasCoupon": 0,
+      "showNum": 11
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "code": 0,
+  "message": "请求成功",
+  "data": [
+    {
+      "id": 1298367,
+      "name": "悬崖之上",
+      "img": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-04-20/1618905056305.jpg",
+      "sc": "9.1",
+      "rt": "2021-04-30",
+      "dir": "张艺谋",
+      "star": "张译,于和伟,秦海璐",
+      "dur": "120",
+      "ver": "IMAX 2D",
+      "showst": 3,
+      "hasCoupon": 0
+    },
+    {
+      "id": 1241385,
+      "name": "秘密访客",
+      "img": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-04-15/1618455235604.jpg",
+      "sc": "7.7",
+      "rt": "2021-05-01",
+      "dir": "陈正道",
+      "star": "郭富城,段奕宏,张子枫",
+      "dur": "111",
+      "ver": "IMAX 2D",
+      "showst": 3,
+      "hasCoupon": 0
+    },
+    {
+      "id": 343568,
+      "name": "哥斯拉大战金刚",
+      "img": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-03-13/1615607221709.jpg",
+      "sc": "8.9",
+      "rt": "2021-03-26",
+      "dir": "亚当·温加德",
+      "star": "哥斯拉,金刚,亚历山大·斯卡斯加德",
+      "dur": "113",
+      "ver": "IMAX 3D",
+      "showst": 3,
+      "hasCoupon": 0
+    },
+    {
+      "id": 1221,
+      "name": "指环王：双塔奇兵",
+      "img": "https://imaxplus-test.oss-cn-beijing.aliyuncs.com/uploadfiles/2021-04-14/1618381963889.jpg",
+      "sc": "9.2",
+      "rt": "2021-04-23",
+      "dir": "彼得·杰克逊",
+      "star": "伊莱贾·伍德,伊恩·麦克莱恩,西恩·奥斯汀",
+      "dur": "180",
+      "ver": "IMAX 2D",
+      "showst": 3,
+      "hasCoupon": 0
+    }
+  ]
+}

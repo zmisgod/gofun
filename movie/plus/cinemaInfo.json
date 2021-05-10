@@ -1,0 +1,85 @@
+{
+  "code": 0,
+  "message": "请求成功",
+  "data": {
+    "cinema": {
+      "id": 592,
+      "cinemaId": 226,
+      "cinemaName": "万达影城（五角场万达广场IMAX店）",
+      "cityName": "上海",
+      "cityId": 10,
+      "cinemaAddr": "淞沪路77号万达广场3层",
+      "buyTimeLimit": 1,
+      "buyNumLimit": 6,
+      "stdCinemaCode": "31090701",
+      "takeTicketPlace": "影院内自助取票机或影院前台",
+      "areaName": "杨浦区",
+      "locationId": 310110,
+      "dis": "五角场/大学区",
+      "longitude": "121.51335",
+      "latitude": "31.30105",
+      "tel": "18918125983",
+      "note": "",
+      "subway": null,
+      "supportQR": 1,
+      "districtId": "10",
+      "isImax": 1
+    },
+    "features": [
+      {
+        "id": 5262,
+        "cinemaId": 592,
+        "featureDesc": "1.3米以下儿童可免费无座观影（VIP厅、IMAX厅、4D厅、ONYX厅、情侣厅、杜比影院厅除外），一名成人限带一名儿童（仅限1.3米以下，观看3D均有3D眼镜）。",
+        "featureName": "儿童优惠"
+      },
+      {
+        "id": 5263,
+        "cinemaId": 592,
+        "featureDesc": "",
+        "featureName": "有情侣座"
+      },
+      {
+        "id": 5264,
+        "cinemaId": 592,
+        "featureDesc": "万达广场B2停车场",
+        "featureName": "可停车"
+      },
+      {
+        "id": 5265,
+        "cinemaId": 592,
+        "featureDesc": "免押金",
+        "featureName": "3D眼镜"
+      },
+      {
+        "id": 5818,
+        "cinemaId": 592,
+        "featureDesc": "1.3米以下儿童可免费无座观影（VIP厅、IMAX厅、4D厅、ONYX厅、情侣厅、杜比影院厅除外），一名成人限带一名儿童（仅限1.3米以下，观看3D均有3D眼镜）。",
+        "featureName": "儿童票"
+      },
+      {
+        "id": 5819,
+        "cinemaId": 592,
+        "featureDesc": "",
+        "featureName": "有WIFI"
+      },
+      {
+        "id": 5820,
+        "cinemaId": 592,
+        "featureDesc": "免押金",
+        "featureName": "免押金"
+      },
+      {
+        "id": 5821,
+        "cinemaId": 592,
+        "featureDesc": "7号厅，146个座位；8号IMAX厅（儿童需购票），347个座位",
+        "featureName": "IMAX厅"
+      },
+      {
+        "id": 7850,
+        "cinemaId": 592,
+        "featureDesc": "每日消毒，隔座售卖，全员佩戴口罩，进门需体温测量",
+        "featureName": "安心影院"
+      }
+    ]
+  }
+}
