@@ -18,9 +18,9 @@ func TestNewCity(t *testing.T) {
 	province := re.GetAllProvince()
 	log.Println(province)
 
-	city := re.GetCitiesByProvince("台湾省")
+	city := re.GetCitiesByProvince("澳门特别行政区")
 	log.Println(city)
 
-	districts := re.GetDistrictByCityName("台湾省", "台北市")
+	districts := re.GetDistrictByCityName("澳门特别行政区", "澳门特别行政区")
 	log.Println(districts)
 }

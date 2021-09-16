@@ -86,7 +86,9 @@ func (a *FetchCity) handleData() {
 						Level: 2,
 					})
 				}
-				if oneLevelPre == nowPre && (oneLevelPre == "31" || oneLevelPre == "50" || oneLevelPre == "11" || oneLevelPre == "12") {
+				//北上广深、澳门、香港 需要特殊处理
+				if oneLevelPre == nowPre && (oneLevelPre == "31" || oneLevelPre == "50" || oneLevelPre == "11" ||
+					oneLevelPre == "12" || oneLevelPre == "81" || oneLevelPre == "82") {
 					if nowSub != "00" {
 						ex, ok := directCity[v.ID]
 						if ok {
