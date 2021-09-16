@@ -18,8 +18,11 @@ type OneInfo struct {
 	FullName string `json:"fullname"`
 }
 
-var res Resp
-var cityTrees CityTree
+type FetchCity struct {
+	OriginalData io.Reader   `json:"original_data"`
+	ParseData    *Resp       `json:"parse_data"`
+	CityList     []*CityTree `json:"city_list"`
+}
 
 type CityTree struct {
 	ID    string      `json:"id"`
@@ -28,19 +31,19 @@ type CityTree struct {
 	Level int         `json:"level"`
 }
 
-func NewJson(fileObj io.Reader) (*Resp, error) {
-	return GetData(fileObj)
-}
-
-func GetData(fileObj io.Reader) (*Resp, error) {
+func NewCity(fileObj io.Reader) (*FetchCity, error) {
 	re, err := ioutil.ReadAll(fileObj)
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(re, &res)
+	res := FetchCity{}
+	var resp Resp
+	err = json.Unmarshal(re, &resp)
 	if err != nil {
 		return nil, err
 	}
+	res.ParseData = &resp
+	res.handleData()
 	return &res, nil
 }
 
@@ -51,13 +54,13 @@ func getStringSplit(a string) (pre, mid, sub string) {
 	return
 }
 
-func (a *Resp) handleData() {
+func (a *FetchCity) handleData() {
 	var levelOne []*CityTree
 	levelTwo := make(map[string][]CityTree)
 	levelThree := make(map[string][]CityTree)
 	directCity := make(map[string]map[string]CityTree)
-	if len(a.Result) > 0 {
-		for _, v := range a.Result {
+	if len(a.ParseData.Result) > 0 {
+		for _, v := range a.ParseData.Result {
 			for _, j := range v {
 				_, mid, sub := getStringSplit(j.ID)
 				if mid == "00" && sub == "00" {
@@ -73,7 +76,7 @@ func (a *Resp) handleData() {
 
 	for _, v := range levelOne {
 		oneLevelPre, _, _ := getStringSplit(v.ID)
-		for _, j := range a.Result {
+		for _, j := range a.ParseData.Result {
 			for _, x := range j {
 				nowPre, nowMid, nowSub := getStringSplit(x.ID)
 				if oneLevelPre == nowPre && nowSub == "00" && nowMid != "00" {
@@ -113,10 +116,10 @@ func (a *Resp) handleData() {
 		for _, j := range v {
 			twoLevelPre, twoLevelMid, _ := getStringSplit(j.ID)
 			//获取城市下面的区信息
-			for _, x := range a.Result {
+			for _, x := range a.ParseData.Result {
 				for _, s := range x {
 					nowPre, nowMid, nowSub := getStringSplit(s.ID)
-					if twoLevelPre == nowPre && twoLevelMid == nowMid && nowSub != "00"  {
+					if twoLevelPre == nowPre && twoLevelMid == nowMid && nowSub != "00" {
 						levelThree[j.ID] = append(levelThree[j.ID], CityTree{
 							ID:    s.ID,
 							Name:  s.FullName,
@@ -135,7 +138,7 @@ func (a *Resp) handleData() {
 				threeList := make([]*CityTree, 0)
 				city, _ok := levelThree[j.ID]
 				if _ok {
-					for _, s :=range city {
+					for _, s := range city {
 						threeList = append(threeList, &CityTree{
 							ID:    s.ID,
 							Name:  s.Name,
@@ -174,17 +177,41 @@ func (a *Resp) handleData() {
 			})
 		}
 	}
-	for _, v := range levelOne {
-		fmt.Println(v.Name, v.Level)
-		for _, j := range v.List {
-			fmt.Println(j.Name, j.Level)
-			for _, x := range j.List {
-				fmt.Println(*x)
+	a.CityList = levelOne
+}
+
+func (a *FetchCity) GetAllProvince() []string {
+	list := make([]string, 0)
+	for _, v := range a.CityList {
+		list = append(list, v.Name)
+	}
+	return list
+}
+
+func (a *FetchCity) GetCitiesByProvince(province string) []string {
+	list := make([]string, 0)
+	for _, v := range a.CityList {
+		if v.Name == province {
+			for _, j := range v.List {
+				list = append(list, j.Name)
 			}
 		}
 	}
+	return list
 }
 
-func getProvince() {
-
+func (a *FetchCity) GetDistrictByCityName(province string, cityName string) []string {
+	list := make([]string, 0)
+	for _, v := range a.CityList {
+		if v.Name == province {
+			for _, j := range v.List {
+				if j.Name == cityName {
+					for _, x := range j.List {
+						list = append(list, x.Name)
+					}
+				}
+			}
+		}
+	}
+	return list
 }
