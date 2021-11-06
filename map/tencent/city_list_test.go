@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-func TestNewCity(t *testing.T) {
-	_file, err := os.Open("./res.json")
+func TestNewCityList(t *testing.T) {
+	_file, err := os.Open("./city_list.json")
 	if err != nil {
 		t.Error(err)
 	}
