@@ -177,6 +177,27 @@ func SolarToLunar(date string) (string, bool) {
 	}
 }
 
+func LunarToSolarByMonthDay(year int, month, day string) (time.Time, error) {
+	reMap := make(map[string]time.Time)
+	start := time.Date(year-1, 7, 1, 0, 0, 0, 0, time.Local).Unix()
+	end := time.Date(year+1, 7, 31, 0, 0, 0, 0, time.Local).Unix()
+	for i := start; i < end; i += 86400 {
+		_i := time.Unix(i, 0)
+		res, _ := SolarToLunar(_i.Format("2006-01-02"))
+		if res != "" {
+			ex := strings.Split(res, "-")
+			if len(ex) >= 3 {
+				reMap[fmt.Sprintf("%s%s", ex[1], ex[2])] = _i
+			}
+		}
+	}
+	_s, ok := reMap[fmt.Sprintf("%s%s", month, day)]
+	if ok {
+		return _s, nil
+	}
+	return time.Now(), errors.New("error")
+}
+
 func calculateLunar(date string) (lunarYear, lunarMonth, lunarDay, leapMonth int, leapMonthFlag bool) {
 	loc, _ := time.LoadLocation("Local")
 	i := 0
