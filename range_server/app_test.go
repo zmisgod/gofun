@@ -29,7 +29,7 @@ func TestReadRemoteRangeFile(t *testing.T) {
 	go func() {
 		SimulateRangeServer("127.0.0.1", port, "image.jpg", true)
 	}()
-	time.Sleep(1*time.Second)
+	time.Sleep(1 * time.Second)
 	readRangeFile := ReadRemoteRangeFile{
 		TargetUrl: fmt.Sprintf("http://127.0.0.1:%d/", port),
 	}

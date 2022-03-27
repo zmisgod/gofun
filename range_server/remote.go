@@ -75,10 +75,10 @@ func (a *ReadRemoteRangeFile) Run(ctx context.Context) error {
 		//wg.Add(1)
 		//go func() {
 		//	defer wg.Done()
-			fmt.Println("Run-----", startId, endId)
-			if err := a.Read(ctx, startId, endId); err != nil {
-				fmt.Println("ReadError", err)
-			}
+		fmt.Println("Run-----", startId, endId)
+		if err := a.Read(ctx, startId, endId); err != nil {
+			fmt.Println("ReadError", err)
+		}
 		//}()
 	}
 	//wg.Wait()

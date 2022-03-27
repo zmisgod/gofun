@@ -7,6 +7,7 @@ import (
 	"github.com/zmisgod/gofun/utils"
 	"io"
 	"io/ioutil"
+	"time"
 )
 
 type DouBanCategory string
@@ -50,7 +51,7 @@ func Fetch(ctx context.Context, category DouBanCategory, startId int, pageSize i
 	targetUrl :=
 		fmt.Sprintf("https://movie.douban.com/j/search_subjects?type=movie&tag=%s&sort=recommend&page_limit=%d&page_start=%d",
 			string(category), pageSize, startId)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, targetUrl, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, targetUrl, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return nil, err
 	}

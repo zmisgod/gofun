@@ -33,7 +33,7 @@ func NewDoor(to string) *Door {
 }
 
 func TestNewLunar(t *testing.T) {
-	myLunar1 , err := lunar.SolarTimeToLunar(time.Date(time.Now().Year(), 10, 18, 0, 0,0,0, time.Local))
+	myLunar1, err := lunar.SolarTimeToLunar(time.Date(time.Now().Year(), 10, 18, 0, 0, 0, 0, time.Local))
 	if err != nil {
 		fmt.Println(err.Error())
 		return

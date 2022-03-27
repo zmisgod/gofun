@@ -13,7 +13,7 @@ type Cipher struct {
 	Key []byte
 }
 
-func NewCipher(key []byte) Cipher{
+func NewCipher(key []byte) Cipher {
 	return Cipher{Key: key}
 }
 

@@ -13,9 +13,9 @@ func TestFindMovieInfo(t *testing.T) {
 	obj, err := Fetch(ctx, "25824686")
 	if err != nil {
 		t.Fatal(err)
-	}else{
+	} else {
 		if len(obj.CoverUrls) > 0 {
-			for _,v := range obj.CoverUrls {
+			for _, v := range obj.CoverUrls {
 				d, err := downloader.NewDownloader(v, downloader.SetTimeout(10))
 				if err == nil {
 					if err := d.SaveFile(ctx); err != nil {

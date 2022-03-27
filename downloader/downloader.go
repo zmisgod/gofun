@@ -63,10 +63,10 @@ const (
 )
 
 const (
-	HeaderRange                string = "Range"
-	DefaultHeaderRangeStartId  int    = 3
-	DefaultHeaderRangeEndId    int    = 4
-	DefaultTryTimes            int    = 30
+	HeaderRange               string = "Range"
+	DefaultHeaderRangeStartId int    = 3
+	DefaultHeaderRangeEndId   int    = 4
+	DefaultTryTimes           int    = 30
 )
 
 func getDefaultHeaderRange() string {
@@ -443,9 +443,9 @@ func (a *Downloader) SmartDownloader(ctx context.Context) error {
 		_teCount := 0
 
 		rand.Shuffle(len(existList), func(i, j int) {
-			existList[i],existList[j] = existList[j], existList[i]
+			existList[i], existList[j] = existList[j], existList[i]
 		})
-		i:=0
+		i := 0
 		stop := false
 		for !stop {
 			k := existList[i%len(downloadQueue)]
@@ -457,7 +457,7 @@ func (a *Downloader) SmartDownloader(ctx context.Context) error {
 			if len(finishMap) == len(downloadQueue) {
 				stop = true
 				sStop = true
-			}else{
+			} else {
 				if downloadQueue[k].queueType == QueueTypeNone {
 					stop = true
 					break
@@ -470,15 +470,15 @@ func (a *Downloader) SmartDownloader(ctx context.Context) error {
 		for k := range existList {
 			if downloadQueue[k].queueType == QueueTypeFinish {
 				_teCount++
-			}else if downloadQueue[k].queueType == QueueTypeNone{
+			} else if downloadQueue[k].queueType == QueueTypeNone {
 				downloadQueue[k].queueType = QueueTypeDownloading
 				nowId = k
 			}
 		}
 		if _teCount == len(downloadQueue) {
 			sStop = true
-		}else{
-			if nowId >= 0{
+		} else {
+			if nowId >= 0 {
 				wg.Add(1)
 				go func(_k int) {
 					defer wg.Done()
@@ -486,7 +486,7 @@ func (a *Downloader) SmartDownloader(ctx context.Context) error {
 					if _s >= 8 {
 						downloadQueue[_k].queueType = QueueTypeFinish
 						fmt.Println("finish")
-					}else{
+					} else {
 						downloadQueue[_k].queueType = QueueTypeNone
 						fmt.Println("none")
 					}

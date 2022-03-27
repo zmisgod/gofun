@@ -12,7 +12,7 @@ func TestEncode(t *testing.T) {
 	res, err := cipher.Aes([]byte("121213"))
 	if err != nil {
 		log.Fatalln(err)
-	}else{
+	} else {
 		encodeStr := cipher.B64Encode(res)
 		fmt.Println(encodeStr)
 	}
@@ -29,7 +29,7 @@ func TestDecode(t *testing.T) {
 	res, err := cipher.Dec(resByte)
 	if err != nil {
 		log.Fatalln(err)
-	}else{
+	} else {
 		fmt.Println(string(res))
 	}
 }

@@ -56,12 +56,12 @@ func TestHttpClient_POSTJson(t *testing.T) {
 
 func TestHttpClient_POSTForm(t *testing.T) {
 	formData := map[string]string{
-		"latitude":"12.0",
-		"longitude":"13.0",
-		"city":"安庆",
-		"movieId":"1298367",
+		"latitude":  "12.0",
+		"longitude": "13.0",
+		"city":      "安庆",
+		"movieId":   "1298367",
 	}
-	header := map[string]string{"sessionId":sessionId}
+	header := map[string]string{"sessionId": sessionId}
 	nC := NewHttpClient(postFromDataUrl, HttpClientMethodPost, header, 1, "")
 	nC.SetPostFormData(ctx, formData)
 	resp, err := nC.HttpClient(ctx)

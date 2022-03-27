@@ -13,7 +13,7 @@ var CharsetUTF8 = "utf-8"
 
 type CsvReader struct {
 	FilePath string
-	Charset string
+	Charset  string
 }
 
 func NewCsvReader(filePath string) (*CsvReader, error) {
@@ -33,9 +33,9 @@ func (a *CsvReader) SetCharset(charset string) {
 	}
 }
 
-func (a *CsvReader) GetValues() ([][]string, error ) {
+func (a *CsvReader) GetValues() ([][]string, error) {
 	resultValueArray := make([][]string, 0)
-	csvByteString , err := ioutil.ReadFile(a.FilePath)
+	csvByteString, err := ioutil.ReadFile(a.FilePath)
 	if err != nil {
 		return resultValueArray, err
 	}

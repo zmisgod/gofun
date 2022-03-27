@@ -1,4 +1,5 @@
 package main
+
 //获取各省I-MAX电影院
 import (
 	"bufio"
@@ -43,7 +44,7 @@ func checkError(err error) {
 	}
 }
 
-func init(){
+func init() {
 	err := godotenv.Load("./../../.env")
 	checkError(err)
 	dbHost := os.Getenv("mysql.host")
@@ -93,7 +94,7 @@ func main() {
 		"香港",
 		"澳门",
 	}
-	for _,province :=range provinceList {
+	for _, province := range provinceList {
 		resp, err := http.PostForm(targetURL, url.Values{
 			"nowlat": {"33.013797"},
 			"nowlng": {"119.368489"},

@@ -6,6 +6,7 @@ import (
 	"github.com/zmisgod/gofun/utils"
 	"io"
 	"net/http"
+	"time"
 )
 
 type FetchData interface {
@@ -76,7 +77,7 @@ func (a *Body) ToData(ctx context.Context) error {
 
 func (a *Body) Fetch(ctx context.Context) error {
 	var err error
-	a.fetchBody, err = utils.HttpClient(ctx, a.HttpConfig.Method, a.HttpConfig.Url, a.HttpConfig.Timeout, a.HttpConfig.Proxy, a.HttpConfig.Body, a.HttpConfig.Header)
+	a.fetchBody, err = utils.HttpClient(ctx, a.HttpConfig.Method, a.HttpConfig.Url, time.Duration(a.HttpConfig.Timeout)*time.Second, a.HttpConfig.Proxy, a.HttpConfig.Body, a.HttpConfig.Header)
 	if err != nil {
 		return err
 	}

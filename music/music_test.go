@@ -15,7 +15,7 @@ func TestNewFetchMusic(t *testing.T) {
 	resUrl, err := res.GetDownloadURL(context.Background())
 	if err != nil {
 		t.Fatal(err)
-	}else{
+	} else {
 		t.Log(resUrl)
 	}
 }

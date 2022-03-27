@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func main (){
+func main() {
 	text := `<div class="views-row views-row-1 views-row-odd views-row-first"> 
             <div class="views-field field views-field-field-block-image field-name-field-block-image"> 
              <div class="field-content">
@@ -33,7 +33,7 @@ func main (){
 	doc, err := goquery.NewDocumentFromReader(rd)
 	if err != nil {
 		fmt.Println(err)
-	}else{
+	} else {
 		content := doc.Find(".views-row")
 		content.EachWithBreak(func(i int, selection *goquery.Selection) bool {
 			image := selection.Find(".views-field")
@@ -53,7 +53,7 @@ func main (){
 					if exist {
 						fmt.Println(url)
 					}
-					rest,err := obj.Html()
+					rest, err := obj.Html()
 					if err != nil {
 						return false
 					}

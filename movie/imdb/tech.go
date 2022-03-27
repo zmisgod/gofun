@@ -7,6 +7,7 @@ import (
 	"github.com/zmisgod/gofun/utils"
 	"io"
 	"strings"
+	"time"
 )
 
 type MovieInfo struct {
@@ -25,7 +26,7 @@ type MovieInfo struct {
 
 func Fetch(ctx context.Context, imdbStr string) (*MovieInfo, error) {
 	_url := fmt.Sprintf("https://www.imdb.com/title/%s/technical?ref_=tt_dt_spec", imdbStr)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return nil, err
 	}

@@ -14,7 +14,7 @@ func main() {
 	proxyStr, err := url.Parse("http://127.0.0.1:1081")
 	if err != nil {
 		fmt.Println(err)
-	}else {
+	} else {
 		tr := &http.Transport{
 			Proxy: http.ProxyURL(proxyStr),
 		}

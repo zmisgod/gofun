@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/zmisgod/gofun/utils"
 	"io/ioutil"
+	"time"
 )
 
 type SearchDouBanInfo struct {
@@ -21,7 +22,7 @@ type SearchDouBanInfo struct {
 
 func Fetch(ctx context.Context, movieName string) ([]*SearchDouBanInfo, error) {
 	_url := fmt.Sprintf("https://movie.douban.com/j/subject_suggest?q=%s", movieName)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return nil, err
 	}

@@ -31,8 +31,8 @@ func (a *ReadLocalRangeFile) Prepare(ctx context.Context) error {
 		exp := strings.Split(a.FileName, ".")
 		if len(exp) <= 1 {
 			a.SaveFileName = fmt.Sprintf("%s%d", exp[len(exp)], time.Now().Unix())
-		}else{
-			exp[len(exp) - 2] =  fmt.Sprintf("%s%d", exp[len(exp) - 2], time.Now().Unix())
+		} else {
+			exp[len(exp)-2] = fmt.Sprintf("%s%d", exp[len(exp)-2], time.Now().Unix())
 			a.SaveFileName = strings.Join(exp, ".")
 		}
 	}
@@ -59,7 +59,7 @@ func (a *ReadLocalRangeFile) Prepare(ctx context.Context) error {
 	return nil
 }
 
-func (a *ReadLocalRangeFile) Run(ctx context.Context,) error {
+func (a *ReadLocalRangeFile) Run(ctx context.Context) error {
 	if err := a.Prepare(ctx); err != nil {
 		return err
 	}

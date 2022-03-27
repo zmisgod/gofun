@@ -8,6 +8,7 @@ import (
 	"github.com/zmisgod/gofun/utils"
 	"io"
 	"io/ioutil"
+	"time"
 )
 
 type PublishVersionPara string
@@ -42,7 +43,7 @@ type MovieInfo struct {
 
 func Fetch(ctx context.Context, year int, publishVersion PublishVersionPara, limit int) ([]*MovieInfo, error) {
 	_url := fmt.Sprintf("https://api.zgdypw.cn/bits/w/porsfilms/api/s?page=0&size=%d&s_showYear=%d&s_publishVersion=%s&sort=id,desc", limit, year, publishVersion)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodPost, _url, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodPost, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return []*MovieInfo{}, err
 	}

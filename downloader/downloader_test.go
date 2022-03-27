@@ -52,7 +52,7 @@ func TestSmart(t *testing.T) {
 	md5String := "xxx22222221111123"
 	if len(md5String) >= 16 {
 		fmt.Println(md5String[:16])
-	}else{
+	} else {
 		fmt.Println("xsss")
 	}
 	//if len(md5String) < 16 {

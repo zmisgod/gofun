@@ -25,9 +25,9 @@ const (
 	HttpClientPostTypeJson = 2
 )
 
-func NewHttpClient(targetUrl string, method HttpClientMethod, header map[string]string, timeOut int, proxy string) *HttpClient{
+func NewHttpClient(targetUrl string, method HttpClientMethod, header map[string]string, timeOut int, proxy string) *HttpClient {
 	if header == nil {
-		header= make(map[string]string, 0)
+		header = make(map[string]string, 0)
 	}
 	return &HttpClient{
 		TargetUrl: targetUrl,

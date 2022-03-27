@@ -27,7 +27,7 @@ type DouBanMovieInfo struct {
 
 func Fetch(ctx context.Context, douBanId string) (*DouBanMovieInfo, error) {
 	_url := fmt.Sprintf("https://movie.douban.com/subject/%s/?from=subject-page", douBanId)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func getValueByPrefix(ctx context.Context, body io.Reader, prefixS string) (stri
 
 func FetchMovieCover(ctx context.Context, douBanId string) ([]string, error) {
 	_url := fmt.Sprintf("https://movie.douban.com/subject/%s/photos?type=R", douBanId)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return nil, err
 	}

@@ -27,7 +27,7 @@ func FetchChapter(ctx context.Context, textName, url string) error {
 		"sec-fetch-site": "none",
 		"user-agent":     "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36",
 	}
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, url, 5, "", nil, header)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, url, time.Duration(5)*time.Second, "", nil, header)
 	if err != nil {
 		return err
 	}

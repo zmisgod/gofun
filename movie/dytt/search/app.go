@@ -10,6 +10,7 @@ import (
 	"net/url"
 	_ "net/url"
 	"regexp"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -37,7 +38,7 @@ func getDyId(ctx context.Context, targetUrl string) string {
 }
 
 func searchFromBaidu(ctx context.Context, baiduURL string) (string, error) {
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, baiduURL, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, baiduURL, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return "", err
 	}

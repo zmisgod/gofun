@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-type NetEastMusic struct {}
+type NetEastMusic struct{}
 
 var errorNetEastFetchError = errors.New("根据网易云获取音乐失败")
 

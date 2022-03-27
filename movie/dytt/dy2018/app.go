@@ -7,11 +7,12 @@ import (
 	"github.com/axgle/mahonia"
 	"github.com/zmisgod/gofun/utils"
 	"io"
+	"time"
 )
 
 func FetchByID(ctx context.Context, id string) ([]string, error) {
 	_url := fmt.Sprintf("https://www.dy2018.com/i/%s.html", id)
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, 5, "", nil, utils.DefaultUserAgent)
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return []string{}, err
 	}
@@ -19,8 +20,8 @@ func FetchByID(ctx context.Context, id string) ([]string, error) {
 	return parseBody(ctx, resp.Body)
 }
 
-func FetchByUrl(ctx context.Context, _url string)([]string, error) {
-	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, 5, "", nil, utils.DefaultUserAgent)
+func FetchByUrl(ctx context.Context, _url string) ([]string, error) {
+	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return []string{}, err
 	}
