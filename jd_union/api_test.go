@@ -8,9 +8,9 @@ import (
 )
 
 var app = &App{
-	ID:     "4000196541",
-	Key:    "329fc1971db2dff84a4d279909247fa4",
-	Secret: "7ebd7440960146b69e9a439450d0dea9",
+	ID:     "",
+	Key:    "",
+	Secret: "",
 }
 
 var ctx = context.Background()
