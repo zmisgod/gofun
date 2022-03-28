@@ -31,7 +31,8 @@ func TestApp_JdUnionOpenGoodsMaterialQuery(t *testing.T) {
 
 func TestApp_JdUnionOpenSellingPromotionGet(t *testing.T) {
 	res, err := app.JdUnionOpenSellingPromotionGet(ctx, map[string]interface{}{
-		"materialId": "https://item.jd.com/11144230.html",
+		"materialId": "https://item.jd.com/10044136889444.html",
+		"couponUrl":  "https://coupon.m.jd.com/coupons/show.action?linkKey=AAROH_xIpeffAs_-naABEFoeQNXepOFXfqKPPNJ6Bv6t-rAJQluMOCkNpEZEhpiJKaAId0ebBw38GE5siHZJ2od68RBsMA",
 		"siteId":     app.ID,
 	})
 	if err != nil {

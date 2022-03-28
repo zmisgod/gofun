@@ -34,7 +34,7 @@ func (app *App) JdUnionOpenGoodsMaterialQuery(ctx context.Context, params map[st
 
 //JdUnionOpenSellingPromotionGet 转链获取，支持工具商
 func (app App) JdUnionOpenSellingPromotionGet(ctx context.Context, params map[string]interface{}) (result *JdUnionOpenSellingPromotionGetResult, err error) {
-	body, err := app.Request(ctx, JdUnionOpenSellingPromotionGetPath, map[string]interface{}{"req": params})
+	body, err := app.Request(ctx, JdUnionOpenSellingPromotionGetPath, map[string]interface{}{"promotionCodeReq": params})
 
 	resp := &JdUnionOpenSellingPromotionGetTopLevel{}
 	if err != nil {

@@ -16,10 +16,6 @@ import (
 	"time"
 )
 
-type JDUnion struct {
-	ID string
-}
-
 type App struct {
 	ID     string
 	Name   string
@@ -42,7 +38,7 @@ var (
 
 const (
 	JdUnionOpenGoodsMaterialQueryPath  string = "jd.union.open.goods.material.query"
-	JdUnionOpenSellingPromotionGetPath string = "jd.union.open.selling.promotion.get"
+	JdUnionOpenSellingPromotionGetPath string = "jd.union.open.promotion.common.get"
 )
 
 const RouterURL = "https://api.jd.com/routerjson"

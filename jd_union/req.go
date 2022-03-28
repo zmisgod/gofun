@@ -11,7 +11,7 @@ type JdUnionOpenSellingPromotionGetTopLevel struct {
 	JdUnionOpenSellingPromotionGetResponse struct {
 		Result string `json:"getResult"`
 		Code   string `json:"code"`
-	} `json:"jd_union_open_selling_promotion_get_responce"`
+	} `json:"jd_union_open_promotion_common_get_responce"`
 }
 
 type JdUnionOpenGoodsMaterialQueryResult struct {
