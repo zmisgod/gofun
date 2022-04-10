@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -19,6 +20,23 @@ func CheckError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func RemoveMoneySuffix(str string) string {
+	res := strings.Split(str, ".")
+	if len(res) > 1 {
+		if len(res[1]) == 2 {
+			//48 is byte
+			if res[1][0] == 48 && res[1][1] == 48 {
+				return res[0]
+			}
+		}else{
+			if res[1] == "0" {
+				return res[0]
+			}
+		}
+	}
+	return str
 }
 
 func CreateFile(textName string) {
