@@ -3,12 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/zmisgod/gofun/svg/draw"
 	"io"
 	"log"
 	"os"
 	"strconv"
-
-	"github.com/zmisgod/gofun/drawsvg"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -62,7 +61,7 @@ type Station struct {
 }
 
 func main() {
-	svg := drawsvg.Create()
+	svg := draw.Create()
 	rows, err := dbCon.Query(fmt.Sprintf("select train_id, train_name, type from crh_line_lists"))
 	defer rows.Close()
 	checkError(err)
@@ -93,7 +92,7 @@ func main() {
 		checkError(err)
 		defer rows.Close()
 
-		var dpath drawsvg.Path
+		var dpath draw.Path
 		dpath.Aid = strconv.Itoa(one.TrainID)
 		dpath.Alt = one.TrainName
 		dpath.Fill = "transparent"
@@ -123,12 +122,12 @@ func main() {
 		}
 		dpath.MaxGroup = maxGroup + 1
 		for i := 0; i < dpath.MaxGroup; i++ {
-			var ipaths []drawsvg.IPath
+			var ipaths []draw.IPath
 			for _, value := range details {
 				if value.Type == i {
 					station, ok := stationLists[value.StationID]
 					if ok {
-						var ipath drawsvg.IPath
+						var ipath draw.IPath
 						ipath.ID = station.ID
 						ipath.Group = station.Type
 						ipath.Long = station.Latitude
