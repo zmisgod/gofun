@@ -40,3 +40,16 @@ func TestApp_JdUnionOpenSellingPromotionGet(t *testing.T) {
 	}
 	fmt.Println(res)
 }
+
+func TestApp_JdUnionOpenGoodsQuery(t *testing.T) {
+	res, err := app.JdUnionOpenGoodsQuery(ctx, map[string]interface{}{
+		"keyword":   "手机",
+		"skuIds":    []uint64{},
+		"pageSize":  20,
+		"pageIndex": 1,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(res)
+}

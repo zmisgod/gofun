@@ -39,6 +39,7 @@ var (
 const (
 	JdUnionOpenGoodsMaterialQueryPath  string = "jd.union.open.goods.material.query"
 	JdUnionOpenSellingPromotionGetPath string = "jd.union.open.promotion.common.get"
+	JdUnionOpenGoodsQueryPath          string = "jd.union.open.goods.query"
 )
 
 const RouterURL = "https://api.jd.com/routerjson"

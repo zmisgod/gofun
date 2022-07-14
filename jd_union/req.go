@@ -14,6 +14,13 @@ type JdUnionOpenSellingPromotionGetTopLevel struct {
 	} `json:"jd_union_open_promotion_common_get_responce"`
 }
 
+type JdUnionOpenGoodsQueryTopLevel struct {
+	JdUnionOpenGoodsQueryResponse struct {
+		Result string `json:"getResult"`
+		Code   string `json:"code"`
+	} `json:"jd_union_open_goods_query_response"`
+}
+
 type JdUnionOpenGoodsMaterialQueryResult struct {
 	Code       int64   `json:"code"`
 	Data       []Goods `json:"data"`

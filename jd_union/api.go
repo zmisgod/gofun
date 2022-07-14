@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -56,4 +57,15 @@ func (app App) JdUnionOpenSellingPromotionGet(ctx context.Context, params map[st
 		err = ResultIsNullError
 	}
 	return
+}
+
+func (app App) JdUnionOpenGoodsQuery(ctx context.Context, params map[string]interface{} )(result *JdUnionOpenSellingPromotionGetResult, err error) {
+	body, err := app.Request(ctx, JdUnionOpenGoodsQueryPath, map[string]interface{}{"goodsReqDTO": params})
+	resp := &JdUnionOpenGoodsQueryTopLevel{}
+	if err != nil {
+		log.Println(string(body))
+		return
+	}
+	fmt.Println(resp)
+	return nil, nil
 }
