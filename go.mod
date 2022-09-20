@@ -1,6 +1,6 @@
 module github.com/zmisgod/gofun
 
-go 1.14
+go 1.17
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.2-0.20210118231321-bedb4e7a8891
@@ -9,4 +9,9 @@ require (
 	github.com/joho/godotenv v1.3.1-0.20201111043658-f562099a4320
 	github.com/looplab/fsm v0.3.0
 	github.com/willf/bitset v1.1.11
+)
+
+require (
+	github.com/andybalholm/cascadia v1.1.0 // indirect
+	golang.org/x/net v0.0.0-20200202094626-16171245cfb2 // indirect
 )
