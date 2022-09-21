@@ -3,27 +3,21 @@ package dy2018
 import (
 	"context"
 	"fmt"
-	"log"
 	"testing"
 )
 
-func TestFetchByID(t *testing.T) {
-	obj, err := FetchByID(context.Background(), "103070")
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log(obj)
-}
-
 func TestSearch(t *testing.T) {
-	res, err := SearchMovies(context.Background(), "告白")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	ctx := context.Background()
+	res, _ := SearchMovies(ctx, "断桥")
 	if res != nil {
-		for _, v := range res.List {
-			fmt.Println(v)
+		for res.HasMore(ctx) {
+			list, _ := res.Next(ctx)
+			for _, v := range list {
+				fmt.Println(v)
+				dLinks, _ := v.GetDownloadUrls(ctx)
+				fmt.Println(dLinks)
+				fmt.Println("----------")
+			}
 		}
-		fmt.Println(res.Page)
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/axgle/mahonia"
 	"github.com/zmisgod/gofun/utils"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -16,8 +17,7 @@ import (
 	"time"
 )
 
-func FetchByID(ctx context.Context, id string) ([]string, error) {
-	_url := fmt.Sprintf("https://www.dy2018.com/i/%s.html", id)
+func FetchByID(ctx context.Context, _url string) ([]string, error) {
 	resp, err := utils.HttpClient(ctx, utils.HttpClientMethodGet, _url, time.Duration(5)*time.Second, "", nil, utils.DefaultUserAgent)
 	if err != nil {
 		return []string{}, err
@@ -66,14 +66,35 @@ func utf2gbkEncode(str string) string {
 	return enc.ConvertString(str)
 }
 
+func ReplaceUrl(_url string, replaceStr string) string {
+	_urlInfo, err := url.Parse(_url)
+	if err != nil {
+		return ""
+	}
+	if replaceStr == "" {
+		return _url
+	}
+	if replaceStr[0] != '/' {
+		exp := strings.Split(_url, "/")
+		if len(exp) > 0 {
+			exp[len(exp)-1] = replaceStr
+			return strings.Join(exp, "/")
+		}
+		return _url
+	}
+	return _urlInfo.Scheme + "://" + _urlInfo.Host + replaceStr
+}
+
 func SearchMovies(ctx context.Context, movieName string) (*SearchResult, error) {
+	var result SearchResult
+	result.SearchUrl = "https://www.dy2018.com/e/search/index.php"
 	res := []byte(fmt.Sprintf("show=%s&tempid=1&keyboard=%s&Submit=%s&classid=0", utf2gbkEncode("title,smalltext"), utf2gbkEncode(movieName), utf2gbkEncode("立即搜索")))
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
 	}
-	trans, err := http.NewRequest("POST", "https://www.dy2018.com/e/search/index.php", bytes.NewReader(res))
+	trans, err := http.NewRequest("POST", result.SearchUrl, bytes.NewReader(res))
 	if err != nil {
 		return nil, err
 	}
@@ -85,22 +106,59 @@ func SearchMovies(ctx context.Context, movieName string) (*SearchResult, error) 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	var result SearchResult
 	result.LocationUrl = resp.Header.Get("Location")
+	_targetUrl := ReplaceUrl(result.SearchUrl, result.LocationUrl)
+	result.TargetUrl = _targetUrl
 	result.SearchName = movieName
-	return nil, err
+	return &result, err
 }
 
 type SearchResult struct {
-	List        []*SearchItem `json:"list"`
-	Page        int           `json:"page"`
-	LocationUrl string        `json:"locationUrl"`
-	SearchName  string        `json:"searchName"`
+	TotalPage   int    `json:"totalPage"`
+	NowPage     int    `json:"nowPage"`
+	LocationUrl string `json:"locationUrl"`
+	TargetUrl   string `json:"targetUrl"`
+	SearchName  string `json:"searchName"`
+	SearchUrl   string `json:"searchUrl"`
 }
 
-func (a SearchResult) ListPage(ctx context.Context, page uint) ([]*SearchItem, error) {
-	list := make([]*SearchItem, 0)
-	return list, nil
+func (a *SearchResult) HasMore(ctx context.Context) bool {
+	if a.NowPage == 0 {
+		return true
+	}
+	if a.NowPage > a.TotalPage {
+		return false
+	}
+	return true
+}
+
+func (a *SearchResult) Next(ctx context.Context) ([]*SearchItem, error) {
+	list, err := a.ListPage(ctx, a.NowPage)
+	a.NowPage += 1
+	return list, err
+}
+
+func (a *SearchResult) ListPage(ctx context.Context, page int) ([]*SearchItem, error) {
+	a.NowPage = page
+	_linkUrl := func(_url string, page int) string {
+		if page == 0 {
+			return _url
+		}
+		return fmt.Sprintf("%s&page=%d", _url, page)
+	}
+	_nowUrl := _linkUrl(a.TargetUrl, page)
+	resp, err := http.Get(_nowUrl)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return a.parseListBody(string(bodyBytes))
 }
 
 type SearchItem struct {
@@ -108,7 +166,11 @@ type SearchItem struct {
 	Title string `json:"title"`
 }
 
-func parseListBody(bodyStr string) (*SearchResult, error) {
+func (a SearchItem) GetDownloadUrls(ctx context.Context) ([]string, error) {
+	return FetchByID(ctx, a.Url)
+}
+
+func (a *SearchResult) parseListBody(bodyStr string) ([]*SearchItem, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(bodyStr))
 	if err != nil {
 		return nil, err
@@ -122,12 +184,12 @@ func parseListBody(bodyStr string) (*SearchResult, error) {
 			return false
 		}
 		list = append(list, &SearchItem{
-			Url:   downloadURL,
+			Url:   ReplaceUrl(a.SearchUrl, downloadURL),
 			Title: gb23122utf(title),
 		})
 		return true
 	})
-	totalPage := 1
+	totalPage := 0
 	pagination := doc.Find(".co_content8 .x a")
 	pagination.EachWithBreak(func(i int, contentSelection *goquery.Selection) bool {
 		res, _ := contentSelection.Html()
@@ -140,10 +202,10 @@ func parseListBody(bodyStr string) (*SearchResult, error) {
 		}
 		return true
 	})
-	return &SearchResult{
-		List: list,
-		Page: totalPage,
-	}, nil
+	if a.TotalPage == 0 {
+		a.TotalPage = totalPage
+	}
+	return list, nil
 }
 
 var pageReg = regexp.MustCompile(`(?m)page=(\d+)`)
