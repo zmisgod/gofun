@@ -59,7 +59,7 @@ func (app App) JdUnionOpenSellingPromotionGet(ctx context.Context, params map[st
 	return
 }
 
-func (app App) JdUnionOpenGoodsQuery(ctx context.Context, params map[string]interface{} )(result *JdUnionOpenSellingPromotionGetResult, err error) {
+func (app App) JdUnionOpenGoodsQuery(ctx context.Context, params map[string]interface{}) (result *JdUnionOpenSellingPromotionGetResult, err error) {
 	body, err := app.Request(ctx, JdUnionOpenGoodsQueryPath, map[string]interface{}{"goodsReqDTO": params})
 	resp := &JdUnionOpenGoodsQueryTopLevel{}
 	if err != nil {

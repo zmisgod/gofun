@@ -3,3 +3,5 @@
 .vscode
 music/node/node_modules/
 music/node/package-lock.json
+ossIn/
+ossOut/

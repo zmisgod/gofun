@@ -30,7 +30,7 @@ func RemoveMoneySuffix(str string) string {
 			if res[1][0] == 48 && res[1][1] == 48 {
 				return res[0]
 			}
-		}else{
+		} else {
 			if res[1] == "0" {
 				return res[0]
 			}
