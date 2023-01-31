@@ -5,3 +5,5 @@ music/node/node_modules/
 music/node/package-lock.json
 ossIn/
 ossOut/
+csv_input/
+csv_output/

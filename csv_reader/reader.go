@@ -14,9 +14,10 @@ var CharsetUTF8 = "utf-8"
 type CsvReader struct {
 	FilePath string
 	Charset  string
+	Quota    bool
 }
 
-func NewCsvReader(filePath string) (*CsvReader, error) {
+func NewCsvReader(filePath string, hasQuote bool) (*CsvReader, error) {
 	_, err := os.Stat(filePath)
 	if err != nil {
 		return nil, err
@@ -24,6 +25,7 @@ func NewCsvReader(filePath string) (*CsvReader, error) {
 	return &CsvReader{
 		FilePath: filePath,
 		Charset:  DefaultCharset,
+		Quota:    hasQuote,
 	}, nil
 }
 
@@ -41,6 +43,10 @@ func (a *CsvReader) GetValues() ([][]string, error) {
 	}
 	decoder := strings.NewReader(string(csvByteString))
 	r := csv.NewReader(decoder)
+	if a.Quota {
+		r.LazyQuotes = true
+		r.Comma = ','
+	}
 	if a.Charset != CharsetUTF8 {
 		decoder := mahonia.NewDecoder(a.Charset)
 		r = csv.NewReader(decoder.NewReader(strings.NewReader(string(csvByteString))))
