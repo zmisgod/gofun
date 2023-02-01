@@ -60,15 +60,29 @@ func readBytes(chunk []byte, start, length uint) ([]byte, error) {
 	}
 }
 
+func readBytesByStartAndEnd(chunk []byte, start, end uint) []byte {
+	if start >= end {
+		return []byte{}
+	}
+	if len(chunk) <= int(start) {
+		return []byte{}
+	}
+	if len(chunk) > int(end) {
+		return chunk[int(start):int(end)]
+	} else {
+		return chunk[int(start):]
+	}
+}
+
 func repeatString(str string, count int) string {
 	return strings.Repeat(str, count)
 }
 
-func shift(chunk []byte) []byte {
+func shift(chunk []byte) (int, []byte) {
 	if len(chunk) == 0 {
-		return []byte{}
+		return 0, chunk
 	}
-	return chunk[1:]
+	return int(chunk[0]), chunk[1:]
 }
 
 //func tBin2sBin(b int) string {
@@ -108,8 +122,9 @@ func byteToAscii(_one byte) int {
 	return int(rune(_one))
 }
 
-func createHuffmanTree(chunk []byte, countArr []uint) map[string]HfmTree {
+func createHuffmanTree(chunk []byte, countArr []uint) (map[string]HfmTree, []HtDataArr, []byte) {
 	ret := make(map[string]HfmTree)
+	retArr := make([]HtDataArr, 0)
 	last := ""
 	for i := 0; i < len(countArr); i++ {
 		_count := countArr[i]
@@ -128,13 +143,18 @@ func createHuffmanTree(chunk []byte, countArr []uint) map[string]HfmTree {
 					last = last + repeatString("0", i+1-len(last))
 				}
 			}
-			chunk = shift(chunk)
-			ret[last] = HfmTree{
+			var _num int
+			_num, chunk = shift(chunk)
+			_data := HfmTree{
 				Group: len(last),
-				Value: chunk,
+				Value: _num,
 			}
+			ret[last] = _data
+			retArr = append(retArr, HtDataArr{
+				key:  last,
+				item: _data,
+			})
 		}
 	}
-
-	return ret
+	return ret, retArr, chunk
 }

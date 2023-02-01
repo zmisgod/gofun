@@ -10,11 +10,17 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type colorComponentsArr struct {
 	key  uint
 	Item ColorComponentsItem
+}
+
+type HtArr struct {
+	key  string
+	item Ht
 }
 
 type JData struct {
@@ -68,14 +74,20 @@ type ColorInfoItem struct {
 	ACHTID int64
 }
 
+type HtDataArr struct {
+	key  string
+	item HfmTree
+}
+
 type Ht struct {
-	Type string
-	Data map[string]HfmTree
+	Type    string
+	Data    map[string]HfmTree
+	DataArr []HtDataArr
 }
 
 type HfmTree struct {
 	Group int
-	Value []byte
+	Value int
 }
 
 type ColorComponentsItem struct {
@@ -92,11 +104,10 @@ type JImageData struct {
 var startCode = []uint8{0xff, 0xd8}
 var endCode = []uint8{0xff, 0xd9}
 
-func NewFile(jpegFile string) ([][][]int, error) {
-	rest := make([][][]int, 0)
+func NewFile(jpegFile string) (*JData, error) {
 	fd, err := os.OpenFile(jpegFile, os.O_RDONLY, 0777)
 	if err != nil {
-		return rest, err
+		return nil , err
 	}
 	obj := &JData{file: fd, vMax: 1, hMax: 1,
 		qt:              make(map[uint]QtItem),
@@ -104,7 +115,67 @@ func NewFile(jpegFile string) ([][][]int, error) {
 		Ht:              make(map[string]Ht),
 		colorInfo:       make(map[uint]ColorInfoItem),
 	}
-	return obj.decode(context.Background())
+	_, err = obj.decode(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
+}
+
+func (a *JData) exportHtml() error {
+	canvas := fmt.Sprintf(`<canvas id="canvas" class="canvas" style="width: %dpx; height: %dpx;"></canvas>`, a.width, a.height)
+	dataArr := make([]string, 0)
+	for _, v := range a.pixels {
+		for _, j := range v {
+			dataArr = append(dataArr, fmt.Sprintf("%d,%d,%d,255", j[0], j[1], j[2]))
+		}
+	}
+	data := strings.Join(dataArr, ",")
+	script := fmt.Sprintf(`(function() {
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = %d;
+    canvas.height = %d;
+
+    var pixels = Uint8ClampedArray.from([%s]);
+
+    var imageData = new ImageData(pixels, %d, %d);
+    ctx.putImageData(imageData, 0, 0, 0, 0, %d, %d);
+})();`, a.width, a.height, data, a.width, a.height, a.width, a.height)
+
+	html := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        .cnt{
+            display: flex;
+            align-items: center;
+        }
+
+        .canvas{
+            margin-left: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cnt">
+        %s
+    </div>
+    <script>
+       	%s
+    </script>
+</body>
+</html>`, canvas, script)
+	res, err := os.Create("test.html")
+	defer func() {
+		_ = res.Close()
+	}()
+	if err != nil {
+		return err
+	}
+	_, _ = res.WriteString(html)
+	return nil
 }
 
 func NewJDataObj(jpegFile string) (*JData, error) {
@@ -319,7 +390,7 @@ var C_QUANTIZATION_TABLE = []int{
 }
 
 func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []int {
-	output := make([]int, 0)
+	output := make([]int, 64)
 	if !isReverse {
 		qt := C_QUANTIZATION_TABLE
 		if colorComponentId == 1 {
@@ -331,7 +402,8 @@ func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []i
 	} else {
 		colorComponent := a.colorComponents[colorComponentId]
 		qt := a.qt[colorComponent.QtId].data
-
+		//fmt.Println("colorComponent", colorComponent, "qt", qt, "colorComponent.QtId", colorComponent.QtId)
+		//fmt.Println(input, len(input), output)
 		for i := 0; i < 64; i++ {
 			output[i] = int(math.Round(float64(input[i] / int(qt[i]))))
 		}
@@ -341,10 +413,10 @@ func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []i
 }
 
 func arrayToMatrix(input []int, w, h int) [][]int {
-	output := make([][]int, 0)
+	output := make([][]int, w)
 
 	for i := 0; i < w; i++ {
-		output[i] = make([]int, 0)
+		output[i] = make([]int, h)
 		for j := 0; j < h; j++ {
 			output[i][j] = input[j*w+i]
 		}
@@ -364,12 +436,14 @@ var ZIG_ZAG = []int{
 }
 
 func zigZag(input []int, isReverse bool) []int {
-	output := make([]int, 0)
+	output := make([]int, 64)
 	for i := 0; i < 64; i++ {
-		if isReverse {
-			output[i] = input[ZIG_ZAG[i]]
-		} else {
-			output[ZIG_ZAG[i]] = input[i]
+		if len(input) >= 64 {
+			if isReverse {
+				output[i] = input[ZIG_ZAG[i]]
+			} else {
+				output[ZIG_ZAG[i]] = input[i]
+			}
 		}
 	}
 
@@ -378,10 +452,10 @@ func zigZag(input []int, isReverse bool) []int {
 
 //快速逆dct变换
 func fastIDct(input [][]int) [][]int {
-	output := make([][]int, 0)
+	output := make([][]int, 8)
 
 	for i := 0; i < 8; i++ {
-		output[i] = make([]int, 0)
+		output[i] = make([]int, 8)
 		for j := 0; j < 8; j++ {
 			output[i][j] = int(input[i][j])
 		}
@@ -442,9 +516,9 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
 	hPixels := hmax * 8
 	vPixels := vmax * 8
 
-	output := make([][][]int, 0)
+	output := make([][][]int, int(a.width))
 	for i := 0; i < int(hPixels); i++ {
-		output[i] = make([][]int, 0)
+		output[i] = make([][]int, int(a.height))
 		for j := 0; j < int(vPixels); j++ {
 			output[i][j] = make([]int, 0)
 		}
@@ -471,14 +545,19 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
 		_temp.Dus = append(_temp.Dus, v.data)
 	}
 
+	for i := 0; i < int(hPixels); i++ {
+		for j := 0; j < int(vPixels); j++ {
+			output[i][j] = make([]int, 3)
+		}
+	}
+
 	for _, v := range tempArr {
 		dus := v.Dus
 		xRange := hmax / v.X //采样块宽度
 		yRange := vmax / v.Y //采样块高度
-
-		data := make([][]int, 0)
-		for i := 0; i < int(hPixels); i++ {
-			data[i] = make([]int, 0)
+		data := make([][]int, a.width)
+		for i := 0; i < len(data); i++ {
+			data[i] = make([]int, a.height)
 		}
 
 		for h := 0; h < int(v.X); h++ {
@@ -496,7 +575,6 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
 							}
 						}
 					}
-
 				}
 			}
 		}
@@ -569,12 +647,11 @@ func rgb2ycrcb(rgb []int) []float64 {
 	}
 }
 
-func keys(list map[string]HfmTree) []string {
+func keys(list []HtDataArr) []string {
 	_list := make([]string, 0)
-	for k := range list {
-		_list = append(_list, k)
+	for _, v := range list {
+		_list = append(_list, v.key)
 	}
-
 	return _list
 }
 
@@ -590,15 +667,18 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 		} else {
 			_d = 1
 		}
-		_ht := a.Ht[fmt.Sprintf("%d-%d", _d, _r)].Data
+		_ht := a.Ht[fmt.Sprintf("%d-%d", _d, _r)].DataArr
+		_htMap := a.Ht[fmt.Sprintf("%d-%d", _d, _r)].Data
 		_keys := keys(_ht)
-		fmt.Println(_keys)
-		var value []byte
+		//fmt.Println("_keys", _keys)
+		//fmt.Println("_ht", _ht)
+		var value int
 		for _, v := range _keys {
 			length := len(v)
+			//fmt.Println("v---", v, len(v))
 			var subBuffer []byte
 			if len(input) >= cursor+length {
-				subBuffer = sliceArr(input, cursor+length)
+				subBuffer = readBytesByStartAndEnd(input, uint(cursor), uint(length))
 			} else {
 				subBuffer = sliceArr(input, cursor)
 				tempSubBuffer := make([]byte, length-len(subBuffer))
@@ -607,11 +687,11 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			}
 			if string(subBuffer) == v {
 				cursor += length
-				value = _ht[v].Value
+				value = _htMap[v].Value
+				break
 			}
-			fmt.Println("subBu--", subBuffer)
 		}
-		fmt.Println(value, cursor)
+		//fmt.Println("cur ", cursor)
 
 		var bitCount int
 		var bitData int
@@ -624,27 +704,32 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 		// 4       -15, ..., -8, 8, ..., 15
 		if i == 0 {
 			//取DC值
-			bitCount = len(value)
+			bitCount = value
 
 			if bitCount == 0 {
 				bitData = 0
 			} else {
-				_bitData := sliceArr(input, cursor+bitCount)
-				_bitData1, _ := strconv.ParseInt(string(_bitData), 10, 2)
+				_bitData := readBytesByStartAndEnd(input, uint(cursor), uint(bitCount+cursor))
+				_bitData1, _ := str2Bin(string(_bitData))
 				half := math.Pow(2, float64(bitCount-1))
-				if float64(bitData) < half {
-					bitData = int(float64(_bitData1) - half*2 + 1)
-				} else {
+				if float64(_bitData1) >= half {
 					bitData = int(_bitData1)
+				} else {
+					bitData = int(float64(_bitData1) - half*2 + 1)
 				}
 			}
 			bitData += lastDc
 		} else {
 			//取AC值
-			bitString := numberToString(int64(len(string(value))))
+			bitString := numberToString(int64(value))
 			zeroCount, _ := strconv.ParseInt(bitString[0:4], 10, 2) //数据前0的个数
-			_bitCount, _ := strconv.ParseInt(bitString[4:4], 10, 2) //数据的位数
+			_bitCount, _ := strconv.ParseInt(bitString[4:8], 10, 2) //数据的位数
 			bitCount = int(_bitCount)
+			//fmt.Println("bitString", bitString,
+			//	"zeroCount", zeroCount,
+			//	"_bitCount", _bitCount,
+			//	"bitCount", bitCount,
+			//)
 
 			if zeroCount == 0 && bitCount == 0 {
 				//解析到 (0, 0) ，表示到达EOB，意味着后面的都是0
@@ -656,13 +741,13 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 				if bitCount == 0 {
 					bitData = 0
 				} else {
-					_bitData := string(input[cursor : cursor+bitCount])
-					_bitData1, _ := strconv.ParseInt(_bitData, 10, 2)
+					_bitData := readBytesByStartAndEnd(input, uint(cursor), uint(bitCount+cursor))
+					_bitData1, _ := str2Bin(string(_bitData))
 					half := math.Pow(2, float64(bitCount-1))
-					if float64(bitData) < half {
-						bitData = int(float64(_bitData1) - half*2 + 1)
-					} else {
+					if float64(_bitData1) >= half {
 						bitData = int(_bitData1)
+					} else {
+						bitData = int(float64(_bitData1) - half*2 + 1)
 					}
 				}
 				for j := 0; j < int(zeroCount); j++ {
@@ -671,9 +756,11 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 				}
 			}
 		}
+		//fmt.Println("bc---", bitCount, cursor)
 		output = append(output, bitData)
 		cursor += bitCount
 	}
+	//fmt.Println("res ---", cursor, output)
 	return cursor, output
 }
 
@@ -776,11 +863,14 @@ func (a *JData) decodeDHT(ctx context.Context, chunkData []byte) error {
 		if err != nil {
 			return err
 		}
-		_data := createHuffmanTree(data, countArr)
-		a.Ht[fmt.Sprintf("%s-%s", asciiToStr(int(_type)), asciiToStr(int(_id)))] = Ht{
-			Type: asciiToStr(int(_type)),
-			Data: _data,
+		_data, _dataArr, _ := createHuffmanTree(data, countArr)
+		_ht := Ht{
+			Type:    asciiToStr(int(_type)),
+			Data:    _data,
+			DataArr: _dataArr,
 		}
+		_key := fmt.Sprintf("%s-%s", asciiToStr(int(_type)), asciiToStr(int(_id)))
+		a.Ht[_key] = _ht
 		chunkData = sliceArr(chunkData, int(length)+17)
 	}
 	return nil
