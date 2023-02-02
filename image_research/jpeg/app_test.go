@@ -26,4 +26,6 @@ func TestUtil(t *testing.T) {
 	//str := "00000001"
 	//fmt.Println(exCount(str))
 	//fmt.Println(numberToString(1123213))
+	//fmt.Println(strconv.ParseInt("0100", 2, 64))
+	fmt.Println(ycrcb2rgb([]float64{ 244.56513902640177, 124.88035222703407, 131.11964777296595 }))
 }

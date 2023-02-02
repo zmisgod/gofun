@@ -107,7 +107,7 @@ var endCode = []uint8{0xff, 0xd9}
 func NewFile(jpegFile string) (*JData, error) {
 	fd, err := os.OpenFile(jpegFile, os.O_RDONLY, 0777)
 	if err != nil {
-		return nil , err
+		return nil, err
 	}
 	obj := &JData{file: fd, vMax: 1, hMax: 1,
 		qt:              make(map[uint]QtItem),
@@ -254,7 +254,7 @@ func writeStr(replaceStr []byte, str []byte, offset int, length int) []byte {
 
 type mcuArr struct {
 	colorComponentId uint
-	data             [][]int
+	data             [][]float64
 }
 
 func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
@@ -287,7 +287,6 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 			lastDc[colorComponentId] = output[0]
 
 			_buffer = sliceArr(_buffer, cursor)
-			//fmt.Println(output)
 
 			//反量化
 			_output := a.quantify(output, colorComponentId, true)
@@ -295,9 +294,11 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 
 			//zig zag反编码
 			_output1 := zigZag(_output, true)
+			//fmt.Println(_output1)
 
 			//转矩阵
 			_output2 := arrayToMatrix(_output1, 8, 8)
+			//fmt.Println(_output2)
 
 			//反dct编码
 			_output3 := fastIDct(_output2)
@@ -316,7 +317,6 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 			}
 		}
 	}
-	//fmt.Println(mcus)
 
 	width := a.width
 	height := a.height
@@ -332,7 +332,8 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 	}
 	for i := 0; i < int(hNum); i++ {
 		for j := 0; j < int(vNum); j++ {
-			mcuPixels := a.getMcuPixels(mcus[j*int(hNum)+i])
+			mcuPixels := a.getMcuPixels(mcus[j*int(hNum)+i], i, j)
+			//fmt.Println(mcuPixels)
 
 			offsetX := i * int(hPixels)
 			offsetY := j * int(vPixels)
@@ -342,7 +343,9 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 					insertY := y + offsetY
 
 					if insertX < int(width) && insertY < int(height) {
-						pixels[insertX][insertY] = ycrcb2rgb(mcuPixels[x][y])
+						_a := ycrcb2rgb(mcuPixels[x][y])
+						pixels[insertX][insertY] = _a
+						fmt.Println(x, y, _a, mcuPixels[x][y])
 					}
 				}
 			}
@@ -384,15 +387,15 @@ var C_QUANTIZATION_TABLE = []int{
 	99, 99, 99, 99, 99, 99, 99, 99,
 }
 
-func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []int {
-	output := make([]int, 64)
+func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []float64 {
+	output := make([]float64, 64)
 	if !isReverse {
 		qt := C_QUANTIZATION_TABLE
 		if colorComponentId == 1 {
 			qt = B_QUANTIZATION_TABLE
 		}
 		for i := 0; i < 64; i++ {
-			output[i] = int(math.Round(float64(input[i] / qt[i])))
+			output[i] = math.Round(float64(input[i] / qt[i]))
 		}
 	} else {
 		colorComponent := a.colorComponents[colorComponentId]
@@ -400,18 +403,18 @@ func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []i
 		//fmt.Println("colorComponent", colorComponent, "qt", qt, "colorComponent.QtId", colorComponent.QtId)
 		//fmt.Println(input, len(input), output)
 		for i := 0; i < 64; i++ {
-			output[i] = int(math.Round(float64(input[i] * int(qt[i]))))
+			output[i] = math.Round(float64(input[i] * int(qt[i])))
 		}
 	}
 
 	return output
 }
 
-func arrayToMatrix(input []int, w, h int) [][]int {
-	output := make([][]int, w)
+func arrayToMatrix(input []float64, w, h int) [][]float64 {
+	output := make([][]float64, w)
 
 	for i := 0; i < w; i++ {
-		output[i] = make([]int, h)
+		output[i] = make([]float64, h)
 		for j := 0; j < h; j++ {
 			output[i][j] = input[j*w+i]
 		}
@@ -430,8 +433,8 @@ var ZIG_ZAG = []int{
 	35, 36, 48, 49, 57, 58, 62, 63,
 }
 
-func zigZag(input []int, isReverse bool) []int {
-	output := make([]int, 64)
+func zigZag(input []float64, isReverse bool) []float64 {
+	output := make([]float64, 64)
 	for i := 0; i < 64; i++ {
 		if len(input) >= 64 {
 			if isReverse {
@@ -446,88 +449,87 @@ func zigZag(input []int, isReverse bool) []int {
 }
 
 //快速逆dct变换
-func fastIDct(input [][]int) [][]int {
-	output := make([][]int, 8)
-
+func fastIDct(input [][]float64) [][]float64 {
+	output := make([][]float64, 8)
 	for i := 0; i < 8; i++ {
-		output[i] = make([]int, 8)
+		output[i] = make([]float64, 8)
 		for j := 0; j < 8; j++ {
-			output[i][j] = int(input[i][j])
+			output[i][j] = input[i][j]
 		}
 	}
 	for i := 0; i < 8; i++ {
-		_temp0 := (float64(output[0][i])*C4 + float64(output[2][i])*C2 + float64(output[4][i])*C4 + float64(output[6][i])*C6) / 2
-		_temp1 := (float64(output[0][i])*C4 + float64(output[2][i])*C6 - float64(output[4][i])*C4 - float64(output[6][i])*C2) / 2
-		_temp2 := (float64(output[0][i])*C4 - float64(output[2][i])*C6 - float64(output[4][i])*C4 + float64(output[6][i])*C2) / 2
-		_temp3 := (float64(output[0][i])*C4 - float64(output[2][i])*C2 + float64(output[4][i])*C4 - float64(output[6][i])*C6) / 2
-		_temp4 := (float64(output[1][i])*C7 - float64(output[3][i])*C5 + float64(output[5][i])*C3 - float64(output[7][i])*C1) / 2
-		_temp5 := (float64(output[1][i])*C5 - float64(output[3][i])*C1 + float64(output[5][i])*C7 + float64(output[7][i])*C3) / 2
-		_temp6 := (float64(output[1][i])*C3 - float64(output[3][i])*C7 - float64(output[5][i])*C1 - float64(output[7][i])*C5) / 2
-		_temp7 := (float64(output[1][i])*C1 + float64(output[3][i])*C3 + float64(output[5][i])*C5 + float64(output[7][i])*C7) / 2
+		_temp0 := (float64(output[0][i])*C4 + float64(output[2][i])*C2 + float64(output[4][i])*C4 + float64(output[6][i])*C6) / 2.0
+		_temp1 := (float64(output[0][i])*C4 + float64(output[2][i])*C6 - float64(output[4][i])*C4 - float64(output[6][i])*C2) / 2.0
+		_temp2 := (float64(output[0][i])*C4 - float64(output[2][i])*C6 - float64(output[4][i])*C4 + float64(output[6][i])*C2) / 2.0
+		_temp3 := (float64(output[0][i])*C4 - float64(output[2][i])*C2 + float64(output[4][i])*C4 - float64(output[6][i])*C6) / 2.0
+		_temp4 := (float64(output[1][i])*C7 - float64(output[3][i])*C5 + float64(output[5][i])*C3 - float64(output[7][i])*C1) / 2.0
+		_temp5 := (float64(output[1][i])*C5 - float64(output[3][i])*C1 + float64(output[5][i])*C7 + float64(output[7][i])*C3) / 2.0
+		_temp6 := (float64(output[1][i])*C3 - float64(output[3][i])*C7 - float64(output[5][i])*C1 - float64(output[7][i])*C5) / 2.0
+		_temp7 := (float64(output[1][i])*C1 + float64(output[3][i])*C3 + float64(output[5][i])*C5 + float64(output[7][i])*C7) / 2.0
 
-		output[0][i] = int(_temp0 + _temp7)
-		output[1][i] = int(_temp1 + _temp6)
-		output[2][i] = int(_temp2 + _temp5)
-		output[3][i] = int(_temp3 + _temp4)
-		output[4][i] = int(_temp3 + _temp4)
-		output[5][i] = int(_temp2 + _temp5)
-		output[6][i] = int(_temp1 + _temp6)
-		output[7][i] = int(_temp0 + _temp7)
+		output[0][i] = _temp0 + _temp7
+		output[1][i] = _temp1 + _temp6
+		output[2][i] = _temp2 + _temp5
+		output[3][i] = _temp3 + _temp4
+		output[4][i] = _temp3 - _temp4
+		output[5][i] = _temp2 - _temp5
+		output[6][i] = _temp1 - _temp6
+		output[7][i] = _temp0 - _temp7
 	}
 
 	for i := 0; i < 8; i++ {
-		_temp0 := (float64(output[i][0])*C4 + float64(output[i][2])*C2 + float64(output[i][4])*C4 + float64(output[i][6])*C6) / 2
-		_temp1 := (float64(output[i][0])*C4 + float64(output[i][2])*C6 - float64(output[i][4])*C4 - float64(output[i][6])*C2) / 2
-		_temp2 := (float64(output[i][0])*C4 - float64(output[i][2])*C6 - float64(output[i][4])*C4 + float64(output[i][6])*C2) / 2
-		_temp3 := (float64(output[i][0])*C4 - float64(output[i][2])*C2 + float64(output[i][4])*C4 - float64(output[i][6])*C6) / 2
-		_temp4 := (float64(output[i][0])*C7 - float64(output[i][3])*C5 + float64(output[i][5])*C3 - float64(output[i][7])*C1) / 2
-		_temp5 := (float64(output[i][0])*C5 - float64(output[i][3])*C1 + float64(output[i][5])*C7 + float64(output[i][7])*C3) / 2
-		_temp6 := (float64(output[i][0])*C3 - float64(output[i][3])*C7 - float64(output[i][5])*C1 - float64(output[i][7])*C5) / 2
-		_temp7 := (float64(output[i][0])*C1 + float64(output[i][3])*C3 + float64(output[i][5])*C5 + float64(output[i][7])*C7) / 2
+		_temp0 := (float64(output[i][0])*C4 + float64(output[i][2])*C2 + float64(output[i][4])*C4 + float64(output[i][6])*C6) / 2.0
+		_temp1 := (float64(output[i][0])*C4 + float64(output[i][2])*C6 - float64(output[i][4])*C4 - float64(output[i][6])*C2) / 2.0
+		_temp2 := (float64(output[i][0])*C4 - float64(output[i][2])*C6 - float64(output[i][4])*C4 + float64(output[i][6])*C2) / 2.0
+		_temp3 := (float64(output[i][0])*C4 - float64(output[i][2])*C2 + float64(output[i][4])*C4 - float64(output[i][6])*C6) / 2.0
+		_temp4 := (float64(output[i][1])*C7 - float64(output[i][3])*C5 + float64(output[i][5])*C3 - float64(output[i][7])*C1) / 2.0
+		_temp5 := (float64(output[i][1])*C5 - float64(output[i][3])*C1 + float64(output[i][5])*C7 + float64(output[i][7])*C3) / 2.0
+		_temp6 := (float64(output[i][1])*C3 - float64(output[i][3])*C7 - float64(output[i][5])*C1 - float64(output[i][7])*C5) / 2.0
+		_temp7 := (float64(output[i][1])*C1 + float64(output[i][3])*C3 + float64(output[i][5])*C5 + float64(output[i][7])*C7) / 2.0
 
-		output[i][0] = int(_temp0 + _temp7)
-		output[i][1] = int(_temp1 + _temp6)
-		output[i][2] = int(_temp2 + _temp5)
-		output[i][3] = int(_temp3 + _temp4)
-		output[i][4] = int(_temp3 + _temp4)
-		output[i][5] = int(_temp2 + _temp5)
-		output[i][6] = int(_temp1 + _temp6)
-		output[i][7] = int(_temp0 + _temp7)
+		output[i][0] = _temp0 + _temp7
+		output[i][1] = _temp1 + _temp6
+		output[i][2] = _temp2 + _temp5
+		output[i][3] = _temp3 + _temp4
+		output[i][4] = _temp3 - _temp4
+		output[i][5] = _temp2 - _temp5
+		output[i][6] = _temp1 - _temp6
+		output[i][7] = _temp0 - _temp7
 	}
 	return output
 }
 
 type splitArr struct {
-	Dus   [][][]int
+	Dus   [][][]float64
 	Index int
 	X     int64
 	Y     int64
 }
 
-func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
+func (a *JData) getMcuPixels(mcu []mcuArr, _i, _j int) [][][]float64 {
 	hmax := a.hMax
 	vmax := a.vMax
 
 	hPixels := hmax * 8
 	vPixels := vmax * 8
 
-	output := make([][][]int, int(a.width))
+	output := make([][][]float64, int(hPixels))
 	for i := 0; i < int(hPixels); i++ {
-		output[i] = make([][]int, int(a.height))
+		output[i] = make([][]float64, int(vPixels))
 		for j := 0; j < int(vPixels); j++ {
-			output[i][j] = make([]int, 0)
+			output[i][j] = make([]float64, 0)
 		}
 	}
 
 	tempArr := make([]*splitArr, 0)
 	tempArr = append(tempArr, &splitArr{
-		Dus:   make([][][]int, 0),
+		Dus:   make([][][]float64, 0),
 		Index: 0,
 	}, &splitArr{
-		Dus:   make([][][]int, 0),
+		Dus:   make([][][]float64, 0),
 		Index: 2,
 	}, &splitArr{
-		Dus:   make([][][]int, 0),
+		Dus:   make([][][]float64, 0),
 		Index: 1,
 	}) //0-Y, 1-Cb, 2-Cr
 
@@ -537,12 +539,12 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
 		_temp := tempArr[colorComponentId-1]
 		_temp.X = a.colorComponents[colorComponentId].X
 		_temp.Y = a.colorComponents[colorComponentId].Y
-		_temp.Dus = append(_temp.Dus, v.data)
+		tempArr[colorComponentId-1].Dus = append(tempArr[colorComponentId-1].Dus, v.data)
 	}
 
 	for i := 0; i < int(hPixels); i++ {
 		for j := 0; j < int(vPixels); j++ {
-			output[i][j] = make([]int, 3)
+			output[i][j] = make([]float64, 3)
 		}
 	}
 
@@ -550,16 +552,16 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
 		dus := v.Dus
 		xRange := hmax / v.X //采样块宽度
 		yRange := vmax / v.Y //采样块高度
-		data := make([][]int, a.width)
-		for i := 0; i < len(data); i++ {
-			data[i] = make([]int, a.height)
+		data := make([][]float64, hPixels)
+		for i := 0; i < int(hPixels); i++ {
+			data[i] = make([]float64, vPixels)
 		}
 
 		for h := 0; h < int(v.X); h++ {
 			for x := 0; x < int(v.Y); x++ {
-				du := dus[x*h+h]
+				du := dus[x*int(v.X)+h]
 				for i := 0; i < 8; i++ {
-					insertX := (int(i) + int(h)*8) * int(xRange) //采样点少的情况下需要步偏移
+					insertX := (i + int(h)*8) * int(xRange) //采样点少的情况下需要步偏移
 
 					for j := 0; j < 8; j++ {
 						insertY := (j + x*8) * int(yRange)
@@ -577,7 +579,7 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
 		index := v.Index
 		for i := 0; i < int(hPixels); i++ {
 			for j := 0; j < int(vPixels); j++ {
-				output[i][j][index] = data[i][j] + 128
+				output[i][j][index] = data[i][j] + float64(128)
 			}
 		}
 	}
@@ -591,7 +593,7 @@ func (a *JData) getMcuPixels(mcu []mcuArr) [][][]int {
  * [ g ] = [ 1  -0.71414  -0.34414 ][ Cr - 128 ]
  * [ b ]   [ 1  0         1.772    ][ Cb - 128 ]
  */
-func ycrcb2rgb(YCrCb []int) []int {
+func ycrcb2rgb(YCrCb []float64) []int {
 	r := float64(YCrCb[0]) + 1.402*(float64(YCrCb[1])-128)
 	g := float64(YCrCb[0]) - 0.34414*(float64(YCrCb[2])-128) - 0.71414*(float64(YCrCb[1])-128)
 	b := float64(YCrCb[0]) + 1.772*(float64(YCrCb[2])-128)
@@ -673,21 +675,23 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			//fmt.Println("v---", v, len(v))
 			var subBuffer []byte
 			if len(input) >= cursor+length {
-				subBuffer = readBytesByStartAndEnd(input, uint(cursor), uint(length))
+				subBuffer = readBytesByStartAndEnd(input, uint(cursor), uint(cursor+length))
+				//fmt.Println("subBuffer --", string(subBuffer), cursor, length)
 			} else {
 				subBuffer = sliceArr(input, cursor)
 				tempSubBuffer := make([]byte, length-len(subBuffer))
 				tempSubBuffer = fillBytes(tempSubBuffer, '1')
 				subBuffer = concat(subBuffer, tempSubBuffer, length)
+				//fmt.Println("subBuffer 222---", string(subBuffer))
 			}
 			if string(subBuffer) == v {
 				cursor += length
 				value = _htMap[v].Value
-				fmt.Println("length", length, v, value)
+				//fmt.Println("length", length, v, value, _keys)
 				break
 			}
 		}
-		//fmt.Println("cur ", cursor)
+		//fmt.Println("bc---cur:", cursor)
 		//fmt.Println("iiii--2", i)
 
 		var bitCount int
@@ -717,10 +721,11 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			}
 			bitData += lastDc
 		} else {
-			//取AC值 todo
+			//取AC值
 			bitString := numberToString(int64(value))
-			zeroCount, _ := strconv.ParseInt(bitString[0:4], 10, 2) //数据前0的个数
-			_bitCount, _ := strconv.ParseInt(bitString[4:8], 10, 2) //数据的位数
+			zeroCount, _ := strconv.ParseInt(bitString[0:4], 2, 64) //数据前0的个数
+			_bitCount, _ := strconv.ParseInt(bitString[4:8], 2, 64) //数据的位数
+			//fmt.Println("bitCount: ", _bitCount, bitString)
 			bitCount = int(_bitCount)
 			//fmt.Println(value, string(bitString), "zeroCount", zeroCount, "_bitCount", _bitCount)
 			if zeroCount == 0 && bitCount == 0 {
