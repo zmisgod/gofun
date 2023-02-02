@@ -18,6 +18,22 @@ func readInt16(chunk []byte, offset int) uint {
 	return uint(chunk[offset])<<8 + uint(chunk[offset+1])<<0
 }
 
+func exCount(str string) (zeroCount int, bitCount int) {
+	noZero := false
+	for _, v:=range []byte(str) {
+		if v == '1' {
+			noZero = true
+		}
+		if !noZero {
+			if v == '0' {
+				zeroCount ++
+			}
+		}
+	}
+	bitCount = len(str) - zeroCount
+	return
+}
+
 func readInt32(chunk []byte, offset int) uint {
 	return uint(chunk[offset])<<24 + uint(chunk[offset+1])<<16 + uint(chunk[offset+2])<<8 + uint(chunk[offset+3])<<0
 }

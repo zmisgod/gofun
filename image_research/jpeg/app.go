@@ -178,14 +178,6 @@ func (a *JData) exportHtml() error {
 	return nil
 }
 
-func NewJDataObj(jpegFile string) (*JData, error) {
-	fd, err := os.OpenFile(jpegFile, os.O_RDONLY, 0777)
-	if err != nil {
-		return nil, err
-	}
-	return &JData{file: fd, vMax: 1, hMax: 1}, nil
-}
-
 func (a *JData) decode(ctx context.Context) ([][][]int, error) {
 	decodePixels := make([][][]int, 0)
 	defer a.close(ctx)
@@ -295,9 +287,11 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 			lastDc[colorComponentId] = output[0]
 
 			_buffer = sliceArr(_buffer, cursor)
+			//fmt.Println(output)
 
 			//反量化
 			_output := a.quantify(output, colorComponentId, true)
+			//fmt.Println("output", _output)
 
 			//zig zag反编码
 			_output1 := zigZag(_output, true)
@@ -322,6 +316,7 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 			}
 		}
 	}
+	//fmt.Println(mcus)
 
 	width := a.width
 	height := a.height
@@ -405,7 +400,7 @@ func (a *JData) quantify(input []int, colorComponentId uint, isReverse bool) []i
 		//fmt.Println("colorComponent", colorComponent, "qt", qt, "colorComponent.QtId", colorComponent.QtId)
 		//fmt.Println(input, len(input), output)
 		for i := 0; i < 64; i++ {
-			output[i] = int(math.Round(float64(input[i] / int(qt[i]))))
+			output[i] = int(math.Round(float64(input[i] * int(qt[i]))))
 		}
 	}
 
@@ -659,18 +654,18 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 	cursor := 0
 	output := make([]int, 0)
 	for i := 0; i < 64; i++ {
-		_r := a.colorInfo[colorComponentId].DCHTID
+		_r := a.colorInfo[colorComponentId].ACHTID
 		var _d int
 		if i == 0 {
-			_d = 0
-			_r = a.colorInfo[colorComponentId].ACHTID
+			_r = a.colorInfo[colorComponentId].DCHTID
 		} else {
 			_d = 1
 		}
-		_ht := a.Ht[fmt.Sprintf("%d-%d", _d, _r)].DataArr
-		_htMap := a.Ht[fmt.Sprintf("%d-%d", _d, _r)].Data
+		_key := fmt.Sprintf("%d-%d", _d, _r)
+		_ht := a.Ht[_key].DataArr
+		_htMap := a.Ht[_key].Data
 		_keys := keys(_ht)
-		//fmt.Println("_keys", _keys)
+		//fmt.Println(i, "_key", _key, _d, _r)
 		//fmt.Println("_ht", _ht)
 		var value int
 		for _, v := range _keys {
@@ -688,10 +683,12 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			if string(subBuffer) == v {
 				cursor += length
 				value = _htMap[v].Value
+				fmt.Println("length", length, v, value)
 				break
 			}
 		}
 		//fmt.Println("cur ", cursor)
+		//fmt.Println("iiii--2", i)
 
 		var bitCount int
 		var bitData int
@@ -720,22 +717,18 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			}
 			bitData += lastDc
 		} else {
-			//取AC值
+			//取AC值 todo
 			bitString := numberToString(int64(value))
 			zeroCount, _ := strconv.ParseInt(bitString[0:4], 10, 2) //数据前0的个数
 			_bitCount, _ := strconv.ParseInt(bitString[4:8], 10, 2) //数据的位数
 			bitCount = int(_bitCount)
-			//fmt.Println("bitString", bitString,
-			//	"zeroCount", zeroCount,
-			//	"_bitCount", _bitCount,
-			//	"bitCount", bitCount,
-			//)
-
+			//fmt.Println(value, string(bitString), "zeroCount", zeroCount, "_bitCount", _bitCount)
 			if zeroCount == 0 && bitCount == 0 {
 				//解析到 (0, 0) ，表示到达EOB，意味着后面的都是0
 				for len(output) < 64 {
 					output = append(output, 0)
 				}
+				//fmt.Println("break")
 				break
 			} else {
 				if bitCount == 0 {
@@ -756,9 +749,11 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 				}
 			}
 		}
-		//fmt.Println("bc---", bitCount, cursor)
+		//fmt.Println("iiii--3", i)
+		//fmt.Println("bc---",  bitCount, cursor, bitData)
 		output = append(output, bitData)
 		cursor += bitCount
+		//fmt.Println("iiii--4", i)
 	}
 	//fmt.Println("res ---", cursor, output)
 	return cursor, output
