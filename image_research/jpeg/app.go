@@ -125,9 +125,10 @@ func NewFile(jpegFile string) (*JData, error) {
 func (a *JData) exportHtml() error {
 	canvas := fmt.Sprintf(`<canvas id="canvas" class="canvas" style="width: %dpx; height: %dpx;"></canvas>`, a.width, a.height)
 	dataArr := make([]string, 0)
-	for _, v := range a.pixels {
-		for _, j := range v {
-			dataArr = append(dataArr, fmt.Sprintf("%d,%d,%d,255", j[0], j[1], j[2]))
+	for i := 0; i < int(a.height); i++ {
+		for j := 0; j < int(a.width); j++ {
+			_item := a.pixels[j][i]
+			dataArr = append(dataArr, fmt.Sprintf("%d,%d,%d,255", _item[0], _item[1], _item[2]))
 		}
 	}
 	data := strings.Join(dataArr, ",")
@@ -294,14 +295,17 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 
 			//zig zag反编码
 			_output1 := zigZag(_output, true)
-			//fmt.Println(_output1)
 
 			//转矩阵
 			_output2 := arrayToMatrix(_output1, 8, 8)
+
 			//fmt.Println(_output2)
 
 			//反dct编码
 			_output3 := fastIDct(_output2)
+			//for _, _x := range _output3 {
+			//	fmt.Println("---", _x)
+			//}
 
 			mcu = append(mcu, mcuArr{
 				colorComponentId: colorComponentId,
@@ -330,10 +334,20 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 	for i := 0; i < int(width); i++ {
 		pixels[i] = make([][]int, height)
 	}
+	//fmt.Println(hNum, vNum, hPixels, vPixels, width, height)
+
+	//for _, _x := range mcus {
+	//	for _, _j := range _x {
+	//		for _, _k := range _j.data {
+	//			fmt.Println("---", _k)
+	//		}
+	//	}
+	//}
+
 	for i := 0; i < int(hNum); i++ {
 		for j := 0; j < int(vNum); j++ {
-			mcuPixels := a.getMcuPixels(mcus[j*int(hNum)+i], i, j)
-			//fmt.Println(mcuPixels)
+			mcuPixels := a.getMcuPixels(mcus[j*int(hNum)+i], 0, 0)
+			//fmt.Println("---", j*int(hNum)+i, i, j)
 
 			offsetX := i * int(hPixels)
 			offsetY := j * int(vPixels)
@@ -520,6 +534,15 @@ func (a *JData) getMcuPixels(mcu []mcuArr, _i, _j int) [][][]float64 {
 			output[i][j] = make([]float64, 0)
 		}
 	}
+	debug := false
+	if _i == 0 && _j == 1 {
+		debug = true
+	}
+	if debug {
+		//for _, v := range mcu {
+		//	fmt.Println("---aaa", v)
+		//}
+	}
 
 	tempArr := make([]*splitArr, 0)
 	tempArr = append(tempArr, &splitArr{
@@ -540,6 +563,11 @@ func (a *JData) getMcuPixels(mcu []mcuArr, _i, _j int) [][][]float64 {
 		_temp.X = a.colorComponents[colorComponentId].X
 		_temp.Y = a.colorComponents[colorComponentId].Y
 		tempArr[colorComponentId-1].Dus = append(tempArr[colorComponentId-1].Dus, v.data)
+	}
+	if debug {
+		for _, v := range tempArr {
+			fmt.Println("---bbb", v)
+		}
 	}
 
 	for i := 0; i < int(hPixels); i++ {
@@ -568,7 +596,10 @@ func (a *JData) getMcuPixels(mcu []mcuArr, _i, _j int) [][][]float64 {
 						value := du[i][j]
 						for rx := 0; rx < int(xRange); rx++ {
 							for ry := 0; ry < int(yRange); ry++ {
-								data[insertX+rx][insertY] = value
+								data[insertX+rx][insertY+ry] = value
+								if debug {
+									fmt.Println("---ccc", value, insertX+rx, insertY)
+								}
 							}
 						}
 					}
@@ -579,7 +610,11 @@ func (a *JData) getMcuPixels(mcu []mcuArr, _i, _j int) [][][]float64 {
 		index := v.Index
 		for i := 0; i < int(hPixels); i++ {
 			for j := 0; j < int(vPixels); j++ {
-				output[i][j][index] = data[i][j] + float64(128)
+				_la := data[i][j] + float64(128)
+				if debug {
+					fmt.Println("---dddd", _la, data[i][j], i, j)
+				}
+				output[i][j][index] = _la
 			}
 		}
 	}

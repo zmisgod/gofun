@@ -1,13 +1,14 @@
 package jpeg
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"testing"
 )
 
 func TestNewFile(t *testing.T) {
-	obj, err := NewFile("./test.jpeg")
+	obj, err := NewFile("./WechatIMG37.jpeg")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -27,5 +28,17 @@ func TestUtil(t *testing.T) {
 	//fmt.Println(exCount(str))
 	//fmt.Println(numberToString(1123213))
 	//fmt.Println(strconv.ParseInt("0100", 2, 64))
-	fmt.Println(ycrcb2rgb([]float64{ 244.56513902640177, 124.88035222703407, 131.11964777296595 }))
+	//fmt.Println(ycrcb2rgb([]float64{ 244.56513902640177, 124.88035222703407, 131.11964777296595 }))
+
+	input := bytes.NewBufferString("01000000").Bytes()
+	fmt.Println(input)
+	cursor := 1
+	length := 10
+	subBuffer := sliceArr(input, cursor)
+	fmt.Println("subBuffer", string(subBuffer))
+	tempSubBuffer := make([]byte, length-len(subBuffer))
+	tempSubBuffer = fillBytes(tempSubBuffer, '1')
+	fmt.Println("temp", string(tempSubBuffer))
+	subBuffer = concat(subBuffer, tempSubBuffer, length)
+	fmt.Println(string(subBuffer))
 }
