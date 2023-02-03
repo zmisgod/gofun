@@ -179,42 +179,98 @@ func (a *JData) exportHtml() error {
 	return nil
 }
 
-func (a *JData) decode(ctx context.Context) ([][][]int, error) {
-	decodePixels := make([][][]int, 0)
+/*
+--Other markers--
+X’FFD8’ |  SOI* | Start of image
+X’FFD9’ |  EOI* | End of image
+X’FFDA’ |  SOS  | Start of scan
+X’FFDB’ |  DQT  | Define quantization table(s)
+X’FFDC’ |  DNL  | Define number of lines
+X’FFDD’ |  DRI  | Define restart interval
+X’FFDE’ |  DHP  | Define hierarchical progression
+X’FFDF’ |  EXP  | Expand reference component(s)
+X’FFE0’ through X’FFEF’ | APPn | Reserved for application segments
+X’FFF0’ through X’FFFD’ | JPGn | Reserved for JPEG extensions
+X’FFFE’ |  COM  | Comment
+
+--Start Of Frame markers, non-differential, Huffman coding--
+X’FFC0’｜SOF0｜Baseline DCT
+X’FFC1’｜SOF1｜Extended sequential DCT
+X’FFC2’｜SOF2｜Progressive DCT
+X’FFC3’｜SOF3｜Lossless (sequential)
+
+--Start Of Frame markers, differential, Huffman coding--
+X’FFC5’｜SOF5｜Differential sequential DCT
+X’FFC6’｜SOF6｜Differential progressive DCT
+X’FFC7’｜SOF7｜Differential lossless (sequential)
+
+--Start Of Frame markers, non-differential, arithmetic coding--
+X’FFC8’｜JPG｜Reserved for JPEG extensions
+X’FFC9’｜SOF9｜Extended sequential DCT
+X’FFCA’｜SOF10｜Progressive DCT
+X’FFCB’｜SOF11｜Lossless (sequential)
+
+--Start Of Frame markers, differential, arithmetic coding--
+X’FFCD’｜SOF13｜Differential sequential DCT
+X’FFCE’｜SOF14｜Differential progressive DCT
+X’FFCF’｜SOF15｜Differential lossless (sequential)
+
+--Huffman table specification--
+X’FFC4’｜DHT｜Define Huffman table(s)
+
+--Arithmetic coding conditioning specification--
+X’FFCC’｜ DAC ｜Define arithmetic coding conditioning(s)
+
+--Restart interval termination--
+X’FFD0’ through X’FFD7’｜ RSTm*｜ Restart with modulo 8 count “m”
+
+--Reserved markers--
+X’FF01’｜TEM*｜For temporary private use in arithmetic coding
+X’FF02’ through X’FFBF’｜RES｜Reserved
+ */
+func (a *JData) decode(ctx context.Context) (decodePixels [][][]int, err error) {
 	defer a.close(ctx)
-	if err := a.decodeSOI(ctx); err != nil {
-		return decodePixels, err
+	//检查前2个字节是否为0xff, 0xd8，这是正确的jpeg格式前缀
+	err = a.decodeSOI(ctx)
+	if err != nil {
+		return
 	}
 	fileBytes, _ := ioutil.ReadAll(io.Reader(a.file))
 	data := make([]byte, 0)
 	for a.index < len(fileBytes) {
-		oneByte, err := a.read(1)
-		if err != nil {
-			return decodePixels, err
-		}
+		//读一个字节，判断该字节是否为0xff 段标识符
+		oneByte, _ := a.read(1)
 		_byte := oneByte[0]
 		if _byte == 0xff {
+			//继续往下面读取数据
 			_next := fileBytes[a.index]
 			if _next == 0x00 {
-				_, _ = a.read(1)
+				//图像里的一部分
+				_, _ = a.read(1)//跳过next
 				if a.collectData {
+					//保存数据
 					data = append(data, _byte)
 				}
 			} else if _next == 0xff {
+				//跳过分隔符
 				continue
 			} else if _next >= 0xd0 && _next <= 0xd7 {
-				_, _ = a.read(1)
+				//Restart interval termination
+				//遇到RSTn标记
+				_, _ = a.read(1)//跳过next
 				a.imageData = append(a.imageData, JImageData{
 					Type:  []byte{_next & 0x0f},
 					Chunk: data,
 				})
 				data = []byte{}
 			} else {
+				//解析其他标记
 				if err := a.decodeMarkerSegment(ctx); err != nil {
 					return decodePixels, err
 				}
 			}
 		} else {
+			//不是分隔符，就需要收集图片数据
 			if a.collectData {
 				data = append(data, _byte)
 			}
@@ -805,9 +861,11 @@ func (a *JData) decodeMarkerSegment(ctx context.Context) error {
 		return err
 	}
 	marker := markerB[0]
+	//遇到结束符号，结束
 	if marker == 0xd9 {
 		return nil
 	}
+	//读取2个字节
 	length, _ := a.read(2)
 	lenInt := length[0] + length[1]
 	chunkData, _ := a.read(int64(lenInt) + -2)
