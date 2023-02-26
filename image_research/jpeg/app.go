@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/zmisgod/gofun/image_research"
 	"io"
 	"io/ioutil"
 	"math"
@@ -81,8 +82,8 @@ type HtDataArr struct {
 
 type Ht struct {
 	Type    string
-	Data    map[string]HfmTree
-	DataArr []HtDataArr
+	Data    map[string]image_research.HfmTree
+	DataArr []image_research.HtDataArr
 }
 
 type HfmTree struct {
@@ -320,7 +321,7 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 		_chunk := v.Chunk
 		_buffer := allocArrStr(len(_chunk)*8, 1)
 		for k, j := range _chunk {
-			_byteStr := bin2Str(int64(rune(j)))
+			_byteStr := image_research.Bin2Str(int64(rune(j)))
 			s := 8 - len(_byteStr)
 			if s > 0 {
 				for i := 0; i < s; i++ {
@@ -343,7 +344,7 @@ func (a *JData) decodeImageData(ctx context.Context) ([][][]int, error) {
 
 			lastDc[colorComponentId] = output[0]
 
-			_buffer = sliceArr(_buffer, cursor)
+			_buffer = image_research.SliceArr(_buffer, cursor)
 
 			//反量化
 			_output := a.quantify(output, colorComponentId, true)
@@ -735,10 +736,10 @@ func rgb2ycrcb(rgb []int) []float64 {
 	}
 }
 
-func keys(list []HtDataArr) []string {
+func keys(list []image_research.HtDataArr) []string {
 	_list := make([]string, 0)
 	for _, v := range list {
-		_list = append(_list, v.key)
+		_list = append(_list, v.Key)
 	}
 	return _list
 }
@@ -766,13 +767,13 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			//fmt.Println("v---", v, len(v))
 			var subBuffer []byte
 			if len(input) >= cursor+length {
-				subBuffer = readBytesByStartAndEnd(input, uint(cursor), uint(cursor+length))
+				subBuffer = image_research.ReadBytesByStartAndEnd(input, uint(cursor), uint(cursor+length))
 				//fmt.Println("subBuffer --", string(subBuffer), cursor, length)
 			} else {
-				subBuffer = sliceArr(input, cursor)
+				subBuffer = image_research.SliceArr(input, cursor)
 				tempSubBuffer := make([]byte, length-len(subBuffer))
-				tempSubBuffer = fillBytes(tempSubBuffer, '1')
-				subBuffer = concat(subBuffer, tempSubBuffer, length)
+				tempSubBuffer = image_research.FillBytes(tempSubBuffer, '1')
+				subBuffer = image_research.Concat(subBuffer, tempSubBuffer, length)
 				//fmt.Println("subBuffer 222---", string(subBuffer))
 			}
 			if string(subBuffer) == v {
@@ -801,8 +802,8 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			if bitCount == 0 {
 				bitData = 0
 			} else {
-				_bitData := readBytesByStartAndEnd(input, uint(cursor), uint(bitCount+cursor))
-				_bitData1, _ := str2Bin(string(_bitData))
+				_bitData := image_research.ReadBytesByStartAndEnd(input, uint(cursor), uint(bitCount+cursor))
+				_bitData1, _ := image_research.Str2Bin(string(_bitData))
 				half := math.Pow(2, float64(bitCount-1))
 				if float64(_bitData1) >= half {
 					bitData = int(_bitData1)
@@ -813,7 +814,7 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 			bitData += lastDc
 		} else {
 			//取AC值
-			bitString := numberToString(int64(value))
+			bitString := image_research.NumberToString(int64(value))
 			zeroCount, _ := strconv.ParseInt(bitString[0:4], 2, 64) //数据前0的个数
 			_bitCount, _ := strconv.ParseInt(bitString[4:8], 2, 64) //数据的位数
 			//fmt.Println("bitCount: ", _bitCount, bitString)
@@ -830,8 +831,8 @@ func (a *JData) decodeHuffman(ctx context.Context, input []byte, colorComponentI
 				if bitCount == 0 {
 					bitData = 0
 				} else {
-					_bitData := readBytesByStartAndEnd(input, uint(cursor), uint(bitCount+cursor))
-					_bitData1, _ := str2Bin(string(_bitData))
+					_bitData := image_research.ReadBytesByStartAndEnd(input, uint(cursor), uint(bitCount+cursor))
+					_bitData1, _ := image_research.Str2Bin(string(_bitData))
 					half := math.Pow(2, float64(bitCount-1))
 					if float64(_bitData1) >= half {
 						bitData = int(_bitData1)
@@ -898,21 +899,21 @@ func (a *JData) decodeMarkerSegment(ctx context.Context) error {
 
 func (a *JData) decodeSOf0(ctx context.Context, chunkData []byte) error {
 	a.accuracy = chunkData[0]
-	a.height = readInt16(chunkData, 1)
-	a.width = readInt16(chunkData, 3)
+	a.height = image_research.ReadInt16(chunkData, 1)
+	a.width = image_research.ReadInt16(chunkData, 3)
 	a.colorComponentCount = chunkData[5]
 	if a.colorComponentCount != 3 {
 		return errors.New("仅支持YCrCb彩色图")
 	}
-	chunk := sliceArr(chunkData, 6)
+	chunk := image_research.SliceArr(chunkData, 6)
 	a.colorComponents = make(map[uint]ColorComponentsItem)
 	for i := 0; i < int(a.colorComponentCount); i++ {
-		colorComponentId := readInt8(chunk, 0)
-		packField := readInt8(chunk, 1)
-		_pF := numberToString(int64(packField))
+		colorComponentId := image_research.ReadInt8(chunk, 0)
+		packField := image_research.ReadInt8(chunk, 1)
+		_pF := image_research.NumberToString(int64(packField))
 		_x, _ := strconv.ParseInt(_pF[0:4], 2, 10)
 		_y, _ := strconv.ParseInt(_pF[4:8], 2, 10)
-		qrId := readInt8(chunk, 2)
+		qrId := image_research.ReadInt8(chunk, 2)
 		_item := ColorComponentsItem{
 			X:    _x,
 			Y:    _y,
@@ -923,7 +924,7 @@ func (a *JData) decodeSOf0(ctx context.Context, chunkData []byte) error {
 			key:  colorComponentId,
 			Item: _item,
 		})
-		chunk = sliceArr(chunk, 3)
+		chunk = image_research.SliceArr(chunk, 3)
 	}
 	for _, v := range a.colorComponentsArr {
 		for i := 0; i < int(v.Item.X)*int(v.Item.Y); i++ {
@@ -941,41 +942,41 @@ func (a *JData) decodeSOf0(ctx context.Context, chunkData []byte) error {
 
 func (a *JData) decodeDHT(ctx context.Context, chunkData []byte) error {
 	for len(chunkData) > 0 {
-		packedField := readInt8(chunkData, 0)
-		_pf := numberToString(int64(packedField))
+		packedField := image_research.ReadInt8(chunkData, 0)
+		_pf := image_research.NumberToString(int64(packedField))
 		_type := _pf[3] //哈夫曼类型 0-DC直流 1-AC交流表
 		_id := _pf[7]   //哈夫曼表id
 		var length uint = 0
 		countArr := make([]uint, 0)
 		for i := 0; i < 16; i++ {
-			_count := readInt8(chunkData, i+1)
+			_count := image_research.ReadInt8(chunkData, i+1)
 			countArr = append(countArr, _count)
 			length += _count
 		}
-		data, err := readBytes(chunkData, 17, length)
+		data, err := image_research.ReadBytes(chunkData, 17, length)
 		if err != nil {
 			return err
 		}
-		_data, _dataArr, _ := createHuffmanTree(data, countArr)
+		_data, _dataArr, _ := image_research.CreateHuffmanTree(data, countArr)
 		_ht := Ht{
-			Type:    asciiToStr(int(_type)),
+			Type:    image_research.AsciiToStr(int(_type)),
 			Data:    _data,
 			DataArr: _dataArr,
 		}
-		_key := fmt.Sprintf("%s-%s", asciiToStr(int(_type)), asciiToStr(int(_id)))
+		_key := fmt.Sprintf("%s-%s", image_research.AsciiToStr(int(_type)), image_research.AsciiToStr(int(_id)))
 		a.Ht[_key] = _ht
-		chunkData = sliceArr(chunkData, int(length)+17)
+		chunkData = image_research.SliceArr(chunkData, int(length)+17)
 	}
 	return nil
 }
 
 func (a *JData) decodeSOS(ctx context.Context, chunkData []byte) {
-	a.colors = uint8(readInt8(chunkData, 0))
-	chunkData = sliceArr(chunkData, 1)
+	a.colors = uint8(image_research.ReadInt8(chunkData, 0))
+	chunkData = image_research.SliceArr(chunkData, 1)
 	for i := 0; i < int(a.colors); i++ {
-		colorId := readInt8(chunkData, 0) //1 - Y，2 - Cb，3 - Cr，4 - I，5 - Q
-		packedField := readInt8(chunkData, 1)
-		_pf := numberToString(int64(packedField))
+		colorId := image_research.ReadInt8(chunkData, 0) //1 - Y，2 - Cb，3 - Cr，4 - I，5 - Q
+		packedField := image_research.ReadInt8(chunkData, 1)
+		_pf := image_research.NumberToString(int64(packedField))
 
 		_dchtId, _ := strconv.ParseInt(_pf[0:4], 2, 10) //DC哈夫曼表id
 		_achtId, _ := strconv.ParseInt(_pf[4:8], 2, 10) //AC哈夫曼表id
@@ -984,7 +985,7 @@ func (a *JData) decodeSOS(ctx context.Context, chunkData []byte) {
 			DCHTID: _dchtId,
 			ACHTID: _achtId,
 		}
-		chunkData = sliceArr(chunkData, 2)
+		chunkData = image_research.SliceArr(chunkData, 2)
 	}
 	a.collectData = true //准备开始收集数据
 }
@@ -992,14 +993,14 @@ func (a *JData) decodeSOS(ctx context.Context, chunkData []byte) {
 //解码DQT，Define Quantization Table，定义量化表
 func (a *JData) decodeDQT(ctx context.Context, chunkData []byte) error {
 	for len(chunkData) > 0 {
-		packedField := readInt8(chunkData, 0)
-		_pf := numberToString(int64(packedField))
+		packedField := image_research.ReadInt8(chunkData, 0)
+		_pf := image_research.NumberToString(int64(packedField))
 
 		accuracy, _ := strconv.ParseInt(_pf[0:4], 2, 10) //量化表精度，0 - 1字节，1 - 2字节
 		id, _ := strconv.ParseInt(_pf[4:8], 2, 10)       //量化表id，取值范围为0 - 3，所以最多可有4个量化表
 
 		length := 64 * (accuracy + 1)
-		data, err := readBytes(chunkData, 1, uint(length))
+		data, err := image_research.ReadBytes(chunkData, 1, uint(length))
 		if err != nil {
 			return err
 		}
@@ -1008,35 +1009,35 @@ func (a *JData) decodeDQT(ctx context.Context, chunkData []byte) error {
 			data:     data,
 		}
 
-		chunkData = sliceArr(chunkData, len(chunkData)+1)
+		chunkData = image_research.SliceArr(chunkData, len(chunkData)+1)
 	}
 	return nil
 }
 
 //解码DRI，Define Restart Interval，定义差分编码累计复位的间隔
 func (a *JData) decodeDRI(ctx context.Context, chunkData []byte) {
-	a.restartInterval = readInt16(chunkData, 0)
+	a.restartInterval = image_research.ReadInt16(chunkData, 0)
 }
 
 //Application，应用程序保留标记0
 func (a *JData) decodeAPP0(ctx context.Context, chunkData []byte) error {
-	_formatB, err := readBytes(chunkData, 0, 5)
+	_formatB, err := image_research.ReadBytes(chunkData, 0, 5)
 	if err != nil {
 		return err
 	}
-	a.format = bufferToString(_formatB)
-	a.mainVersion = readInt8(chunkData, 5)
-	a.subVersion = readInt8(chunkData, 6)
+	a.format = image_research.BufferToString(_formatB)
+	a.mainVersion = image_research.ReadInt8(chunkData, 5)
+	a.subVersion = image_research.ReadInt8(chunkData, 6)
 
-	a.unit = readInt8(chunkData, 7)
-	a.xPixel = readInt16(chunkData, 8)
-	a.yPixel = readInt16(chunkData, 10)
+	a.unit = image_research.ReadInt8(chunkData, 7)
+	a.xPixel = image_research.ReadInt16(chunkData, 8)
+	a.yPixel = image_research.ReadInt16(chunkData, 10)
 
-	a.thumbnailWidth = readInt8(chunkData, 12)
-	a.thumbnailHeight = readInt8(chunkData, 13)
+	a.thumbnailWidth = image_research.ReadInt8(chunkData, 12)
+	a.thumbnailHeight = image_research.ReadInt8(chunkData, 13)
 
 	if a.thumbnailWidth > 0 && a.thumbnailHeight > 0 && len(chunkData) > 14 {
-		thumbnail := sliceArr(chunkData, 14)
+		thumbnail := image_research.SliceArr(chunkData, 14)
 		data := make([][][]byte, 0)
 		for i := 0; i < int(a.thumbnailWidth); i++ {
 			data[i] = make([][]byte, 0)

@@ -3,6 +3,7 @@ package jpeg
 import (
 	"bytes"
 	"fmt"
+	"github.com/zmisgod/gofun/image_research"
 	"log"
 	"testing"
 )
@@ -34,11 +35,11 @@ func TestUtil(t *testing.T) {
 	fmt.Println(input)
 	cursor := 1
 	length := 10
-	subBuffer := sliceArr(input, cursor)
+	subBuffer := image_research.SliceArr(input, cursor)
 	fmt.Println("subBuffer", string(subBuffer))
 	tempSubBuffer := make([]byte, length-len(subBuffer))
-	tempSubBuffer = fillBytes(tempSubBuffer, '1')
+	tempSubBuffer = image_research.FillBytes(tempSubBuffer, '1')
 	fmt.Println("temp", string(tempSubBuffer))
-	subBuffer = concat(subBuffer, tempSubBuffer, length)
+	subBuffer = image_research.Concat(subBuffer, tempSubBuffer, length)
 	fmt.Println(string(subBuffer))
 }
